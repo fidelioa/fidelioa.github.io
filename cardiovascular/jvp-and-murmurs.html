@@ -3,181 +3,809 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JVP & Murmurs High-Yield QBank</title>
+    <title>The Grand Budapest - Board Review System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Georgia', serif; }
-        body, html { background: #090f1d; color: #e2e8f0; min-height: 100vh; }
-
-        .art-canvas-container {
-            position: relative;
-            width: 100%;
-            min-height: 100vh;
-            background: linear-gradient(rgba(9, 15, 29, 0.75), rgba(15, 23, 42, 0.85)),
-                        url('https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Vincent_van_Gogh_-_Wheatfield_with_crows_-_Google_Art_Project.jpg/1280px-Vincent_van_Gogh_-_Wheatfield_with_crows_-_Google_Art_Project.jpg') no-repeat center center;
-            background-size: cover;
-            display: flex;
-            flex-direction: column;
+        /* ========================================================
+            ARTSY RESET & BASE (Impressionist Oil Canvas Vibe)
+           ======================================================== */
+        body, html {
+            margin: 0 !important;
+            padding: 0 !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            background: #090f1d !important;
+            min-height: 100%;
         }
 
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Georgia', serif;
+        }
+
+        /* ========================================================
+            VAN GOGH WHEATFIELD CANVAS BACKDROP
+           ======================================================== */
+        .art-canvas-container {
+            position: relative;
+            width: 100% !important;
+            min-height: 100vh !important;
+            z-index: 1 !important;
+            background: 
+                linear-gradient(rgba(9, 15, 29, 0.65), rgba(15, 23, 42, 0.8)),
+                url('https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Vincent_van_Gogh_-_Wheatfield_with_crows_-_Google_Art_Project.jpg/1280px-Vincent_van_Gogh_-_Wheatfield_with_crows_-_Google_Art_Project.jpg') no-repeat center center !important;
+            background-size: cover !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: flex-start !important;
+            overflow-x: hidden !important;
+            padding-bottom: 60px !important;
+        }
+
+        /* Paint Stroke Texture Overlay */
+        .art-canvas-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 2;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* ========================================================
+            NAVIGATION BAR
+           ======================================================== */
         .custom-navbar {
+            position: relative;
+            z-index: 20;
             width: 100%;
-            padding: 15px 50px;
-            background: rgba(9, 15, 29, 0.95);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(234, 179, 8, 0.3);
+            min-height: 80px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 100;
+            padding: 15px 50px;
+            background: rgba(9, 15, 29, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(234, 179, 8, 0.3);
         }
 
-        .nav-logo { color: #fef08a; font-size: 1.5rem; font-weight: 700; font-style: italic; text-decoration: none; }
-
-        .timer { color: #fcd34d; font-size: 1.35rem; font-weight: 600; }
-
-        .main-wrapper {
-            width: 100%;
-            max-width: 980px;
-            padding: 40px 20px;
-            flex-grow: 1;
-        }
-
-        .question-card {
-            background: rgba(13, 21, 39, 0.97);
-            border: 2px solid #eab308;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
-        }
-
-        .question-header { display: flex; justify-content: space-between; margin-bottom: 25px; }
-        .question-number { color: #eab308; font-size: 1.45rem; font-weight: 700; }
-
-        .question-text { font-size: 1.22rem; line-height: 1.8; margin-bottom: 30px; }
-
-        .option {
-            padding: 16px 22px;
-            margin: 10px 0;
-            background: rgba(234, 179, 8, 0.09);
-            border: 1px solid rgba(234, 179, 8, 0.4);
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .option:hover { background: rgba(234, 179, 8, 0.25); border-color: #fcd34d; }
-
-        .next-btn {
-            padding: 15px 45px;
-            background: linear-gradient(90deg, #fcd34d, #f59e0b);
-            color: #0f172a;
+        .nav-logo {
+            font-size: 1.4rem;
             font-weight: 700;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 1.1rem;
-            margin-top: 25px;
+            font-style: italic;
+            letter-spacing: 1px;
+            color: #fef08a;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
         }
-        .next-btn:hover { transform: translateY(-4px); box-shadow: 0 12px 25px rgba(245, 158, 11, 0.5); }
+        .nav-logo i {
+            color: #eab308;
+            font-size: 1.4rem;
+            filter: drop-shadow(0 0 8px rgba(234, 179, 8, 0.6));
+        }
 
-        .answer-section { margin-top: 30px; padding: 25px; background: rgba(15, 23, 42, 0.95); border-radius: 12px; display: none; }
-        .correct-answer { color: #4ade80; font-weight: 700; font-size: 1.15rem; }
+        /* ========================================================
+            METRICS HEADER BAR (Question counter & Timer)
+           ======================================================== */
+        .metrics-bar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed rgba(234, 179, 8, 0.2);
+        }
+
+        .metric-item {
+            font-size: 1.15rem;
+            color: #fef08a;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .metric-item.timer {
+            color: #ef4444;
+            text-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+            background: rgba(239, 68, 68, 0.1);
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        /* ========================================================
+            MAIN MAINFRAME CONTAINER
+           ======================================================== */
+        .main-wrapper {
+            flex-grow: 1;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            z-index: 10;
+            max-width: 950px;
+        }
+
+        .art-mainframe {
+            position: relative;
+            width: 100%;
+            background: #0d1527;
+            border: 2px solid #eab308;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            padding: 40px;
+        }
+
+        .q-stem {
+            color: #f8fafc;
+            font-size: 1.25rem;
+            line-height: 1.7;
+            margin-bottom: 30px;
+            text-align: justify;
+        }
+
+        /* ========================================================
+            INTERACTIVE OPTIONS
+           ======================================================== */
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 35px;
+        }
+
+        .option-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(234, 179, 8, 0.15);
+            border-radius: 12px;
+            padding: 18px 22px;
+            cursor: pointer;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            transition: all 0.25s ease;
+            color: #cbd5e1;
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+
+        .option-card:hover {
+            border-color: #eab308;
+            background: rgba(234, 179, 8, 0.04);
+            color: #fef08a;
+            transform: translateX(4px);
+        }
+
+        .option-card input[type="radio"] {
+            margin-top: 4px;
+            accent-color: #eab308;
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+
+        .option-card.selected {
+            border-color: #eab308;
+            background: rgba(234, 179, 8, 0.08);
+            color: #fef08a;
+            box-shadow: 0 0 15px rgba(234, 179, 8, 0.15);
+        }
+
+        /* Evaluation states */
+        .option-card.correct-row {
+            border-color: #22c55e !important;
+            background: rgba(34, 197, 94, 0.12) !important;
+            color: #4ade80 !important;
+        }
+
+        .option-card.incorrect-row {
+            border-color: #ef4444 !important;
+            background: rgba(239, 68, 68, 0.12) !important;
+            color: #f87171 !important;
+        }
+
+        /* ========================================================
+            DYNAMIC SYSTEM BUTTONS
+           ======================================================== */
+        .action-container {
+            display: flex;
+            justify-content: flex-end;
+            gap: 20px;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #eab308, #ca8a04);
+            color: #090f1d;
+            font-weight: bold;
+            font-size: 1.05rem;
+            padding: 14px 30px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(234, 179, 8, 0.3);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(234, 179, 8, 0.5);
+            background: linear-gradient(135deg, #fef08a, #eab308);
+        }
+
+        .action-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .action-btn.secondary-btn {
+            background: rgba(30, 41, 59, 0.8);
+            color: #cbd5e1;
+            border: 1px solid rgba(234, 179, 8, 0.3);
+            box-shadow: none;
+        }
+
+        .action-btn.secondary-btn:hover {
+            background: rgba(51, 65, 85, 0.9);
+            color: #fef08a;
+            border-color: #eab308;
+        }
+
+        /* ========================================================
+            EXPLANATION ACORDION PANEL
+           ======================================================== */
+        .explanation-panel {
+            margin-top: 35px;
+            background: #111a2e;
+            border: 1px solid rgba(234, 179, 8, 0.25);
+            border-radius: 16px;
+            padding: 30px;
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .exp-heading {
+            color: #fef08a;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid rgba(234, 179, 8, 0.2);
+            padding-bottom: 8px;
+        }
+
+        .exp-text {
+            color: #cbd5e1;
+            font-size: 1.05rem;
+            line-height: 1.65;
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        .obj-box {
+            background: rgba(234, 179, 8, 0.05);
+            border-left: 4px solid #eab308;
+            padding: 15px 20px;
+            border-radius: 0 12px 12px 0;
+            color: #e2e8f0;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .obj-box strong {
+            color: #fef08a;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Finished Screen View Overlay */
+        .completion-view {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .completion-view h2 {
+            color: #fef08a;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        .completion-view p {
+            color: #cbd5e1;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
     </style>
 </head>
 <body>
 
-<div class="art-canvas-container">
-    <nav class="custom-navbar">
-        <a href="https://ankitx007x.github.io/" class="nav-logo">
-            <i class="fa-solid fa-palette"></i> The Grand Budapest
-        </a>
-        <div class="timer" id="timer">60:00</div>
-    </nav>
+    <div class="art-canvas-container">
+        <nav class="custom-navbar">
+            <a href="#" class="nav-logo">
+                <i class="fa-solid fa-palette"></i> The Grand Budapest — Advanced Cardiorespiratory Review
+            </a>
+        </nav>
 
-    <div class="main-wrapper">
-        <div id="quiz-container"></div>
+        <div class="main-wrapper">
+            <div class="art-mainframe" id="interactive-mainframe">
+                
+                <div class="metrics-bar">
+                    <div class="metric-item" id="question-index-label">
+                        <i class="fa-solid fa-signature"></i> Question 1 of 21
+                    </div>
+                    <div class="metric-item timer" id="countdown-timer">
+                        <i class="fa-solid fa-hourglass-half"></i> 90:00
+                    </div>
+                </div>
+
+                <div id="quiz-contents">
+                    <p class="q-stem" id="question-stem-text">Loading case vignette...</p>
+
+                    <div class="options-list" id="options-box-wrapper">
+                        </div>
+
+                    <div class="action-container">
+                        <button class="action-btn secondary-btn" id="submit-answer-btn" onclick="evaluateSelection()" disabled>
+                            <i class="fa-solid fa-check-to-slot"></i> Submit Answer
+                        </button>
+                        <button class="action-btn" id="next-question-btn" onclick="loadNextQuestion()" style="display: none;">
+                            Next Question <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <div class="explanation-panel" id="explanation-reveal-panel">
+                        <h4 class="exp-heading">
+                            <i class="fa-solid fa-graduation-cap"></i> Detailed Clinical Rationale
+                        </h4>
+                        <p class="exp-text" id="explanation-body-text"></p>
+                        <div class="obj-box" id="educational-objective-text"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </div>
-</div>
 
-<script>
-// ==================== ALL 40 QUESTIONS ====================
-const questions = [
-    {id:1, text:"A 64-year-old male presents with progressive dyspnea on exertion and episodic lightheadedness over the past 6 months. Physical examination reveals a delayed, low-amplitude carotid pulse (pulsus parvus et tardus). On cardiac auscultation, a harsh, crescendo-decrescendo systolic murmur is heard loudest at the right upper sternal border, radiating to the carotids. The second heart sound (S2) is single and paradoxically split. Which of the following dynamic auscultatory findings is most expected in this patient?", options:["A. Softening of the murmur with a handgrip maneuver","B. Softening of the murmur during the strain phase of the Valsalva maneuver","C. Intensification of the murmur upon standing from a squatting position","D. Softening of the murmur following a premature ventricular contraction (PVC)","E. Decreased intensity of the murmur with passive leg raise"], answer:"A", explanation:"Classic severe aortic stenosis. Handgrip ↑ afterload → ↓ transvalvular gradient → softens murmur."},
-    {id:2, text:"A 45-year-old female presents with fatigue and peripheral edema. On examination, her jugular venous pressure is elevated at 12 cm H₂O. Inspection of the jugular venous waveform reveals an exceptionally prominent, rapid descent occurring immediately after the second heart sound, while the descent following the 'a' wave is blunted. A sharp, high-pitched sound is heard early in diastole along the left sternal border. Which of the following is the most likely etiology?", options:["A. Cardiac tamponade","B. Constrictive pericarditis","C. Severe tricuspid regurgitation","D. Tricuspid stenosis","E. Right ventricular infarction"], answer:"B", explanation:"Prominent rapid y descent (Friedreich's sign) + pericardial knock = constrictive pericarditis."},
-    {id:3, text:"A 28-year-old female presents with an unprovoked episode of palpitations. She has a history of mild exertional dyspnea. Physical examination reveals a regular cardiac rhythm with a fixed split-second heart sound (S2) across both inspiration and expiration. A mid-systolic, crescendo-decrescendo murmur is heard best at the left upper sternal border. Which of the following mechanical processes is primarily responsible for the production of this murmur?", options:["A. Turbulent blood flow across an anatomically stenotic pulmonic valve","B. Regurgitant flow through an incompetent tricuspid valve","C. Increased stroke volume and flow across a structurally normal pulmonic valve","D. Left-to-right shunting of blood directly across an atrial septal defect","E. Rapid diastolic filling into an oversized right ventricle"], answer:"C", explanation:"ASD → volume overload of RV → increased flow across normal pulmonic valve."},
-    {id:4, text:"A 72-year-old male with a history of hypertension and a prior anterior wall myocardial infarction is admitted with acute decompensated heart failure... The intensity of this murmur increases when the patient is asked to clench both fists tightly. Which of the following changes in left ventricular (LV) dynamics best explains the intensification of this murmur?", options:["A. Increased LV preload...","B. Increased systemic vascular resistance...","C. Decreased cardiac output...","D. Increased myocardial contractility...","E. Reflex bradycardia..."], answer:"B", explanation:"Handgrip ↑ afterload → ↑ LV-LA pressure gradient → ↑ regurgitant volume in MR."},
-    // ... (I have all 40 fully extracted)
-    {id:40, text:"A 53-year-old male is evaluated for a harsh mid-systolic murmur heard loudest at the right upper sternal border. The clinician is considering either calcific aortic stenosis or a bicuspid aortic valve. Which of the following findings on auscultation would point most strongly toward a congenital bicuspid aortic valve over senile calcific aortic stenosis?", options:["A. Presence of an early systolic, high-pitched ejection click...","B. Radiation of the systolic murmur into the left axillary line","C. Absence of normal respiratory variation in the second heart sound","D. Combination with a mid-diastolic opening snap","E. Development of an intermittent cannon 'a' wave on JVP inspection"], answer:"A", explanation:"Bicuspid aortic valve classically presents with an ejection click before heavy calcification."}
-];
+    <script>
+        const quizDataset = [
+            {
+                id: 1,
+                stem: "A 64-year-old male presents with progressive dyspnea on exertion and episodic lightheadedness over the past 6 months. Physical examination reveals a delayed, low-amplitude carotid pulse (pulsus parvus et tardus). On cardiac auscultation, a harsh, crescendo-decrescendo systolic murmur is heard loudest at the right upper sternal border, radiating to the carotids. The second heart sound (S2) is single and paradoxically split. Which of the following dynamic auscultatory findings is most expected in this patient?",
+                choices: {
+                    A: "Softening of the murmur with a handgrip maneuver",
+                    B: "Softening of the murmur during the strain phase of the Valsalva maneuver",
+                    C: "Intensification of the murmur upon standing from a squatting position",
+                    D: "Softening of the murmur following a premature ventricular contraction (PVC)",
+                    E: "Decreased intensity of the murmur with passive leg raise"
+                },
+                correct: "A",
+                explanation: "This presentation is classic for severe aortic stenosis (AS), characterized by the triad of exertional dyspnea, angina, and syncope, along with a crescendo-decrescendo systolic murmur and pulsus parvus et tardus. Handgrip increases afterload (systemic vascular resistance). For AS, an increase in afterload decreases the pressure gradient across the stenotic aortic valve, thereby reducing forward flow and softening the murmur. In contrast, hypertrophic cardiomyopathy (HCM) and mitral regurgitation (MR) behave differently (MR increases with handgrip due to forced backward flow; HCM decreases due to left ventricular expansion). Choice B & C: Valsalva strain and standing decrease venous return (preload). Decreasing preload softens AS murmurs but intensifies HCM and mitral valve prolapse (MVP) murmurs. Choice D: Post-PVC, left ventricular filling increases, and contractility is augmented via post-extrasystolic potentiation. This increases forward flow across the aortic valve, intensifying an AS murmur.",
+                objective: "Handgrip maneuver increases afterload, which decreases forward flow across the aortic valve, softening the murmur of aortic stenosis."
+            },
+            {
+                id: 2,
+                stem: "A 45-year-old female presents with fatigue and peripheral edema. On examination, her jugular venous pressure is elevated at 12 cm H₂O. Inspection of the jugular venous waveform reveals an exceptionally prominent, rapid descent occurring immediately after the second heart sound, while the descent following the 'a' wave is blunted. A sharp, high-pitched sound is heard early in diastole along the left sternal border. Which of the following is the most likely etiology?",
+                choices: {
+                    A: "Cardiac tamponade",
+                    B: "Constrictive pericarditis",
+                    C: "Severe tricuspid regurgitation",
+                    D: "Tricuspid stenosis",
+                    E: "Right ventricular infarction"
+                },
+                correct: "B",
+                explanation: "The patient features a prominent, rapid 'y' descent (Friedreich's sign) and a high-pitched early diastolic sound (pericardial knock), pathognomonic for constrictive pericarditis. In constrictive pericarditis, early diastolic filling is rapid and unimpeded until the rigid, calcified pericardium abruptly halts ventricular expansion, creating a sharp drop and bottoming out of the right atrial pressure (steep y descent) and producing the pericardial knock. Choice A: Cardiac tamponade features an absent or blunted y descent because the intrapericardial pressure remains high throughout diastole, preventing rapid ventricular filling from the atrium. Choice C: Tricuspid regurgitation presents with a giant, prominent v wave and a sharp y descent, but lacks a pericardial knock and exhibits a prominent x' descent blunting.",
+                objective: "Constrictive pericarditis presents with a sharp, prominent y descent (Friedreich's sign) and an early diastolic pericardial knock, contrasting with cardiac tamponade which lacks a prominent y descent."
+            },
+            {
+                id: 3,
+                stem: "A 28-year-old female presents with an unprovoked episode of palpitations. She has a history of mild exertional dyspnea. Physical examination reveals a regular cardiac rhythm with a fixed split-second heart sound (S2) across both inspiration and expiration. A mid-systolic, crescendo-decrescendo murmur is heard best at the left upper sternal border. Which of the following mechanical processes is primarily responsible for the production of this murmur?",
+                choices: {
+                    A: "Turbulent blood flow across an anatomically stenotic pulmonic valve",
+                    B: "Regurgitant flow through an incompetent tricuspid valve",
+                    C: "Increased stroke volume and flow across a structurally normal pulmonic valve",
+                    D: "Left-to-right shunting of blood directly across an atrial septal defect",
+                    E: "Rapid diastolic filling into an oversized right ventricle"
+                },
+                correct: "C",
+                explanation: "This patient has an atrial septal defect (ASD). The classic presentation of an ASD is a fixed split S2 accompanied by a mid-systolic ejection murmur at the left upper sternal border. Crucially, the murmur itself is NOT caused by blood moving across the low-pressure atrial defect (which is silent). Instead, the left-to-right shunt creates chronic volume overload of the right atrium and ventricle, leading to an increased stroke volume ejected across a structurally normal pulmonic valve. Choice A: Pulmonic stenosis produces a similar systolic murmur, but it would not feature a fixed split S2; instead, the split would widen normally with inspiration and P2 would be delayed and soft.",
+                objective: "The systolic murmur in an ASD is caused by increased blood flow volume across a normal pulmonic valve, not by flow across the septal defect itself."
+            },
+            {
+                id: 4,
+                stem: "A 72-year-old male with a history of hypertension and a prior anterior wall myocardial infarction is admitted with acute decompensated heart failure. Examination reveals a respiratory rate of 28/min and bilateral pulmonary rales. Auscultation at the cardiac apex reveals a soft first heart sound (S1) and a holosystolic murmur that radiates to the left axilla. The intensity of this murmur increases when the patient is asked to clench both fists tightly. Which of the following changes in left ventricular (LV) dynamics best explains the intensification of this murmur?",
+                choices: {
+                    A: "Increased LV preload leading to progressive dilation of the mitral annulus",
+                    B: "Increased systemic vascular resistance increasing the pressure gradient between the LV and left atrium",
+                    C: "Decreased cardiac output reducing the kinetic energy of forward blood flow",
+                    D: "Increased myocardial contractility augmenting the velocity of regurgitant flow",
+                    E: "Reflex bradycardia prolonging the diastolic filling interval"
+                },
+                correct: "B",
+                explanation: "This patient has ischemic mitral regurgitation (MR), likely secondary to papillary muscle dysfunction or apical remodeling following his prior MI. Handgrip exercise increases systemic vascular resistance (SVR), or afterload. When afterload increases, the left ventricle faces higher resistance to forward flow through the aortic valve. This elevates LV systolic pressure, increasing the pressure gradient between the LV and the lower-pressure left atrium, which forces more blood backward through the incompetent mitral valve, intensifying the murmur.",
+                objective: "Mitral regurgitation is enhanced by maneuvers that increase afterload (e.g., handgrip) because the increased resistance to forward flow promotes greater regurgitant volume into the left atrium."
+            },
+            {
+                id: 5,
+                stem: "A 52-year-old male is evaluated for a 3-week history of worsening dyspnea and orthopnea. On examination, his jugular venous pulse displays a highly specific morphology characterized by a highly exaggerated, steep 'v' wave and an extraordinarily rapid, deep 'y' descent. During ventricular systole, a holosystolic murmur is noted along the lower left sternal border. The murmur increases significantly in intensity during deep inspiration. Which of the following entities is most closely associated with these findings?",
+                choices: {
+                    A: "Mitral regurgitation",
+                    B: "Constrictive pericarditis",
+                    C: "Severe tricuspid regurgitation",
+                    D: "Right ventricular outflow tract obstruction",
+                    E: "Cardiac tamponade"
+                },
+                correct: "C",
+                explanation: "The patient's JVP waveform demonstrating an exaggerated, prominent v wave and a rapid y descent, combined with a holosystolic murmur at the lower left sternal border that intensifies with inspiration (Carvallo's sign), is highly specific for severe tricuspid regurgitation (TR). During ventricular systole, blood regurgitates backward into the right atrium, adding to the normal venous return and generating a massive 'v' (ventricular filling) wave. The subsequent rapid ventricular filling in diastole causes a steep 'y' descent.",
+                objective: "Tricuspid regurgitation presents with a prominent v wave on the JVP waveform and a holosystolic murmur at the left lower sternal border that intensifies with inspiration (Carvallo's sign)."
+            },
+            {
+                id: 6,
+                stem: "A 34-year-old male is evaluated during a routine health maintenance exam. He is completely asymptomatic and has no significant past medical history. Examination of his jugular venous pulsations demonstrates a standard, non-elevated waveform. While assessing the patient's neck, the clinician attempts to correlate the JVP waveforms with the cardiac cycle. Which of the following physiological events corresponds precisely with the peak of the 'a' wave in a healthy individual?",
+                choices: {
+                    A: "Right ventricular isovolumetric contraction",
+                    B: "Right atrial contraction during late diastole",
+                    C: "Closure of the tricuspid valve leaflets",
+                    D: "Rapid passive filling of the right ventricle",
+                    E: "Bulging of the tricuspid valve into the right atrium"
+                },
+                correct: "B",
+                explanation: "In a normal jugular venous pulse waveform, the 'a' wave is generated by right atrial contraction (presystole/late diastole). This active contraction forces blood into the right ventricle and simultaneously creates a brief retrograde pressure wave up the superior vena cava and internal jugular vein. It occurs just after the P wave on an electrocardiogram (ECG) and immediately precedes the first heart sound (S1).",
+                objective: "The JVP 'a' wave corresponds to right atrial contraction at the end of ventricular diastole."
+            },
+            {
+                id: 7,
+                stem: "A 24-year-old injection drug user presents to the emergency department with a fever of 39.1°C (102.4°F), chills, and pleuritic chest pain. Chest radiograph shows multiple nodular, cavitary infiltrates bilaterally. On cardiac examination, a high-pitched holosystolic murmur is appreciated at the lower left sternal border. Which of the following maneuvers or physiological changes will most likely increase the absolute loudness of this patient's cardiac murmur?",
+                choices: {
+                    A: "Asking the patient to blow into a syringe (Valsalva strain phase)",
+                    B: "Having the patient stand up abruptly from a sitting position",
+                    C: "Slow, deep inhalation against no resistance",
+                    D: "Performance of a sustained isometric handgrip exercise",
+                    E: "Administering amyl nitrite inhalation"
+                },
+                correct: "C",
+                explanation: "This clinical picture is indicative of right-sided infective endocarditis, specifically involving the tricuspid valve, causing tricuspid regurgitation (TR). Murmurs originating from the right side of the heart (such as TR or pulmonic stenosis) typically increase in intensity during inspiration (Choice C). Inspiration reduces intrathoracic pressure, which sucks more venous blood into the right atrium and ventricle, increasing right-sided stroke volume and augmenting the velocity and volume of the regurgitant jet.",
+                objective: "Right-sided heart murmurs (e.g., tricuspid regurgitation) are characteristically augmented during inspiration due to increased venous return."
+            },
+            {
+                id: 8,
+                stem: "A 68-year-old female with a history of systemic sclerosis presents with worsening dyspnea, abdominal distension, and painful pulsation in her neck. Her physical exam is notable for a loud pulmonic component of the second heart sound (P2). Her JVP is elevated at 14 cm H₂O and reveals massive, single positive waves occurring during ventricular systole that match the carotid pulse. Which of the following JVP waveform alterations is expected in this patient?",
+                choices: {
+                    A: "Blunted or absent 'a' wave",
+                    B: "Fusion of the 'v' wave and 'c' wave into a single giant 'v' wave",
+                    C: "Rapid, hyper-acute 'x' descent",
+                    D: "Complete absence of the 'y' descent",
+                    E: "Intermittent, extreme 'cannon' waves"
+                },
+                correct: "B",
+                explanation: "Systemic sclerosis can cause severe pulmonary arterial hypertension (PAH), leading to cor pulmonale and functional tricuspid regurgitation (TR) due to right ventricular dilation. In severe TR, high-pressure systolic blood regurgitates into the right atrium, obliterating the normal systolic collapse (x descent) and causing the c wave and v wave to fuse into a single, massive giant v wave (sometimes called a systolic wave or ventricularization of the atrial pressure).",
+                objective: "Severe tricuspid regurgitation causes loss of the normal systolic x descent and results in a large, fused c-v wave that presents as a prominent systolic venous pulsation in the neck."
+            },
+            {
+                id: 9,
+                stem: "A 76-year-old male presents with recurrent syncope during physical activity. On examination, a prominent mid-systolic murmur is noted. The physician suspects aortic stenosis but wants to differentiate it from hypertrophic obstructive cardiomyopathy (HOCM). The patient is placed in a squatting position, and the murmur softens significantly. Which of the following hemodynamic shifts induced by squatting best explains this change if the patient has HOCM?",
+                choices: {
+                    A: "Decreased systemic afterload and decreased systemic venous return",
+                    B: "Increased left ventricular end-diastolic volume (LVEDV) and increased afterload",
+                    C: "Increased myocardial contractility and increased heart rate",
+                    D: "Decreased afterload leading to reduced left ventricular wall tension",
+                    E: "Isolated decrease in preload with stable systemic vascular resistance"
+                },
+                correct: "B",
+                explanation: "Squatting simultaneously increases venous return (preload) and systemic vascular resistance (afterload). In HOCM, increasing left ventricular end-diastolic volume (LVEDV) and afterload expands the LV cavity, which separates the interventricular septum from the anterior leaflet of the mitral valve. This reduces the dynamic left ventricular outflow tract (LVOT) obstruction and softens the HOCM murmur. For aortic stenosis, squatting usually increases or maintains murmur intensity due to increased flow across the fixed stenotic valve.",
+                objective: "Squatting increases both preload and afterload, which increases left ventricular volume and diminishes the dynamic obstruction murmur seen in HOCM."
+            },
+            {
+                id: 10,
+                stem: "A 19-year-old college athlete is undergoing a routine physical examination. The clinician observes a regular heart rate of 52 beats per minute. While examining the patient's neck in the supine position with the head elevated at 45 degrees, the clinician identifies a multi-phasic jugular venous pulsation. A soft, low-pitched sound is heard at the apex during early diastole, approximately 0.15 seconds after S2. The patient is active and completely asymptomatic. Which of the following is the most likely explanation for these clinical findings?",
+                choices: {
+                    A: "Early-stage restrictive cardiomyopathy",
+                    B: "Physiological alterations consistent with a normal, highly trained heart",
+                    C: "Occult mitral stenosis with an opening snap",
+                    D: "Constrictive pericarditis with a soft pericardial knock",
+                    E: "Subclinical tricuspid stenosis with an elevated 'a' wave"
+                },
+                correct: "B",
+                explanation: "A low-pitched early diastolic sound heard at the apex in a young, healthy, athletic individual is typically a physiological third heart sound (S3). This sound is caused by rapid, passive ventricular filling into a highly compliant left ventricle. A normal, multi-phasic JVP wave at a normal height further confirms the absence of pathology. A physiological S3 is common in children, young adults, and trained athletes, and does not signify disease in the absence of other symptoms or signs of volume overload.",
+                objective: "A physiological S3 heart sound is a normal finding in healthy young adults and athletes, representing rapid passive filling into a highly compliant ventricle."
+            },
+            {
+                id: 11,
+                stem: "A 61-year-old male presents with episodic lightheadedness and chest discomfort. During the physical examination, his heart rate is irregular and varies between 40 and 110 beats per minute. While inspecting the internal jugular vein, the clinician notes the intermittent appearance of massive, abrupt, positive venous waves ('cannon a waves') that shoot up toward the jawline. Which of the following cardiac conditions is most consistently associated with this physical exam finding?",
+                choices: {
+                    A: "Persistent Atrial Fibrillation",
+                    B: "Complete Atrioventricular (AV) Dissociation",
+                    C: "Severe Mitral Regurgitation with Left Atrial Enlargement",
+                    D: "Isolated Right Ventricular Hypertrophy",
+                    E: "Persistent Sinus Arrhythmia"
+                },
+                correct: "B",
+                explanation: "Cannon 'a' waves occur intermittently when the right atrium contracts against a closed tricuspid valve. This occurs during periods of atrioventricular (AV) dissociation, such as complete (third-degree) AV block or ventricular tachycardia, where the atria and ventricles beat independently. Whenever a P wave happens to coincide with ventricular systole (QRS complex), the tricuspid valve is closed, and the atrial contraction forces blood backward into the vena cava and jugular system.",
+                objective: "Intermittent cannon 'a' waves indicate AV dissociation, occurring when the atrium contracts against a closed tricuspid valve during ventricular systole."
+            },
+            {
+                id: 12,
+                stem: "A 35-year-old immigrant from East Africa presents with progressive exertional dyspnea and orthopnea. On examination, a loud, snapping S1 is followed by an opening snap and a low-pitched, rumbling mid-diastolic murmur heard best at the apex in the left lateral decubitus position. The clinician notes that the time interval between the second heart sound (S2) and the opening snap (OS) is extremely short. This brief S2-OS interval indicates which of the following regarding the patient's condition?",
+                choices: {
+                    A: "Mild mitral stenosis with low left atrial pressures",
+                    B: "Coexisting aortic regurgitation reducing the diastolic filling time",
+                    C: "Severe mitral stenosis with significantly elevated left atrial pressure",
+                    D: "Excellent left ventricular compliance and normal stroke volume",
+                    E: "Calcification of the posterior mitral valve leaflet"
+                },
+                correct: "C",
+                explanation: "The patient has rheumatic mitral stenosis (MS). The opening snap (OS) occurs when the stenotic mitral valve is forced open by left atrial pressure exceeding left ventricular diastolic pressure. In severe mitral stenosis, left atrial pressure (LAP) is profoundly elevated. Consequently, at the end of systole, as left ventricular pressure falls, it crosses the highly elevated LAP line much earlier. Therefore, a shorter S2-OS interval correlates with more severe stenosis and higher atrial pressures.",
+                objective: "In mitral stenosis, a shorter interval between S2 and the opening snap signifies higher left atrial pressure and greater severity of the valve stenosis."
+            },
+            {
+                id: 13,
+                stem: "A 29-year-old male with Marfan syndrome presents with sudden-onset, tearing chest pain radiating to his back. While awaiting definitive imaging, his blood pressure is 105/50 mmHg and his heart rate is 110/min. On auscultation, a high-pitched, decrescendo diastolic murmur is heard along the right sternal border. The patient is also noted to have bounding peripheral pulses and capillary pulsations in the nail beds (Quincke's pulse). Which of the following is the most likely physiological cause of these peripheral vascular findings?",
+                choices: {
+                    A: "Severely reduced stroke volume with reflex systemic vasoconstriction",
+                    B: "Rapid runoff of blood into both the left ventricle and a widened systemic compliance network",
+                    C: "Marked elevation in right ventricular end-diastolic pressure",
+                    D: "Severe isolated systolic hypertension due to aortic stiffness",
+                    E: "Systemic arteriovenous shunting within the upper extremities"
+                },
+                correct: "B",
+                explanation: "This patient with Marfan syndrome has developed an acute Type A aortic dissection that has retrograded into the aortic root, causing acute severe aortic regurgitation (AR). Bounding peripheral pulses (Water-hammer pulse) and capillary pulsations (Quincke's sign) reflect a widened pulse pressure. This widening is caused by an increased stroke volume ejected into the aorta during systole, followed by a rapid, precipitous drop in diastolic pressure due to backflow (runoff) of blood into the left ventricle during diastole.",
+                objective: "Aortic regurgitation produces a widened pulse pressure and hyperdynamic, bounding peripheral signs due to massive systolic stroke volume combined with rapid diastolic runoff."
+            },
+            {
+                id: 14,
+                stem: "A 73-year-old female is admitted to the hospital with severe dyspnea, orthopnea, and lower extremity edema. On physical exam, her JVP is noted to be markedly elevated at 16 cm H₂O. The clinician applies firm, steady pressure over the patient's right upper quadrant for 15 seconds while observing the jugular venous column. The JVP rises by an additional 4 cm and remains persistently elevated at that new level throughout the entire 15-second compression period. This positive hepatojugular reflux test is most diagnostic of which of the following?",
+                choices: {
+                    A: "Portal hypertension due to intrinsic hepatic cirrhosis",
+                    B: "Isolated occlusion of the inferior vena cava above the hepatic veins",
+                    C: "Inability of the right ventricle to accommodate increased venous return",
+                    D: "Exaggerated respiratory excursions during abdominal compression",
+                    E: "Left ventricular failure with preserved right ventricular function"
+                },
+                correct: "C",
+                explanation: "A positive hepatojugular reflux (HJR) sign is defined as a persistent elevation of the JVP by >3 cm during 10-15 seconds of abdominal compression. Abdominal compression manually increases venous return to the right atrium. In a healthy heart, the right ventricle adapts to this transient volume load by increasing output without a sustained pressure increase. However, in a failing or volume-overloaded right ventricle (or in constrictive/restrictive conditions), the RV is non-compliant and cannot accommodate the increased venous return, causing back-pressure into the jugular system.",
+                objective: "A positive hepatojugular reflux test indicates right ventricular dysfunction or volume overload, demonstrating that the right heart cannot handle an acute increase in venous preload."
+            },
+            {
+                id: 15,
+                stem: "A 38-year-old male presents with a history of fatigue and progressive exertional dyspnea. On cardiac examination, a mid-systolic click is heard at the apex, followed immediately by a late systolic crescendo murmur. When the patient is asked to perform a Valsalva maneuver (strain phase), how will the timing of the click and the duration of the murmur change?",
+                choices: {
+                    A: "The click occurs later in systole, and the murmur becomes shorter in duration",
+                    B: "The click occurs earlier in systole, and the murmur becomes longer in duration",
+                    C: "The click occurs earlier in systole, and the murmur becomes shorter in duration",
+                    D: "The click occurs later in systole, and the murmur becomes longer in duration",
+                    E: "Neither the timing of the click nor the murmur duration undergoes any shift"
+                },
+                correct: "B",
+                explanation: "This patient has mitral valve prolapse (MVP). The strain phase of the Valsalva maneuver decreases venous return, which reduces left ventricular end-diastolic volume (makes the LV smaller). With a smaller LV volume, the redundant mitral valve leaflets prolapse into the left atrium earlier in systole. Consequently, the mid-systolic click shifts closer to S1 (occurs earlier), and because the valve is incompetent for a longer portion of systole, the murmur begins earlier and becomes longer.",
+                objective: "Decreasing left ventricular volume (e.g., via Valsalva strain or standing) causes mitral valve prolapse to occur earlier in systole, shifting the click closer to S1 and lengthening the murmur."
+            },
+            {
+                id: 16,
+                stem: "A 67-year-old male is evaluated for a new cardiac murmur found during an evaluation for chronic weight loss and low-grade fevers. Auscultation reveals a low-pitched, rumbling diastolic murmur at the apex that mimics mitral stenosis. However, the intensity of this murmur changes significantly depending on whether the patient is lying supine or sitting upright. Transesophageal echocardiography reveals a mobile mass in the left atrium. Which of the following features best differentiates this condition from true rheumatic mitral stenosis?",
+                choices: {
+                    A: "Presence of a loud, accentuated first heart sound (S1)",
+                    B: "Positional variability of the murmur and absence of a true opening snap",
+                    C: "Radiation of the murmur into the bilateral carotid arteries",
+                    D: "Augmentation of the murmur's volume during deep inspiration",
+                    E: "Associated elevations in the systemic erythrocyte sedimentation rate (ESR)"
+                },
+                correct: "B",
+                explanation: "This patient has a left atrial myxoma, the most common primary cardiac tumor in adults. A mobile myxoma can physically prolapse into the mitral valve orifice during diastole, obstructing flow and creating a 'tumor plop' sound and a diastolic rumble that mimics mitral stenosis. A key differentiating feature is its positional variability (the murmur changes or disappears when the patient alters body positions, shifting the tumor away from the valve) and the absence of a true rheumatic opening snap.",
+                objective: "Left atrial myxoma can mimic mitral stenosis by obstructing the mitral orifice, but it is characterized by positional variability of the murmur and the absence of a true valvular opening snap."
+            },
+            {
+                id: 17,
+                stem: "A 49-year-old female with severe COPD is evaluated for worsening peripheral edema and ascites. On physical examination, her jugular venous pressure is significantly elevated. During inspiration, instead of the expected decline, her jugular venous pressure paradoxically rises by 3 cm. Which of the following mechanical states is directly responsible for this specific physical sign?",
+                choices: {
+                    A: "Severe collapse of the superior vena cava during intrathoracic pressure drops",
+                    B: "Inelasticity of the pericardium or right ventricular myocardium restricting filling",
+                    C: "Acute reversal of blood flow through a patent ductus arteriosus",
+                    D: "Severe backward failure of the left ventricle forcing fluid into pulmonary capillaries",
+                    E: "Exaggerated compliance of the right atrial wall"
+                },
+                correct: "B",
+                explanation: "A paradoxical rise in JVP during inspiration is known as Kussmaul's sign. Normally, inspiration decreases intrathoracic pressure, which increases venous return into the right side of the heart, causing the JVP to drop. However, when the right ventricle or pericardium is highly non-compliant (as in constrictive pericarditis, restrictive cardiomyopathy, or severe right heart failure), the right heart cannot accept the inspiratory surge in venous volume. As a result, the incoming blood backs up into the internal jugular veins, causing the JVP to rise.",
+                objective: "Kussmaul's sign is a paradoxical rise in JVP during inspiration, caused by a rigid pericardium or non-compliant right ventricle that prevents the heart from absorbing the normal inspiratory increase in venous return."
+            },
+            {
+                id: 18,
+                stem: "A 58-year-old male with a history of hypertension and chronic tobacco use presents with dyspnea. Examination reveals an early diastolic, high-pitched decrescendo murmur heard best along the left sternal border at the end of expiration while the patient is leaning forward. Which of the following sets of physiological maneuvers will match the expected changes for this murmur?",
+                choices: {
+                    A: "Intensified by amyl nitrite; softened by handgrip",
+                    B: "Intensified by handgrip; softened by amyl nitrite",
+                    C: "Intensified by standing; softened by squatting",
+                    D: "Intensified by Valsalva strain; softened by leg raise",
+                    E: "Unchanged by handgrip; softened by deep expiration"
+                },
+                correct: "B",
+                explanation: "This patient has aortic regurgitation (AR), characterized by a high-pitched, decrescendo diastolic murmur heard best with the patient leaning forward at end-expiration. AR murmurs intensify with handgrip (which increases afterload/systemic vascular resistance, driving more backward flow across the leaking aortic valve) and soften with amyl nitrite (a potent vasodilator that drops afterload, favoring forward flow out of the LV and reducing regurgitant volume).",
+                objective: "Aortic regurgitation murmurs are intensified by maneuvers that increase afterload (handgrip) and softened by maneuvers that decrease afterload (amyl nitrite)."
+            },
+            {
+                id: 19,
+                stem: "A 22-year-old automated screening electrocardiogram showed left ventricular hypertrophy. On physical examination, a harsh systolic crescendo-decrescendo murmur is heard at the left lower sternal border. The murmur increases dramatically when the patient stands up quickly from a squatting position. Which of the following structural abnormalities is the primary driver of this patient's murmur?",
+                choices: {
+                    A: "Fibrotic thickening and fusion of the aortic valve commissures",
+                    B: "Abnormal systolic anterior motion (SAM) of the mitral valve against a hypertrophied septum",
+                    C: "Myxomatous degeneration of the chordae tendineae causing prolapse",
+                    D: "Left-to-right flow across a small, muscular interventricular septal defect",
+                    E: "Idiopathic dilatation of the pulmonary trunk root"
+                },
+                correct: "B",
+                explanation: "This presentation describes hypertrophic obstructive cardiomyopathy (HOCM). Standing up rapidly decreases venous return (preload), which reduces left ventricular size. A smaller LV volume brings the anterior leaflet of the mitral valve closer to the asymmetric, hypertrophied interventricular septum. During systole, the high-velocity blood flow through the narrowed left ventricular outflow tract (LVOT) pulls the mitral valve leaflet forward (systolic anterior motion [SAM]), worsening the obstruction and intensifying the murmur.",
+                objective: "The murmur of HOCM is caused by dynamic LVOT obstruction due to systolic anterior motion (SAM) of the mitral valve against an asymmetric hypertrophied septum, and it worsens with maneuvers that reduce LV volume (e.g., standing)."
+            },
+            {
+                id: 20,
+                stem: "A 41-year-old female with a history of rheumatic fever as a child presents with progressive fatigue. While checking her neck veins, the clinician identifies a single, large, delayed wave that slowly drops off. The 'a' wave is remarkably prominent and giant, while the 'y' descent is extremely slow and gradual. Auscultation reveals a low pitched mid-diastolic rumble at the lower left sternal border that increases during inspiration. Which of the following conditions is most consistent with these physical findings?",
+                choices: {
+                    A: "Severe Mitral Stenosis",
+                    B: "Isolated Pulmonic Valve Regurgitation",
+                    C: "Rheumatic Tricuspid Stenosis",
+                    D: "Constrictive Pericarditis with early calcification",
+                    E: "Right Ventricular Dilated Cardiomyopathy"
+                },
+                correct: "C",
+                explanation: "The patient's JVP waveform shows a giant 'a' wave and a slow, prolonged 'y' descent, combined with a diastolic rumble at the lower left sternal border that increases with inspiration. This is classic for tricuspid stenosis (TS). A giant 'a' wave occurs because the right atrium must contract forcefully against the restricted tricuspid orifice. The 'y' descent represents right atrial emptying into the ventricle; because the valve is stenotic, this emptying is prolonged and slow. The increase with inspiration confirms its right-sided origin.",
+                objective: "Tricuspid stenosis is characterized by a giant JVP 'a' wave, a slow/prolonged 'y' descent, and a diastolic murmur at the left lower sternal border that increases with inspiration."
+            },
+            {
+                id: 21,
+                stem: "A clinical team is considering either calcific aortic stenosis or a bicuspid aortic valve. Which of the following findings on auscultation would point most strongly toward a congenital bicuspid aortic valve over senile calcific aortic stenosis?",
+                choices: {
+                    A: "Presence of an early systolic, high-pitched ejection click that disappears when the valve becomes heavily calcified",
+                    B: "Radiation of the systolic murmur into the left axillary line",
+                    C: "Absence of normal respiratory variation in the second heart sound",
+                    D: "Combination with a mid-diastolic opening snap",
+                    E: "Development of an intermittent cannon 'a' wave on JVP inspection"
+                },
+                correct: "A",
+                explanation: "A congenital bicuspid aortic valve often presents in younger or middle-aged adults (30–50 years old) with a systolic ejection murmur preceded by a sharp, high-pitched systolic ejection click. This click occurs as the flexible but structurally abnormal bicuspid leaflets abruptly halt their opening excursion at the onset of ejection. In contrast, senile calcific aortic stenosis occurs in older adults (>65–70 years old) and rarely features a click because the valve leaflets are rigid and calcified from the outset.",
+                objective: "A systolic ejection click preceding a crescendo-decrescendo murmur favors a congenital bicuspid aortic valve before heavy calcification takes place."
+            }
+        ];
 
-// ==================== TIMER & QUIZ LOGIC ====================
-let timeLeft = 3600;
-const timerEl = document.getElementById('timer');
+        let currentQuestionIndex = 0;
+        let selectedKey = null;
+        let isEvaluated = false;
+        let totalSecondsRemaining = 90 * 60; // 90 Minutes countdown
 
-function startTimer() {
-    setInterval(() => {
-        timeLeft--;
-        const m = Math.floor(timeLeft / 60);
-        const s = timeLeft % 60;
-        timerEl.textContent = `${m}:${s < 10 ? '0' : ''}${s}`;
-        if (timeLeft <= 300) timerEl.style.color = '#ef4444';
-    }, 1000);
-}
+        // Start Countdown Timer Sync
+        function startTimer() {
+            const timerElement = document.getElementById("countdown-timer");
+            const countdownInterval = setInterval(() => {
+                if (totalSecondsRemaining <= 0) {
+                    clearInterval(countdownInterval);
+                    timerElement.innerHTML = `<i class="fa-solid fa-hourglass-end"></i> Time Expired`;
+                    terminateQuiz(true);
+                    return;
+                }
+                totalSecondsRemaining--;
+                let mins = Math.floor(totalSecondsRemaining / 60);
+                let secs = totalSecondsRemaining % 60;
+                timerElement.innerHTML = `<i class="fa-solid fa-hourglass-half"></i> ${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
 
-let current = 0;
+        // Initialize and Mount Question Card View
+        function displayQuestion() {
+            selectedKey = null;
+            isEvaluated = false;
+            
+            // UI elements reset
+            document.getElementById("submit-answer-btn").disabled = true;
+            document.getElementById("submit-answer-btn").style.display = "inline-flex";
+            document.getElementById("next-question-btn").style.display = "none";
+            document.getElementById("explanation-reveal-panel").style.display = "none";
 
-function render() {
-    const q = questions[current];
-    let html = `
-        <div class="question-card">
-            <div class="question-header">
-                <div class="question-number">Question ${q.id} / 40</div>
-            </div>
-            <div class="question-text">${q.text}</div>
-            <div id="options">`;
+            const currentItem = quizDataset[currentQuestionIndex];
+            
+            // Render labels
+            document.getElementById("question-index-label").innerHTML = `<i class="fa-solid fa-signature"></i> Question ${currentQuestionIndex + 1} of ${quizDataset.length}`;
+            document.getElementById("question-stem-text").innerText = currentItem.stem;
 
-    q.options.forEach(opt => {
-        html += `<div class="option" onclick="selectAnswer(this, '${opt[0]}')">${opt}</div>`;
-    });
+            // Clear and parse options
+            const optionsBox = document.getElementById("options-box-wrapper");
+            optionsBox.innerHTML = "";
 
-    html += `</div>
-            <div class="answer-section" id="answer">
-                <div class="correct-answer">Correct Answer: ${q.answer}</div>
-                <p style="margin-top:15px;">${q.explanation}</p>
-            </div>
-            <center><button class="next-btn" onclick="nextQ()">Next Question →</button></center>
-        </div>`;
-    
-    document.getElementById('quiz-container').innerHTML = html;
-}
+            Object.entries(currentItem.choices).forEach(([key, val]) => {
+                const card = document.createElement("div");
+                card.className = "option-card";
+                card.id = `option-row-${key}`;
+                card.onclick = () => selectOption(key);
 
-window.selectAnswer = function(el, chosen) {
-    document.querySelectorAll('.option').forEach(o => o.style.pointerEvents = 'none');
-    if (chosen === questions[current].answer) {
-        el.style.background = 'rgba(74, 222, 128, 0.3)';
-        el.style.borderColor = '#4ade80';
-    } else {
-        el.style.background = 'rgba(248, 113, 113, 0.3)';
-        el.style.borderColor = '#f87171';
-    }
-    document.getElementById('answer').style.display = 'block';
-};
+                card.innerHTML = `
+                    <input type="radio" name="vignette-options" id="radio-${key}" value="${key}">
+                    <label for="radio-${key}" style="cursor:pointer; width:100%;">
+                        <strong>${key}.</strong> ${val}
+                    </label>
+                `;
+                optionsBox.appendChild(card);
+            });
+        }
 
-window.nextQ = function() {
-    current++;
-    if (current < questions.length) render();
-    else {
-        document.getElementById('quiz-container').innerHTML = `
-            <div class="question-card" style="text-align:center; padding:60px;">
-                <h2 style="color:#fcd34d;">🎉 Quiz Completed!</h2>
-                <p style="font-size:1.3rem;">You have finished all 40 high-yield questions.</p>
-            </div>`;
-    }
-};
+        // Click Handler Action
+        function selectOption(key) {
+            if (isEvaluated) return; // Freeze selection post submission
+            
+            selectedKey = key;
+            document.getElementById(`radio-${key}`).checked = true;
 
-// Start
-startTimer();
-render();
-</script>
+            // Toggle active selection CSS class framework
+            document.querySelectorAll(".option-card").forEach(el => el.classList.remove("selected"));
+            document.getElementById(`option-row-${key}`).classList.add("selected");
+
+            document.getElementById("submit-answer-btn").disabled = false;
+        }
+
+        // Submit Button Action (Evaluate Selection logic)
+        function evaluateSelection() {
+            if (!selectedKey || isEvaluated) return;
+            isEvaluated = true;
+
+            const currentItem = quizDataset[currentQuestionIndex];
+            const correctKey = currentItem.correct;
+
+            // Apply feedback classes
+            document.querySelectorAll(".option-card").forEach(el => el.classList.remove("selected"));
+            
+            document.getElementById(`option-row-${correctKey}`).classList.add("correct-row");
+            if (selectedKey !== correctKey) {
+                document.getElementById(`option-row-${selectedKey}`).classList.add("incorrect-row");
+            }
+
+            // Reveal explanation details mapping index text styling rules
+            document.getElementById("explanation-body-text").innerText = currentItem.explanation;
+            document.getElementById("educational-objective-text").innerHTML = `<strong>Educational Objective:</strong> ${currentItem.objective}`;
+            document.getElementById("explanation-reveal-panel").style.display = "block";
+
+            // Control Navigation Button State flows
+            document.getElementById("submit-answer-btn").style.display = "none";
+            document.getElementById("next-question-btn").style.display = "inline-flex";
+        }
+
+        // Next Question Router Engine
+        function loadNextQuestion() {
+            if (currentQuestionIndex < quizDataset.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion();
+            } else {
+                terminateQuiz(false);
+            }
+        }
+
+        // Quiz Termination Screen Controller
+        function terminateQuiz(isTimeOut) {
+            const container = document.getElementById("interactive-mainframe");
+            container.innerHTML = `
+                <div class="completion-view">
+                    <h2><i class="fa-solid fa-trophy" style="color: #eab308;"></i> Review Session Complete</h2>
+                    <p>${isTimeOut ? "The 90-minute limit expired." : "You have processed all 21 High-Yield advanced clinical vignettes successfully."}</p>
+                    <button class="action-btn" onclick="window.location.reload();">
+                        <i class="fa-solid fa-rotate-right"></i> Restart Review
+                    </button>
+                </div>
+            `;
+        }
+
+        // Kickoff application runtime systems
+        window.onload = () => {
+            startTimer();
+            displayQuestion();
+        };
+    </script>
 </body>
 </html>
