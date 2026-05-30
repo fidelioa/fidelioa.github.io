@@ -197,6 +197,12 @@
     <div class="qbank-header">
         <div class="question-counter" id="tracker-display">Question 1 of 40</div>
         <div class="timer-display" id="clock-display">90:00</div>
+        <div>
+            <button class="btn btn-submit" onclick="pauseSession()">Pause</button>
+            <button class="btn btn-next" id="resume-btn" onclick="resumeSession()" style="display:none;">
+                Resume
+            </button>
+        </div>
     </div>
 
     <div id="qbank-container">
@@ -952,5 +958,147 @@
         }
     </script>
 
+
+<script>
+function pauseSession() {
+    if (typeof timerInterval !== 'undefined') {
+        clearInterval(timerInterval);
+    }
+
+    saveProgress();
+
+    alert("Session paused. Your progress has been saved.");
+}
+
+function saveProgress() {
+
+    const selectedAnswers = {};
+
+    document.querySelectorAll('.question-card').forEach((card, qIndex) => {
+
+        const selected = card.querySelector('.choices li.selected');
+
+        if (selected) {
+            selectedAnswers[qIndex] = selected.getAttribute('data-ans');
+        }
+    });
+
+    const activeCard = document.querySelector('.question-card.active');
+
+    const currentQuestion = activeCard
+        ? parseInt(activeCard.getAttribute('data-qindex')) - 1
+        : 0;
+
+    let timeRemaining = 0;
+
+    const clock = document.getElementById('clock-display');
+
+    if (clock) {
+        const parts = clock.innerText.split(':');
+
+        if (parts.length === 2) {
+            timeRemaining =
+                (parseInt(parts[0]) * 60) + parseInt(parts[1]);
+        }
+    }
+
+    localStorage.setItem('mcqProgress', JSON.stringify({
+        currentQuestion,
+        timeRemaining,
+        selectedAnswers
+    }));
+}
+
+function resumeSession() {
+
+    const saved = JSON.parse(localStorage.getItem('mcqProgress'));
+
+    if (!saved) return;
+
+    document.querySelectorAll('.choices li').forEach(li => {
+        li.classList.remove('selected');
+    });
+
+    Object.keys(saved.selectedAnswers).forEach(qIndex => {
+
+        const answer = saved.selectedAnswers[qIndex];
+
+        const card = document.querySelectorAll('.question-card')[qIndex];
+
+        if (!card) return;
+
+        const option = card.querySelector(`[data-ans="${answer}"]`);
+
+        if (option) {
+            option.classList.add('selected');
+        }
+    });
+
+    document.querySelectorAll('.question-card').forEach(card => {
+        card.classList.remove('active');
+    });
+
+    const activeCard =
+        document.querySelectorAll('.question-card')[saved.currentQuestion];
+
+    if (activeCard) {
+        activeCard.classList.add('active');
+    }
+
+    const tracker = document.getElementById('tracker-display');
+
+    if (tracker) {
+        tracker.innerText =
+            `Question ${saved.currentQuestion + 1} of ${document.querySelectorAll('.question-card').length}`;
+    }
+
+    const clock = document.getElementById('clock-display');
+
+    if (clock) {
+        const minutes = Math.floor(saved.timeRemaining / 60);
+        const seconds = saved.timeRemaining % 60;
+
+        clock.innerText =
+            `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    if (typeof timerInterval !== 'undefined') {
+        clearInterval(timerInterval);
+    }
+
+    if (typeof startTimer === 'function') {
+        startTimer(saved.timeRemaining);
+    }
+
+    alert("Progress restored.");
+}
+
+function checkSavedSession() {
+
+    const saved = localStorage.getItem('mcqProgress');
+
+    if (saved) {
+        const btn = document.getElementById('resume-btn');
+
+        if (btn) {
+            btn.style.display = 'inline-block';
+        }
+    }
+}
+
+document.querySelectorAll('.choices li').forEach(choice => {
+
+    choice.addEventListener('click', () => {
+
+        setTimeout(saveProgress, 100);
+    });
+});
+
+window.addEventListener('beforeunload', saveProgress);
+
+checkSavedSession();
+</script>
+
 </body>
+
 </html>
