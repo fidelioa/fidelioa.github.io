@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-// TODO: Ensure this matches your actual project credentials from the Firebase console
+// IMPORTANT: Insert your specific config block parameters from your Firebase Project Dashboard here:
 const firebaseConfig = {
     apiKey: "YOUR_API_KEY",
     authDomain: "YOUR_AUTH_DOMAIN",
@@ -11,12 +11,12 @@ const firebaseConfig = {
     appId: "YOUR_APP_ID"
 };
 
-// Initialize Firebase App & Services
+// Initialize Firebase App & Identity Instances
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-// DOM Selector Elements - Central Card Dashboard
+// Target Core DOM Nodes
 const loginBtn = document.getElementById('google-login-btn');
 const logoutBtn = document.getElementById('logout-btn');
 const dashboard = document.getElementById('user-dashboard');
@@ -24,45 +24,56 @@ const userPhoto = document.getElementById('user-photo');
 const userName = document.getElementById('user-name');
 const userEmail = document.getElementById('user-email');
 
-// DOM Selector Elements - Top Navigation Bar Profile Link
 const navUserProfile = document.getElementById('nav-user-profile');
 const navUserPhoto = document.getElementById('nav-user-photo');
 const navUserName = document.getElementById('nav-user-name');
 
-// Authentication Event Listeners
+// Sign-In Click Event
 loginBtn.addEventListener('click', () => {
-    signInWithPopup(auth, provider).catch((error) => console.error("Sign-In Failure:", error));
+    signInWithPopup(auth, provider)
+        .then((result) => {
+            console.log("Successfully Authenticated via Google Account:", result.user);
+        })
+        .catch((error) => {
+            console.error("Authentication Handler Encountered an Issue:", error.message);
+        });
 });
 
+// Sign-Out Click Event
 logoutBtn.addEventListener('click', () => {
-    signOut(auth).catch((error) => console.error("Sign-Out Failure:", error));
+    signOut(auth)
+        .then(() => {
+            console.log("Session terminated safely.");
+        })
+        .catch((error) => {
+            console.error("Sign-Out Handler Error:", error.message);
+        });
 });
 
-// Session Engine: Handles continuous state tracking & stays logged in automatically
+// Mainline State Lifecycle Engine: Keeps users logged in automatically
 onAuthStateChanged(auth, (user) => {
     if (user) {
-        const photoUrl = user.photoURL || 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/svgs/solid/user.svg';
+        const fallBackPhoto = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/svgs/solid/user.svg';
+        const finalPhoto = user.photoURL || fallBackPhoto;
         
-        // 1. Populate Central Dashboard Card data
-        userPhoto.src = photoUrl;
-        userName.textContent = user.displayName;
-        userEmail.textContent = user.email;
+        // Feed text and attributes into matching interface bindings
+        userPhoto.src = finalPhoto;
+        userName.textContent = user.displayName || "Anonymous User";
+        userEmail.textContent = user.email || "";
 
-        // 2. Populate Top Bar Profile Nav elements
-        navUserPhoto.src = photoUrl;
-        navUserName.textContent = user.displayName.split(' ')[0]; // Shows first name only on thin menus
+        navUserPhoto.src = finalPhoto;
+        navUserName.textContent = user.displayName ? user.displayName.split(' ')[0] : "User";
 
-        // 3. UI Alterations (Hide login, Show profiles)
+        // Flip layout toggles to view state alterations
         loginBtn.style.display = 'none';
         dashboard.style.display = 'block';
         navUserProfile.style.display = 'inline-flex';
     } else {
-        // User is absent/logged out: Revert styles back completely
+        // Fallback cleanup if session keys expire or user triggers an exit
         loginBtn.style.display = 'inline-flex';
         dashboard.style.display = 'none';
         navUserProfile.style.display = 'none';
         
-        // Wipe sources cleanly
         userPhoto.src = "";
         navUserPhoto.src = "";
     }
