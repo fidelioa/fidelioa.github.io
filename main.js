@@ -1,22 +1,25 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-analytics.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
 
-// IMPORTANT: Insert your specific config block parameters from your Firebase Project Dashboard here:
+// Your verified web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_STORAGE_BUCKET",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
+    apiKey: "AIzaSyBq2uEulFacFnzk86agcRhuQD1UNlZ_UTE",
+    authDomain: "the-grand-budapest.firebaseapp.com",
+    projectId: "the-grand-budapest",
+    storageBucket: "the-grand-budapest.firebasestorage.app",
+    messagingSenderId: "656352616063",
+    appId: "1:656352616063:web:4f807b5f16b2cb059d694a",
+    measurementId: "G-87X1RHHV3F"
 };
 
-// Initialize Firebase App & Identity Instances
+// Initialize Firebase Core & Services
 const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-// Target Core DOM Nodes
+// Target Dashboard Card Elements
 const loginBtn = document.getElementById('google-login-btn');
 const logoutBtn = document.getElementById('logout-btn');
 const dashboard = document.getElementById('user-dashboard');
@@ -24,52 +27,54 @@ const userPhoto = document.getElementById('user-photo');
 const userName = document.getElementById('user-name');
 const userEmail = document.getElementById('user-email');
 
+// Target Top Nav Bar Profile Elements
 const navUserProfile = document.getElementById('nav-user-profile');
 const navUserPhoto = document.getElementById('nav-user-photo');
 const navUserName = document.getElementById('nav-user-name');
 
-// Sign-In Click Event
+// Sign-In Click Event Listener
 loginBtn.addEventListener('click', () => {
     signInWithPopup(auth, provider)
         .then((result) => {
-            console.log("Successfully Authenticated via Google Account:", result.user);
+            console.log("Successfully Authenticated:", result.user);
         })
         .catch((error) => {
-            console.error("Authentication Handler Encountered an Issue:", error.message);
+            console.error("Authentication Error:", error.message);
         });
 });
 
-// Sign-Out Click Event
+// Sign-Out Click Event Listener
 logoutBtn.addEventListener('click', () => {
     signOut(auth)
         .then(() => {
             console.log("Session terminated safely.");
         })
         .catch((error) => {
-            console.error("Sign-Out Handler Error:", error.message);
+            console.error("Sign-Out Error:", error.message);
         });
 });
 
-// Mainline State Lifecycle Engine: Keeps users logged in automatically
+// Session Lifecycle Engine: Toggles view logic instantly across header and layout
 onAuthStateChanged(auth, (user) => {
     if (user) {
         const fallBackPhoto = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/svgs/solid/user.svg';
         const finalPhoto = user.photoURL || fallBackPhoto;
         
-        // Feed text and attributes into matching interface bindings
+        // 1. Fill Card Data
         userPhoto.src = finalPhoto;
-        userName.textContent = user.displayName || "Anonymous User";
+        userName.textContent = user.displayName || "User";
         userEmail.textContent = user.email || "";
 
+        // 2. Fill Navigation Header Data (Shows first name only to keep nav items tight)
         navUserPhoto.src = finalPhoto;
         navUserName.textContent = user.displayName ? user.displayName.split(' ')[0] : "User";
 
-        // Flip layout toggles to view state alterations
+        // 3. UI Adjustments
         loginBtn.style.display = 'none';
         dashboard.style.display = 'block';
         navUserProfile.style.display = 'inline-flex';
     } else {
-        // Fallback cleanup if session keys expire or user triggers an exit
+        // Clear layout state if logged out
         loginBtn.style.display = 'inline-flex';
         dashboard.style.display = 'none';
         navUserProfile.style.display = 'none';
