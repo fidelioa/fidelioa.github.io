@@ -34,7 +34,7 @@
         }
 
         /* ========================================================
-            ULTRA-SMOOTH ARTSY GRADIENT BACKGROUND
+            STARRY BACKGROUND CANVAS
            ======================================================== */
         .art-canvas-container {
             position: relative;
@@ -42,11 +42,11 @@
             min-height: 100vh !important;
             z-index: 999999 !important;
             
-            /* Layered gradients prevent banding and create a velvety, artistic depth */
+            /* Combined your starry asset with a soft linear gradient overlay for readability */
             background: 
-                radial-gradient(circle at 80% 20%, rgba(30, 41, 59, 0.6), transparent 50%),
-                radial-gradient(circle at 10% 80%, rgba(15, 23, 42, 0.8), transparent 60%),
-                linear-gradient(135deg, #090f1d 0%, #0f172a 40%, #1e1b4b 100%) !important;
+                linear-gradient(rgba(9, 15, 29, 0.4), rgba(15, 23, 42, 0.6)),
+                url('./assets/Background.jpg') no-repeat center center !important;
+            background-size: cover !important;
                 
             display: flex !important;
             flex-direction: column !important;
@@ -55,7 +55,7 @@
             overflow-x: hidden !important;
             padding-bottom: 60px !important;
             
-            /* Promotes this layer to the GPU for fluid rendering */
+            /* Promotes this heavy layer to the GPU for fluid rendering and fixes scroll lag */
             transform: translateZ(0);
             -webkit-transform: translateZ(0);
         }
@@ -78,7 +78,7 @@
             border-bottom: 1px solid rgba(234, 179, 8, 0.2);
             flex-wrap: wrap;
             gap: 20px;
-            will-change: transform; /* Hardware acceleration to keep scrolling snappy */
+            will-change: transform;
         }
 
         .nav-logo {
@@ -94,13 +94,6 @@
             transition: transform 0.3s ease;
         }
         .nav-logo:hover { transform: scale(1.02); }
-        
-        .nav-logo img {
-            height: 1.8rem;
-            width: auto;
-            object-fit: contain;
-            filter: drop-shadow(0 0 8px rgba(234, 179, 8, 0.4));
-        }
 
         .nav-links {
             display: flex;
@@ -145,12 +138,12 @@
         .art-mainframe {
             position: relative;
             width: 100%;
-            background: rgba(13, 21, 39, 0.7); 
+            background: rgba(13, 21, 39, 0.75); 
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             border: 1.5px solid rgba(234, 179, 8, 0.6);
             border-radius: 24px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
             padding: 60px 40px;
             text-align: center;
         }
@@ -182,7 +175,7 @@
             letter-spacing: -1px;
             line-height: 1.2;
             margin-bottom: 20px;
-            text-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            text-shadow: 0 4px 12px rgba(0,0,0,0.6);
         }
 
         .main-subtitle {
@@ -252,7 +245,7 @@
 
         <nav class="custom-navbar">
             <a href="https://ankitx007x.github.io/" class="nav-logo">
-                <img src="./assets/logo.png" alt="The Grand Budapest Logo"> The Grand Budapest
+                <i class="fa-solid fa-palette"></i> The Grand Budapest
             </a>
             <ul class="nav-links">
                 <li><a href="https://ankitx007x.github.io/" class="active">Home</a></li>
