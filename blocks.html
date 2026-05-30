@@ -49,21 +49,16 @@
             width: 100% !important;
             min-height: 100vh !important;
             z-index: 1 !important;
-            
             background: 
                 linear-gradient(rgba(9, 15, 29, 0.5), rgba(15, 23, 42, 0.7)),
                 url('./assets/Background.jpg') no-repeat center center !important;
             background-size: cover !important;
-            
             display: flex !important;
             flex-direction: column !important;
             align-items: center !important;
             justify-content: flex-start !important;
             overflow-x: hidden !important;
             padding-bottom: 60px !important;
-            
-            transform: translateZ(0);
-            -webkit-transform: translateZ(0);
             transition: opacity 0.4s ease-in-out;
         }
 
@@ -72,7 +67,7 @@
            ======================================================== */
         .custom-navbar {
             position: relative;
-            z-index: 20;
+            z-index: 100;
             width: 100%;
             min-height: 80px;
             display: flex;
@@ -85,7 +80,6 @@
             border-bottom: 1px solid rgba(234, 179, 8, 0.2);
             flex-wrap: wrap;
             gap: 20px;
-            will-change: transform;
         }
 
         .nav-logo {
@@ -124,13 +118,95 @@
             position: relative;
             padding-bottom: 4px;
         }
-
         .nav-links a:hover, .nav-links a.active { color: #fef08a; }
         .nav-links a::after {
             content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 1px;
             background: #eab308; transition: width 0.3s ease;
         }
         .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+
+        /* ========================================================
+            TOP-RIGHT NAV PROFILE HUB (Exact copy from Index)
+           ======================================================== */
+        .nav-profile-wrapper {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        #nav-user-profile {
+            display: none; /* Managed dynamically by blocks-guard.js */
+            align-items: center;
+        }
+
+        #nav-user-photo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #eab308;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        #nav-user-photo:hover { transform: scale(1.05); }
+
+        .profile-dropdown-menu {
+            display: none; 
+            position: absolute;
+            top: 55px;
+            right: 0; 
+            background: rgba(13, 21, 39, 0.95);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(234, 179, 8, 0.4);
+            border-radius: 12px;
+            padding: 16px;
+            min-width: 230px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            z-index: 105;
+            text-align: left;
+        }
+        .profile-dropdown-menu.show {
+            display: block !important;
+        }
+
+        .dropdown-name {
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        .dropdown-email {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            margin-bottom: 12px;
+            word-break: break-all;
+        }
+        .dropdown-divider {
+            border: 0;
+            border-top: 1px solid rgba(234, 179, 8, 0.2);
+            margin-bottom: 12px;
+        }
+
+        .logout-btn {
+            width: 100%;
+            background: transparent;
+            color: #f87171;
+            border: 1px solid rgba(248, 113, 113, 0.4);
+            padding: 8px 14px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .logout-btn:hover {
+            background: rgba(248, 113, 113, 0.1);
+            border-color: #f87171;
+        }
 
         /* ========================================================
             THE MAIN PALETTE FRAME
@@ -340,6 +416,21 @@
                 <li><a href="https://ankitx007x.github.io/">Home</a></li>
                 <li><a href="./blocks" class="active">Blocks</a></li>
                 <li><a href="./about">About Me</a></li>
+                
+                <li class="nav-profile-wrapper">
+                    <div id="nav-user-profile">
+                        <img id="nav-user-photo" src="" alt="User Avatar">
+                        
+                        <div id="profile-dropdown" class="profile-dropdown-menu">
+                            <h3 id="user-name" class="dropdown-name"></h3>
+                            <p id="user-email" class="dropdown-email"></p>
+                            <hr class="dropdown-divider">
+                            <button id="logout-btn" class="logout-btn">
+                                <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+                            </button>
+                        </div>
+                    </div>
+                </li>
             </ul>
         </nav>
 
