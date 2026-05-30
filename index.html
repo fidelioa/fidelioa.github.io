@@ -108,6 +108,23 @@
         }
         .nav-links a:hover, .nav-links a.active { color: #fef08a; }
 
+        /* Generic Lockout Global Rules for Navigation Link Protection */
+        .nav-links a.disabled-link {
+            color: #475569 !important;
+            cursor: not-allowed !important;
+            pointer-events: none !important;
+            opacity: 0.5;
+        }
+        .nav-links a.active-link {
+            color: #cbd5e1 !important;
+            cursor: pointer !important;
+            pointer-events: auto !important;
+            opacity: 1;
+        }
+        .nav-links a.active-link:hover {
+            color: #fef08a !important;
+        }
+
         /* ========================================================
             TOP-RIGHT NAV PROFILE HUB
            ======================================================== */
@@ -118,7 +135,7 @@
         }
 
         #nav-user-profile {
-            display: none; /* Managed dynamically by main.js */
+            display: none; 
             align-items: center;
         }
 
@@ -149,8 +166,6 @@
             z-index: 105;
             text-align: left;
         }
-        
-        /* Class helper to show drop menu */
         .profile-dropdown-menu.show {
             display: block !important;
         }
@@ -276,7 +291,6 @@
             gap: 10px;
         }
 
-        /* Logged Out Mode: Locks the link completely */
         .explore-btn.disabled-state {
             color: #475569 !important;
             background: #1e293b !important;
@@ -284,17 +298,16 @@
             cursor: not-allowed !important;
             box-shadow: none !important;
             opacity: 0.6;
-            pointer-events: none !important; /* Forces the browser to ignore link clicks natively */
+            pointer-events: none !important; 
         }
 
-        /* Logged In Mode: Unlocks and makes it click responsive */
         .explore-btn.active-state {
             color: #0f172a !important;
             background: linear-gradient(90deg, #fcd34d, #f59e0b, #fcd34d) !important;
             background-size: 200% auto !important;
             box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3) !important;
             cursor: pointer !important;
-            pointer-events: auto !important; /* Re-enables standard link behavior */
+            pointer-events: auto !important; 
         }
         .explore-btn.active-state:hover {
             transform: translateY(-2px);
@@ -365,7 +378,7 @@
             
             <ul class="nav-links">
                 <li><a href="https://ankitx007x.github.io/" class="active">Home</a></li>
-                <li><a href="./blocks">Blocks</a></li>
+                <li><a href="./blocks" id="nav-blocks-link" class="disabled-link">Blocks</a></li>
                 <li><a href="./about">About Me</a></li>
                 
                 <li class="nav-profile-wrapper">
