@@ -20,7 +20,7 @@ const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
 // Target Dashboard Card Elements
-const loginBtn = document.getElementById('google-login-btn');
+const whiteRabbitBtn = document.getElementById('white-rabbit-btn'); // FIXED: Swapped to White Rabbit button
 const logoutBtn = document.getElementById('logout-btn');
 const dashboard = document.getElementById('user-dashboard');
 const userPhoto = document.getElementById('user-photo');
@@ -32,54 +32,68 @@ const navUserProfile = document.getElementById('nav-user-profile');
 const navUserPhoto = document.getElementById('nav-user-photo');
 const navUserName = document.getElementById('nav-user-name');
 
-// Sign-In Click Event Listener
-loginBtn.addEventListener('click', () => {
-    signInWithPopup(auth, provider)
-        .then((result) => {
-            console.log("Successfully Authenticated:", result.user);
-        })
-        .catch((error) => {
-            console.error("Authentication Error:", error.message);
-        });
-});
+// Sign-In Click Event Listener attached to White Rabbit Button
+if (whiteRabbitBtn) {
+    whiteRabbitBtn.addEventListener('click', () => {
+        signInWithPopup(auth, provider)
+            .then((result) => {
+                console.log("Successfully Authenticated:", result.user);
+                localStorage.setItem('isLoggedIn', 'true'); // Save state immediately
+                window.location.href = "./blocks"; // Redirect directly into app upon login
+            })
+            .catch((error) => {
+                console.error("Authentication Error:", error.message);
+            });
+    });
+}
 
 // Sign-Out Click Event Listener
-logoutBtn.addEventListener('click', () => {
-    signOut(auth)
-        .then(() => {
-            console.log("Session terminated safely.");
-        })
-        .catch((error) => {
-            console.error("Sign-Out Error:", error.message);
-        });
-});
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+        signOut(auth)
+            .then(() => {
+                console.log("Session terminated safely.");
+                localStorage.setItem('isLoggedIn', 'false'); // Clear cache state
+                window.location.href = "https://ankitx007x.github.io/"; // Send back home
+            })
+            .catch((error) => {
+                console.error("Sign-Out Error:", error.message);
+            });
+    });
+}
 
 // Session Lifecycle Engine: Toggles view logic instantly across header and layout
 onAuthStateChanged(auth, (user) => {
     if (user) {
+        localStorage.setItem('isLoggedIn', 'true');
+        document.body.classList.remove('logged-out'); // Reveals protected nav tabs instantly
+
         const fallBackPhoto = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/svgs/solid/user.svg';
         const finalPhoto = user.photoURL || fallBackPhoto;
         
         // 1. Fill Card Data
-        userPhoto.src = finalPhoto;
-        userName.textContent = user.displayName || "User";
-        userEmail.textContent = user.email || "";
+        if (userPhoto) userPhoto.src = finalPhoto;
+        if (userName) userName.textContent = user.displayName || "User";
+        if (userEmail) userEmail.textContent = user.email || "";
 
         // 2. Fill Navigation Header Data (Shows first name only to keep nav items tight)
-        navUserPhoto.src = finalPhoto;
-        navUserName.textContent = user.displayName ? user.displayName.split(' ')[0] : "User";
+        if (navUserPhoto) navUserPhoto.src = finalPhoto;
+        if (navUserName) navUserName.textContent = user.displayName ? user.displayName.split(' ')[0] : "User";
 
         // 3. UI Adjustments
-        loginBtn.style.display = 'none';
-        dashboard.style.display = 'block';
-        navUserProfile.style.display = 'inline-flex';
+        if (whiteRabbitBtn) whiteRabbitBtn.style.display = 'none';
+        if (dashboard) dashboard.style.display = 'block';
+        if (navUserProfile) navUserProfile.style.display = 'inline-flex';
     } else {
+        localStorage.setItem('isLoggedIn', 'false');
+        document.body.classList.add('logged-out'); // Completely hides navigation tags
+
         // Clear layout state if logged out
-        loginBtn.style.display = 'inline-flex';
-        dashboard.style.display = 'none';
-        navUserProfile.style.display = 'none';
+        if (whiteRabbitBtn) whiteRabbitBtn.style.display = 'inline-flex';
+        if (dashboard) dashboard.style.display = 'none';
+        if (navUserProfile) navUserProfile.style.display = 'none';
         
-        userPhoto.src = "";
-        navUserPhoto.src = "";
+        if (userPhoto) userPhoto.src = "";
+        if (navUserPhoto) navUserPhoto.src = "";
     }
 });
