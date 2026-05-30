@@ -119,6 +119,29 @@
         }
         .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
 
+        /* Top Bar Mini Profile Component */
+        .nav-profile-item {
+            display: none; /* Controlled dynamically by main.js */
+            align-items: center;
+            gap: 10px;
+            padding: 4px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(234, 179, 8, 0.3);
+            border-radius: 30px;
+        }
+        .nav-profile-item img {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid #eab308;
+        }
+        .nav-profile-item span {
+            color: #fef08a;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
         /* ========================================================
             HERO WELCOME CONSOLE
            ======================================================== */
@@ -337,6 +360,7 @@
 
         @media (max-width: 768px) {
             .custom-navbar { padding: 15px 30px; }
+            .nav-links { gap: 15px; }
             .main-title { font-size: 2.2rem; }
             .art-mainframe { padding: 40px 20px; }
         }
@@ -354,6 +378,11 @@
                 <li><a href="https://ankitx007x.github.io/" class="active">Home</a></li>
                 <li><a href="./blocks">Blocks</a></li>
                 <li><a href="./about">About Me</a></li>
+                <!-- Top Bar User Info (Shows when logged in) -->
+                <li id="nav-user-profile" class="nav-profile-item">
+                    <img id="nav-user-photo" src="" alt="">
+                    <span id="nav-user-name"></span>
+                </li>
             </ul>
         </nav>
 
