@@ -1,6 +1,0 @@
-{
-  "name": "CardioQBank",
-  "description": "An interactive board-standard clinical QBank specializing in JVP, cardiac murmurs, and dynamic maneuvers with synchronized online persistence.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
