@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>UWorld Cardiology Trainer: Murmurs & JVP</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f4f8;
+            color: #2d3748;
+            margin: 0;
+            padding: 0;
+        }
+        .header-bar {
+            background-color: #1a365d;
+            color: #ffffff;
+            padding: 15px 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-title {
+            font-size: 16pt;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+        .timer-box {
+            background-color: #2b6cb0;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 14pt;
+            font-weight: bold;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .main-container {
+            max-width: 900px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            padding: 30px;
+            box-sizing: border-box;
+        }
+        .progress-indicator {
+            font-size: 10pt;
+            color: #718096;
+            margin-bottom: 15px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .vignette-panel {
+            font-size: 11.5pt;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            text-align: justify;
+        }
+        .options-panel {
+            margin-bottom: 25px;
+        }
+        .option-card {
+            background-color: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 14px 18px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 11pt;
+            display: flex;
+            align-items: center;
+        }
+        .option-card:hover {
+            background-color: #edf2f7;
+            border-color: #cbd5e0;
+        }
+        .option-card.selected {
+            border-color: #3182ce;
+            background-color: #ebf8ff;
+        }
+        .option-card.correct-highlight {
+            border-color: #38a169 !important;
+            background-color: #c6f6d5 !important;
+            color: #22543d;
+            font-weight: bold;
+        }
+        .option-card.wrong-highlight {
+            border-color: #e53e3e !important;
+            background-color: #fed7d7 !important;
+            color: #742a2a;
+        }
+        .radio-dot {
+            height: 16px;
+            width: 16px;
+            border: 2px solid #a0aec0;
+            border-radius: 50%;
+            margin-right: 12px;
+            display: inline-block;
+            flex-shrink: 0;
+            position: relative;
+        }
+        .option-card.selected .radio-dot {
+            border-color: #3182ce;
+        }
+        .option-card.selected .radio-dot::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background-color: #3182ce;
+            border-radius: 50%;
+            position: absolute;
+            top: 3px;
+            left: 3px;
+        }
+        .action-bar {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 12px 28px;
+            font-size: 11pt;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.1s ease;
+        }
+        .btn-primary {
+            background-color: #3182ce;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #2b6cb0;
+        }
+        .btn-success {
+            background-color: #38a169;
+            color: white;
+        }
+        .btn-success:hover {
+            background-color: #2f855a;
+        }
+        .btn:disabled {
+            background-color: #cbd5e0;
+            color: #a0aec0;
+            cursor: not-allowed;
+        }
+        .explanation-panel {
+            margin-top: 30px;
+            background-color: #f7fafc;
+            border-left: 5px solid #2b6cb0;
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+            display: none;
+        }
+        .panel-heading {
+            font-size: 12pt;
+            font-weight: bold;
+            color: #1a365d;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 5px;
+        }
+        .rationale-body {
+            font-size: 11pt;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        .distractors-heading {
+            font-size: 10.5pt;
+            font-weight: bold;
+            color: #4a5568;
+            margin-top: 15px;
+            margin-bottom: 8px;
+        }
+        .distractor-paragraph {
+            font-size: 10.5pt;
+            line-height: 1.5;
+            margin-bottom: 10px;
+            color: #4a5568;
+            text-align: justify;
+        }
+        .summary-panel {
+            text-align: center;
+            display: none;
+        }
+        .score-display {
+            font-size: 36pt;
+            font-weight: bold;
+            color: #2b6cb0;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header-bar">
+    <div class="header-title">UWorld Cardiology Exam Simulation</div>
+    <div class="timer-box" id="time-display">90:00</div>
+</div>
+
+<div class="main-container" id="quiz-wrapper">
+    <div id="game-view">
+        <div class="progress-indicator" id="progress-text">Question 1 of 40</div>
+        <div class="vignette-panel" id="vignette-box">Vignette Text goes here.</div>
+        
+        <div class="options-panel" id="options-box">
+            <!-- Render dynamic options -->
+        </div>
+
+        <div class="action-bar">
+            <button class="btn btn-primary" id="action-btn" onclick="submitCurrentAnswer()" disabled>Submit Answer</button>
+        </div>
+
+        <div class="explanation-panel" id="explanation-box">
+            <div class="panel-heading">Educational Objective & Core Rationale</div>
+            <div class="rationale-body" id="rationale-box">Core rationale text.</div>
+            <div class="panel-heading" style="margin-top:20px;">Comprehensive Option Deconstruction</div>
+            <div id="distractors-box">Deconstruction lines.</div>
+        </div>
+    </div>
+
+    <div class="summary-panel" id="summary-view">
+        <h2>Simulated Examination Completed</h2>
+        <p>Your performance metrics for the high-yield Murmurs & JVP set:</p>
+        <div class="score-display" id="final-score">0 / 40</div>
+        <p id="percentage-box">0%</p>
+        <button class="btn btn-primary" style="margin-top: 20px;" onclick="window.location.reload()">Restart Simulation</button>
+    </div>
+</div>
+
+<script>
+    // Injected question JSON pool
+    const dataset = [
+        {
+            num: 1,
+            vignette: `A 72-year-old male presents to the outpatient cardiology clinic complaining of progressive exertional chest pain, a sense of tightness in his chest during mild ambulation, and two recent episodes of lightheadedness while walking up a steep incline. Physical examination reveals a harsh, late-peaking crescendo-decrescendo systolic ejection murmur heard best at the right upper sternal border, which radiates significantly into both carotid arteries. The second heart sound (S2) is delayed, soft, and single. Pulsus parvus et tardus is palpable on arterial exam. Inspection of the internal jugular venous pulsations is performed. Which of the following internal jugular venous pressure (JVP) waveform alterations is most characteristically expected in this patient's underlying cardiac state?`,
+            options: [
+                `A) Prominent, towering 'a' wave due to decreased right ventricular compliance`,
+                `B) Giant, fused 'v' wave (Lancisi sign) stemming from chronic volume overload`,
+                `C) Steep, precipitous, and rapid 'y' descent following a brief plateau phase`,
+                `D) Attenuated or completely absent 'x' descent during ventricular ejection`,
+                `E) Large, rhythmic cannon 'a' waves occurring predictably with each cycle`,
+            ],
+            correct: 0,
+            rationale: `This clinical presentation is classic for severe, calcific aortic stenosis (AS), characterized by the classic clinical triad of angina, syncope (or presyncope), and dyspnea. The physical exam confirms this with a late-peaking systolic ejection murmur, radiation to the carotids, and a soft/delayed S2 (parodoxical splitting or single sound). Chronic left ventricular outflow tract obstruction induces severe concentric left ventricular hypertrophy (LVH), drastically lowering left ventricular diastolic compliance. Because the interventricular septum is shared between both chambers, the profound hypertrophy and high filling pressures on the left side anatomically bulge into and compromise the right ventricular (RV) lumen, leading to decreased right ventricular compliance as well. To maintain adequate right ventricular filling across a stiffened tricuspid valve, the right atrium must contract with significantly enhanced force during late diastole. On the JVP tracing, this hyper-dynamic atrial kick manifests as a prominent, towering 'a' wave.`,
+            distractors: [
+                `<strong>Option B is incorrect:</strong> A giant, fused 'v' wave (sometimes referred to as the Lancisi sign or ventricularization of the atrial pressure pulse) is the hallmark finding of severe tricuspid regurgitation. In tricuspid regurgitation, the incompetent valve allows a massive volume of blood to jet backward into the right atrium during ventricular systole, which directly obliterates the normal systolic 'x' descent and builds a massive, early-appearing 'v' wave that peaks during ventricular contraction.`,
+                `<strong>Option C is incorrect:</strong> A steep, rapid, and deep 'y' descent is a classic feature of constrictive pericarditis (Friedreich's sign) or restrictive cardiomyopathy. In these conditions, early diastolic filling is initially rapid and unrestricted, but it is abruptly halted as the expanding right ventricular wall hits a rigid, calcified, or non-compliant pericardium. In fixed valvular outflow tract obstructions like aortic stenosis, early diastolic emptying is normal or slowed, never sharp or precipitous.`,
+                `<strong>Option D is incorrect:</strong> An attenuated or completely absent 'x' descent occurs when tricuspid valve competence is compromised, such as in tricuspid regurgitation or right ventricular infundibular failure. The 'x' descent represents right atrial relaxation combined with the downward pulling of the tricuspid annulus during ventricular systole. In aortic stenosis, atrial relaxation proceeds normally, maintaining a preserved and distinct 'x' descent on the venous waveform.`,
+                `<strong>Option E is incorrect:</strong> Cannon 'a' waves are transient, highly elevated pressure waves that occur exclusively when the right atrium contracts against a completely closed tricuspid valve. This occurs during atrioventricular (AV) dissociation, such as in third-degree heart block or ventricular tachycardia, where the atrium and ventricle contract completely independently of one another. Because these events occur randomly, cannon 'a' waves occur irregularly rather than predictably with every single cycle.`,
+            ]
+        },
+        {
+            num: 2,
+            vignette: `A 34-year-old female with a long, documented history of intravenous drug use is admitted to the medical floor for high-grade fevers, rigors, and a productive cough. Physical examination reveals warm, flushed skin and needle track marks across both antecubital fossae. On cardiac auscultation, a high-pitched, blowing holosystolic murmur is heard loudest over the left lower sternal border. Notably, the murmur increases in intensity during deep, quiet inspiration. On bedside evaluation of the neck, prominent, bounding venous pulsations are observed in the jugular bulb. Which of the following specific JVP tracing abnormalities is directly correlated with the pathophysiological mechanism of this murmur?`,
+            options: [
+                `A) A delayed and prominent 'c' wave following the carotid upstroke`,
+                `B) A highly prominent, peaked, and amplified 'v' wave during ventricular systole`,
+                `C) A paradoxical elevation of the absolute JVP height during quiet inspiration`,
+                `D) A slow, sluggish, and prolonged 'y' descent extending into late diastole`,
+                `E) Complete and total absence of the 'a' wave throughout the cardiac cycle`,
+            ],
+            correct: 1,
+            rationale: `This patient presents with acute tricuspid regurgitation (TR) secondary to right-sided infective endocarditis, which is highly prevalent among intravenous drug users (frequently caused by Staphylococcus aureus). The physical exam finding of a holosystolic murmur at the left lower sternal border that increases with inspiration is known as Carvallo's sign. Inspiration decreases intrathoracic pressure, pulling more venous blood into the right atrium and right ventricle, thereby increasing the regurgitant volume and accentuating the murmur. Pathophysiologically, during ventricular systole, the right ventricle contracts against an incompetent tricuspid valve, forcing a substantial portion of the stroke volume backward into the right atrium. Because the right atrium is normally filling passively from the vena cavae during this exact phase, the retrograde regurgitant jet causes an immense, early spike in intra-atrial volume and pressure. On the JVP waveform, this presents as an amplified, peaked, and elevated 'v' wave that merges with and obliterates the normal systolic 'x' descent.`,
+            distractors: [
+                `<strong>Option A is incorrect:</strong> The 'c' wave corresponds to the mechanical closure of the tricuspid valve and its subsequent upward bulging into the right atrium at the onset of ventricular systole. While the 'c' wave may be slightly buried by a large regurgitant jet, it is not delayed, and its alterations are non-specific and completely overshadowed by the massive diagnostic amplification seen in the subsequent 'v' wave.`,
+                `<strong>Option C is incorrect:</strong> A paradoxical rise in JVP during inspiration is known as Kussmaul's sign. Mechanically, inspiration should lower intrathoracic pressure and cause the JVP to drop as blood is rapidly drawn into the right heart. Kussmaul's sign occurs when a rigid pericardium (as in constrictive pericarditis) or a severely failing, restricted right ventricle cannot accommodate this extra venous return, forcing the blood to back up into the neck veins. Isolated acute tricuspid regurgitation does not cause Kussmaul's sign.`,
+                `<strong>Option D is incorrect:</strong> The 'y' descent represents the passive emptying of the right atrium into the right ventricle immediately after the tricuspid valve opens in early diastole. In tricuspid regurgitation, the right atrium holds an abnormally massive volume of blood under highly elevated pressure at the end of systole. Consequently, when the tricuspid valve opens, blood rushes into the ventricle with extreme velocity, resulting in an exceptionally steep, rapid, and sharp 'y' descent rather than a slow or sluggish one.`,
+                `<strong>Option E is incorrect:</strong> The absolute absence of the 'a' wave occurs only when there is a complete loss of coordinated, mechanical right atrial contraction, which is the definition of atrial fibrillation. While chronic tricuspid regurgitation can lead to atrial stretch and subsequent atrial fibrillation, this patient is in acute endocarditis and there is no clinical or electrocardiographic documentation of an arrhythmia, meaning her 'a' wave remains fully intact.`,
+            ]
+        },
+        {
+            num: 3,
+            vignette: `A 62-year-old female is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a low-pitched, rumbling mid-diastolic murmur heard best at the apex with the patient in the left lateral decubitus position, preceded by a high-pitched, sharp opening snap. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) A prominent, towering 'a' wave due to adaptive right ventricular hypertrophy and pressure overload`,
+                `B) A completely flattened 'a' wave combined with an isolated, giant systolic 'v' wave`,
+                `C) An exceptionally sharp, rapid 'y' descent that terminates abruptly with an early diastolic knock`,
+                `D) A selective prolongation of the 'c' wave due to delayed transmission of left-sided pressures`,
+                `E) Intermittent, highly erratic cannon 'a' waves occurring predominantly during inspiration`,
+            ],
+            correct: 0,
+            rationale: `This clinical image describes severe rheumatic Mitral Stenosis (MS). The stenosis restricts left ventricular inflow, elevating left atrial pressures and causing retrograde congestion through the pulmonary vasculature. Over time, this chronic pulmonary venous congestion leads to reactive pulmonary arterial hypertension and severe right ventricular pressure overload. The right ventricle responds by undergoing concentric hypertrophy, which severely limits its diastolic compliance. To successfully drive blood into this stiffened, thick-walled right ventricle, the right atrium must contract with extreme force during late diastole. This hyper-forceful atrial kick is directly captured on the JVP tracing as a towering, prominent 'a' wave, indicating elevated right-sided filling pressures secondary to chronic upstream left-sided valvular disease.`,
+            distractors: [
+                `<strong>Option B is incorrect:</strong> A flattened 'a' wave with a giant 'v' wave describes the combined effect of atrial fibrillation and tricuspid regurgitation. While severe mitral stenosis frequently causes left atrial enlargement and subsequent atrial fibrillation, the vignette specifies a classical sinus rhythm profile with an opening snap and a mid-diastolic rumble without defining an irregular rhythm, making an isolated giant 'v' wave incorrect.`,
+                `<strong>Option C is incorrect:</strong> A sharp, rapid 'y' descent terminating in an early diastolic knock is pathognomonic for constrictive pericarditis. In constrictive pericarditis, the rigid pericardial shell limits the total volume of the cardiac silhouette. Early filling occurs rapidly because atrial pressures are high, but it stops abruptly when the expanding wall hits the unyielding pericardium, creating a 'knock'. In mitral stenosis, filling is restricted across the mitral valve, affecting the left heart directly, and the right heart changes are driven by compliance rather than direct external restriction.`,
+                `<strong>Option D is incorrect:</strong> The JVP 'c' wave represents the minor pressure spike caused by the tricuspid valve bulging into the right atrium during early right ventricular contraction. It is completely independent of left-sided valvular mechanics and does not undergo selective prolongation or modification due to mitral valve calcification.`,
+                `<strong>Option E is incorrect:</strong> Cannon 'a' waves are severe, erratic waves produced exclusively during complete atrioventricular (AV) dissociation. This occurs when the right atrium contracts against a fully closed tricuspid valve because the sinus node and the ventricular pacemaker are firing independently. Mitral stenosis creates a fixed mechanical resistance due to compliance changes, which produces a consistent, uniform enlargement of the 'a' wave with every single cardiac cycle, rather than intermittent cannon waves.`,
+            ]
+        },
+        {
+            num: 4,
+            vignette: `A 73-year-old male is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a sharp, high-pitched early diastolic sound, described as a pericardial knock, heard best along the left sternal border, without an associated classic murmur. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) A complete loss of the 'x' descent during the middle phase of ventricular ejection`,
+                `B) An isolated, towering 'v' wave that exceeds the height of the normal arterial pulse`,
+                `C) A paradoxical rise in overall JVP during inspiration coupled with an exceptionally sharp, deep 'y' descent`,
+                `D) Bounding, rhythmic cannon 'a' waves that correlate directly with peripheral pulse deficits`,
+                `E) A complete flattening of all waves and descents, creating a straight-line static venous pressure`,
+            ],
+            correct: 2,
+            rationale: `This patient exhibits the classic clinical presentation of constrictive pericarditis, often caused by prior viral pericarditis, tuberculosis, or cardiac surgery. The rigid, fibrotic, and frequently calcified pericardium acts as a non-yielding shell around the entire heart, fixing the maximum total cardiac volume. This produces two distinct hemodynamic phenomena. First, during inspiration, the normal drop in intrathoracic pressure increases venous return to the right heart. However, because the rigid pericardium prevents the right-sided chambers from expanding outward, the incoming blood cannot be accommodated, causing a paradoxical rise in jugular venous pressure during inspiration, known as Kussmaul's sign. Second, when the tricuspid valve opens in early diastole, the high pressure in the right atrium drives blood into the right ventricle with extreme speed. This rapid filling is abruptly halted when the ventricular wall hits the rigid pericardial boundary, resulting in an exceptionally steep, rapid, and deep 'y' descent on the JVP tracing, known as Friedreich's sign.`,
+            distractors: [
+                `<strong>Option A is incorrect:</strong> The 'x' descent, which represents right atrial relaxation and the downward movement of the tricuspid annulus during ventricular systole, is fully preserved or even exaggerated in constrictive pericarditis. The rigid pericardium does not impair systolic downward translation of the cardiac floor, meaning the 'x' descent remains highly prominent.`,
+                `<strong>Option B is incorrect:</strong> A towering, isolated 'v' wave is caused by systolic regurgitation of blood into the right atrium, which is characteristic of tricuspid regurgitation. Constrictive pericarditis is a disease of diastolic filling restriction affecting all four chambers equally; it does not involve an incompetent valvular apparatus that would drive a systolic regurgitant pressure spike.`,
+                `<strong>Option D is incorrect:</strong> Cannon 'a' waves are caused by an electrical dysrhythmia resulting in atrioventricular dissociation. In constrictive pericarditis, the mechanical and structural constraints of the pericardium do not cause independent atrial and ventricular rhythms, meaning there are no regular or irregular cannon waves.`,
+                `<strong>Option E is incorrect:</strong> The JVP tracing in constrictive pericarditis is highly dynamic and exaggerated, featuring prominent 'M' or 'W' wave shapes due to the sharp 'x' and 'y' descents. It is never flat or static, as the rapid pressure shifts within the restricted cardiac chambers are directly transmitted up the venous system.`,
+            ]
+        },
+        {
+            num: 5,
+            vignette: `A 38-year-old female is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a markedly distant, muffled heart sounds along with an impalpable apex beat, hypotension, and a clear chest on auscultation. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) A towering, prominent 'a' wave that disappears completely when the patient stands`,
+                `B) Fused, giant 'a' and 'v' waves creating a single massive systolic wave`,
+                `C) A steep, rapid, and exaggerated 'y' descent that dominates the entire tracking cycle`,
+                `D) A prominent, deep 'x' descent accompanied by a severely blunted or entirely abolished 'y' descent`,
+                `E) Regular, rhythmic cannon 'a' waves that occur precisely during ventricular diastole`,
+            ],
+            correct: 3,
+            rationale: `This clinical picture represents cardiac tamponade, defined by Beck's triad: hypotension, muffled heart sounds, and jugular venous distension. In tamponade, fluid accumulates within the pericardial space under high pressure, compressing all four cardiac chambers throughout the entire cardiac cycle. This high external pressure severely disrupts normal hemodynamics. During ventricular systole, as blood is ejected from the heart, the total cardiac volume briefly decreases. This drop in volume reduces the external pressure within the pericardial space, allowing the right atrium to relax and its floor to move downward normally. This preserves or exaggerates the 'x' descent. However, during early diastole, when the tricuspid valve opens, the high external fluid pressure completely prevents the right ventricle from expanding to receive passive venous flow. As a result, right atrial emptying is severely restricted, which blunts or entirely abolished the 'y' descent on the JVP tracing. This distinct pattern—a prominent 'x' descent with an absent 'y' descent—is a key diagnostic feature that distinguishes cardiac tamponade from constrictive pericarditis.`,
+            distractors: [
+                `<strong>Option A is incorrect:</strong> While the 'a' wave may be elevated due to high baseline right atrial pressures, it does not selectively disappear based on postural changes like standing, and a prominent 'a' wave is not the definitive diagnostic feature of tamponade physiology.`,
+                `<strong>Option B is incorrect:</strong> Fused 'a' and 'v' waves (ventricularization) are caused by severe tricuspid regurgitation, where systolic regurgitant volume merges with passive filling. In tamponade, the tricuspid valve is mechanically competent, so there is no retrograde systolic jet to fuse these waveforms.`,
+                `<strong>Option C is incorrect:</strong> A steep, rapid 'y' descent is characteristic of constrictive pericarditis (Friedreich's sign). In tamponade, the 'y' descent is blunted or absent because the high external fluid pressure prevents the right ventricle from expanding during early diastole, preventing rapid passive filling.`,
+                `<strong>Option E is incorrect:</strong> Cannon 'a' waves require atrioventricular dissociation, an electrical rhythm disorder where the atrium contracts against a closed tricuspid valve. Cardiac tamponade is a mechanical compression emergency caused by fluid accumulation, not an electrical block, so it does not produce cannon waves.`,
+            ]
+        },
+        {
+            num: 6,
+            vignette: `A 56-year-old male is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a mid-diastolic, low-pitched rumbling murmur heard best at the apex, which completely lacks any late diastolic or presystolic accentuation. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) Intermittent, highly elevated cannon 'a' waves during phases of ventricular contraction`,
+                `B) A giant, hyper-amplified 'a' wave that tracks synchronously with an irregularly irregular pulse`,
+                `C) A prominent 'c' wave that completely replaces the normal diastolic venous filling phase`,
+                `D) A sharp, steep 'x' descent that terminates in an early diastolic pericardial knock`,
+                `E) Complete and total absence of the 'a' wave along with a flattened or blunted 'x' descent`,
+            ],
+            correct: 4,
+            rationale: `This patient has mitral stenosis complicated by atrial fibrillation, which is common due to chronic left atrial stretch and remodeling. In sinus rhythm, a mitral stenosis murmur features 'presystolic accentuation,' where late atrial contraction forces blood across the stenotic valve, intensifying the murmur just before S1. When atrial fibrillation develops, coordinated atrial contraction is lost, causing the murmur to lose its presystolic accentuation. On the JVP tracing, the 'a' wave is produced by coordinated right atrial contraction. Therefore, the development of atrial fibrillation results in the complete absence of the 'a' wave. Additionally, because the 'x' descent depends partly on organized atrial relaxation following contraction, it becomes blunted or flattened, leaving the JVP tracing dominated by a prominent 'v' wave and an irregular 'y' descent.`,
+            distractors: [
+                `<strong>Option A is incorrect:</strong> Cannon 'a' waves require a forceful, synchronized atrial contraction against a closed tricuspid valve during AV dissociation. In atrial fibrillation, the atria are quivering without any coordinated contraction, making it mechanically impossible to generate a cannon 'a' wave.`,
+                `<strong>Option B is incorrect:</strong> A giant, amplified 'a' wave requires powerful, coordinated atrial contraction against increased resistance (e.g., tricuspid stenosis or RV hypertrophy). In atrial fibrillation, no such coordinated contraction occurs, so an 'a' wave cannot be generated.`,
+                `<strong>Option C is incorrect:</strong> The 'c' wave is a minor deflection caused by the tricuspid valve bulging into the right atrium during early ventricular systole. It does not become amplified or replace the diastolic filling phase due to an atrial arrhythmia.`,
+                `<strong>Option D is incorrect:</strong> A sharp 'x' descent with an early diastolic knock is a classic sign of constrictive pericarditis. This patient's pathology is valvular and electrical, without the rigid pericardial constraint needed to produce a diastolic knock.`,
+            ]
+        },
+        {
+            num: 7,
+            vignette: `A 67-year-old female is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a variable intensity of the first heart sound (S1) from beat to beat on auscultation, accompanied by a severe, bradycardic regular rhythm of 35 beats per minute. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) Intermittent, towering cannon 'a' waves occurring unpredictably within the cardiac cycle`,
+                `B) A permanent, fixed amplification of every single 'v' wave during ventricular ejection`,
+                `C) A profound blunting of both the 'x' and 'y' descents, mimicking a static fluid column`,
+                `D) A paradoxical drop in the height of the jugular venous column during deep expiration`,
+                `E) Complete absence of the 'c' wave with an isolated, towering early diastolic 'y' descent`,
+            ],
+            correct: 0,
+            rationale: `This patient presents with third-degree (complete) atrioventricular (AV) dissociation. In complete heart block, the sinus node depolarizes the atria at a normal rate, while an independent junctional or ventricular escape rhythm drives the ventricles at a much slower, regular rate. Because there is no electrical communication between the two systems, the atria and ventricles contract completely independently. This independent contraction creates two distinct physical exam findings. First, S1 varies in intensity from beat to beat because the distance between the mitral valve leaflets varies depending on when the atrium contracted relative to ventricular systole. Second, whenever the right atrium happens to contract while the tricuspid valve is closed during ventricular systole, the atrial volume is forced against a solid muscular barrier. This drives a massive pressure wave backward into the vena cavae, presenting on the JVP tracing as an intermittent, towering cannon 'a' wave.`,
+            distractors: [
+                `<strong>Option B is incorrect:</strong> A fixed, permanent amplification of every 'v' wave is caused by a structural valvular defect, specifically tricuspid regurgitation. In complete heart block, the tricuspid valve functions normally, so the 'v' wave is unaffected during regular cycles when the valve is open.`,
+                `<strong>Option C is incorrect:</strong> Blunting of both the 'x' and 'y' descents occurs in conditions that restrict fluid movement throughout the entire cardiac cycle, such as severe right ventricular infarction or restrictive cardiomyopathy. Complete heart block does not alter these descents during normal cardiac cycles.`,
+                `<strong>Option D is incorrect:</strong> A drop in JVP during inspiration (and a subsequent rise during expiration) is a normal respiratory finding, not a pathological feature of complete heart block. It does not provide diagnostic insight into AV dissociation.`,
+                `<strong>Option E is incorrect:</strong> The 'c' wave and 'y' descent reflect normal valve closure and early diastolic emptying. They are not selectively altered or isolated in complete heart block, which is primarily characterized by the intermittent appearance of cannon 'a' waves.`,
+            ]
+        },
+        {
+            num: 8,
+            vignette: `A 29-year-old male is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a harsh systolic ejection murmur heard best along the left lower sternal border that intensifies dramatically when the patient performs a Valsalva maneuver. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) A prominent, towering 'a' wave caused by reduced right ventricular compliance from septal hypertrophy`,
+                `B) A giant fused 'v' wave that completely obliterates the normal systolic 'x' descent`,
+                `C) A steep, rapid 'y' descent that terminates in a loud, audible pericardial knock`,
+                `D) A complete absence of the 'a' wave with irregular, chaotic venous pulsations`,
+                `E) An isolated elevation of the 'c' wave that occurs exclusively during the straining phase`,
+            ],
+            correct: 0,
+            rationale: `This clinical scenario describes Hypertrophic Obstructive Cardiomyopathy (HOCM). The classic murmur is a harsh systolic ejection murmur along the left lower sternal border that increases with maneuvers that reduce left ventricular volume, such as the Valsalva maneuver or standing. These maneuvers reduce venous return, causing the hypertrophied interventricular septum and the anterior leaflet of the mitral valve to come into closer contact, worsening the outflow tract obstruction. HOCM is characterized by marked, asymmetric hypertrophy of the interventricular septum. Because the septum forms a shared wall between both ventricles, this massive muscular thickening impinges upon the right ventricular lumen as well, reducing right ventricular compliance and restricting diastolic filling. To overcome this resistance, the right atrium must contract with increased force during late diastole, which produces a prominent, towering 'a' wave on the JVP tracing.`,
+            distractors: [
+                `<strong>Option B is incorrect:</strong> A giant, fused 'v' wave is caused by severe tricuspid regurgitation, where ventricular contraction forces blood backward into the right atrium. HOCM affects ventricular outflow and compliance; it does not typically involve acute tricuspid valve incompetence.`,
+                `<strong>Option C is incorrect:</strong> A steep 'y' descent terminating in a pericardial knock is a classic feature of constrictive pericarditis, a disease of the pericardium. HOCM is an intrinsic myocardial disease that impairs diastolic relaxation without producing a pericardial knock.`,
+                `<strong>Option D is incorrect:</strong> The complete absence of the 'a' wave occurs in atrial fibrillation, where organized atrial contraction is lost. While patients with HOCM are at increased risk for atrial fibrillation due to chronic left atrial stretch, the vignette describes a classic presentation in sinus rhythm, meaning the 'a' wave is prominent rather than absent.`,
+                `<strong>Option E is incorrect:</strong> The 'c' wave represents the minor pressure transient from tricuspid valve closure. It does not undergo isolated elevation or serve as a diagnostic marker for the ventricular septal hypertrophy characteristic of HOCM.`,
+            ]
+        },
+        {
+            num: 9,
+            vignette: `A 44-year-old female is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a loud, harsh holosystolic murmur heard best at the left lower sternal border, accompanied by a prominent, palpable thrill and signs of fluid overload. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) A baseline low JVP column with an isolated, deep 'x' descent during diastole`,
+                `B) An elevated overall JVP column with prominent 'v' waves reflecting right-sided volume overload`,
+                `C) Intermittent cannon 'a' waves that correlate with irregular peripheral pulses`,
+                `D) A complete loss of both the 'a' and 'c' waves with a highly prolonged 'y' descent`,
+                `E) A paradoxical drop in the height of the neck veins when the patient breathes in deeply`,
+            ],
+            correct: 1,
+            rationale: `This patient presents with a large Ventricular Septal Defect (VSD), which causes a high-velocity, left-to-right shunt during ventricular systole, producing a loud, harsh holosystolic murmur along the left lower sternal border with a palpable thrill. In a large, uncorrected VSD, the substantial left-to-right shunt exposes the pulmonary vasculature to chronic volume and pressure overload, leading to pulmonary hypertension. This increased afterload causes right ventricular hypertrophy and, eventually, right-sided heart failure. As the right ventricle fails, blood backs up into the right atrium and venous system, elevating the overall baseline JVP. During ventricular systole, the elevated right-sided volumes and secondary tricuspid regurgitation lead to increased right atrial filling, which manifests on the JVP tracing as a prominent, amplified 'v' wave.`,
+            distractors: [
+                `<strong>Option A is incorrect:</strong> A large VSD with right heart failure causes a high, distended venous column due to fluid retention and backup, not a low JVP column, and the 'x' descent is typically blunted rather than deep.`,
+                `<strong>Option C is incorrect:</strong> Cannon 'a' waves are caused by atrioventricular dissociation, an electrical conduction block. A VSD is a structural congenital defect that does not inherently cause independent atrial and ventricular rhythms.`,
+                `<strong>Option D is incorrect:</strong> The 'a' wave represents right atrial contraction, which remains fully intact as long as the patient is in sinus rhythm. A VSD does not cause a loss of the 'a' and 'c' waves.`,
+                `<strong>Option E is incorrect:</strong> A drop in JVP during inspiration is a normal physiological finding due to decreased intrathoracic pressure. A paradoxical rise (Kussmaul's sign) occurs in compliance conditions, but a normal respiratory drop is not a primary diagnostic indicator for a structural left-to-right shunt.`,
+            ]
+        },
+        {
+            num: 10,
+            vignette: `A 51-year-old male is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a low-pitched, rumbling mid-diastolic murmur heard best at the apex with the patient in the left lateral decubitus position, preceded by a high-pitched, sharp opening snap. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) A prominent, towering 'a' wave due to adaptive right ventricular hypertrophy and pressure overload`,
+                `B) A completely flattened 'a' wave combined with an isolated, giant systolic 'v' wave`,
+                `C) An exceptionally sharp, rapid 'y' descent that terminates abruptly with an early diastolic knock`,
+                `D) A selective prolongation of the 'c' wave due to delayed transmission of left-sided pressures`,
+                `E) Intermittent, highly erratic cannon 'a' waves occurring predominantly during inspiration`,
+            ],
+            correct: 0,
+            rationale: `This clinical image describes severe rheumatic Mitral Stenosis (MS). The stenosis restricts left ventricular inflow, elevating left atrial pressures and causing retrograde congestion through the pulmonary vasculature. Over time, this chronic pulmonary venous congestion leads to reactive pulmonary arterial hypertension and severe right ventricular pressure overload. The right ventricle responds by undergoing concentric hypertrophy, which severely limits its diastolic compliance. To successfully drive blood into this stiffened, thick-walled right ventricle, the right atrium must contract with extreme force during late diastole. This hyper-forceful atrial kick is directly captured on the JVP tracing as a towering, prominent 'a' wave, indicating elevated right-sided filling pressures secondary to chronic upstream left-sided valvular disease.`,
+            distractors: [
+                `<strong>Option B is incorrect:</strong> A flattened 'a' wave with a giant 'v' wave describes the combined effect of atrial fibrillation and tricuspid regurgitation. While severe mitral stenosis frequently causes left atrial enlargement and subsequent atrial fibrillation, the vignette specifies a classical sinus rhythm profile with an opening snap and a mid-diastolic rumble without defining an irregular rhythm, making an isolated giant 'v' wave incorrect.`,
+                `<strong>Option C is incorrect:</strong> A sharp, rapid 'y' descent terminating in an early diastolic knock is pathognomonic for constrictive pericarditis. In constrictive pericarditis, the rigid pericardial shell limits the total volume of the cardiac silhouette. Early filling occurs rapidly because atrial pressures are high, but it stops abruptly when the expanding wall hits the unyielding pericardium, creating a 'knock'. In mitral stenosis, filling is restricted across the mitral valve, affecting the left heart directly, and the right heart changes are driven by compliance rather than direct external restriction.`,
+                `<strong>Option D is incorrect:</strong> The JVP 'c' wave represents the minor pressure spike caused by the tricuspid valve bulging into the right atrium during early right ventricular contraction. It is completely independent of left-sided valvular mechanics and does not undergo selective prolongation or modification due to mitral valve calcification.`,
+                `<strong>Option E is incorrect:</strong> Cannon 'a' waves are severe, erratic waves produced exclusively during complete atrioventricular (AV) dissociation. This occurs when the right atrium contracts against a fully closed tricuspid valve because the sinus node and the ventricular pacemaker are firing independently. Mitral stenosis creates a fixed mechanical resistance due to compliance changes, which produces a consistent, uniform enlargement of the 'a' wave with every single cardiac cycle, rather than intermittent cannon waves.`,
+            ]
+        },
+        {
+            num: 11,
+            vignette: `A 62-year-old female is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a sharp, high-pitched early diastolic sound, described as a pericardial knock, heard best along the left sternal border, without an associated classic murmur. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) A complete loss of the 'x' descent during the middle phase of ventricular ejection`,
+                `B) An isolated, towering 'v' wave that exceeds the height of the normal arterial pulse`,
+                `C) A paradoxical rise in overall JVP during inspiration coupled with an exceptionally sharp, deep 'y' descent`,
+                `D) Bounding, rhythmic cannon 'a' waves that correlate directly with peripheral pulse deficits`,
+                `E) A complete flattening of all waves and descents, creating a straight-line static venous pressure`,
+            ],
+            correct: 2,
+            rationale: `This patient exhibits the classic clinical presentation of constrictive pericarditis, often caused by prior viral pericarditis, tuberculosis, or cardiac surgery. The rigid, fibrotic, and frequently calcified pericardium acts as a non-yielding shell around the entire heart, fixing the maximum total cardiac volume. This produces two distinct hemodynamic phenomena. First, during inspiration, the normal drop in intrathoracic pressure increases venous return to the right heart. However, because the rigid pericardium prevents the right-sided chambers from expanding outward, the incoming blood cannot be accommodated, causing a paradoxical rise in jugular venous pressure during inspiration, known as Kussmaul's sign. Second, when the tricuspid valve opens in early diastole, the high pressure in the right atrium drives blood into the right ventricle with extreme speed. This rapid filling is abruptly halted when the ventricular wall hits the rigid pericardial boundary, resulting in an exceptionally steep, rapid, and deep 'y' descent on the JVP tracing, known as Friedreich's sign.`,
+            distractors: [
+                `<strong>Option A is incorrect:</strong> The 'x' descent, which represents right atrial relaxation and the downward movement of the tricuspid annulus during ventricular systole, is fully preserved or even exaggerated in constrictive pericarditis. The rigid pericardium does not impair systolic downward translation of the cardiac floor, meaning the 'x' descent remains highly prominent.`,
+                `<strong>Option B is incorrect:</strong> A towering, isolated 'v' wave is caused by systolic regurgitation of blood into the right atrium, which is characteristic of tricuspid regurgitation. Constrictive pericarditis is a disease of diastolic filling restriction affecting all four chambers equally; it does not involve an incompetent valvular apparatus that would drive a systolic regurgitant pressure spike.`,
+                `<strong>Option D is incorrect:</strong> Cannon 'a' waves are caused by an electrical dysrhythmia resulting in atrioventricular dissociation. In constrictive pericarditis, the mechanical and structural constraints of the pericardium do not cause independent atrial and ventricular rhythms, meaning there are no regular or irregular cannon waves.`,
+                `<strong>Option E is incorrect:</strong> The JVP tracing in constrictive pericarditis is highly dynamic and exaggerated, featuring prominent 'M' or 'W' wave shapes due to the sharp 'x' and 'y' descents. It is never flat or static, as the rapid pressure shifts within the restricted cardiac chambers are directly transmitted up the venous system.`,
+            ]
+        },
+        {
+            num: 12,
+            vignette: `A 73-year-old male is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a markedly distant, muffled heart sounds along with an impalpable apex beat, hypotension, and a clear chest on auscultation. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) A towering, prominent 'a' wave that disappears completely when the patient stands`,
+                `B) Fused, giant 'a' and 'v' waves creating a single massive systolic wave`,
+                `C) A steep, rapid, and exaggerated 'y' descent that dominates the entire tracking cycle`,
+                `D) A prominent, deep 'x' descent accompanied by a severely blunted or entirely abolished 'y' descent`,
+                `E) Regular, rhythmic cannon 'a' waves that occur precisely during ventricular diastole`,
+            ],
+            correct: 3,
+            rationale: `This clinical picture represents cardiac tamponade, defined by Beck's triad: hypotension, muffled heart sounds, and jugular venous distension. In tamponade, fluid accumulates within the pericardial space under high pressure, compressing all four cardiac chambers throughout the entire cardiac cycle. This high external pressure severely disrupts normal hemodynamics. During ventricular systole, as blood is ejected from the heart, the total cardiac volume briefly decreases. This drop in volume reduces the external pressure within the pericardial space, allowing the right atrium to relax and its floor to move downward normally. This preserves or exaggerates the 'x' descent. However, during early diastole, when the tricuspid valve opens, the high external fluid pressure completely prevents the right ventricle from expanding to receive passive venous flow. As a result, right atrial emptying is severely restricted, which blunts or entirely abolished the 'y' descent on the JVP tracing. This distinct pattern—a prominent 'x' descent with an absent 'y' descent—is a key diagnostic feature that distinguishes cardiac tamponade from constrictive pericarditis.`,
+            distractors: [
+                `<strong>Option A is incorrect:</strong> While the 'a' wave may be elevated due to high baseline right atrial pressures, it does not selectively disappear based on postural changes like standing, and a prominent 'a' wave is not the definitive diagnostic feature of tamponade physiology.`,
+                `<strong>Option B is incorrect:</strong> Fused 'a' and 'v' waves (ventricularization) are caused by severe tricuspid regurgitation, where systolic regurgitant volume merges with passive filling. In tamponade, the tricuspid valve is mechanically competent, so there is no retrograde systolic jet to fuse these waveforms.`,
+                `<strong>Option C is incorrect:</strong> A steep, rapid 'y' descent is characteristic of constrictive pericarditis (Friedreich's sign). In tamponade, the 'y' descent is blunted or absent because the high external fluid pressure prevents the right ventricle from expanding during early diastole, preventing rapid passive filling.`,
+                `<strong>Option E is incorrect:</strong> Cannon 'a' waves require atrioventricular dissociation, an electrical rhythm disorder where the atrium contracts against a closed tricuspid valve. Cardiac tamponade is a mechanical compression emergency caused by fluid accumulation, not an electrical block, so it does not produce cannon waves.`,
+            ]
+        },
+        {
+            num: 13,
+            vignette: `A 38-year-old female is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a mid-diastolic, low-pitched rumbling murmur heard best at the apex, which completely lacks any late diastolic or presystolic accentuation. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) Intermittent, highly elevated cannon 'a' waves during phases of ventricular contraction`,
+                `B) A giant, hyper-amplified 'a' wave that tracks synchronously with an irregularly irregular pulse`,
+                `C) A prominent 'c' wave that completely replaces the normal diastolic venous filling phase`,
+                `D) A sharp, steep 'x' descent that terminates in an early diastolic pericardial knock`,
+                `E) Complete and total absence of the 'a' wave along with a flattened or blunted 'x' descent`,
+            ],
+            correct: 4,
+            rationale: `This patient has mitral stenosis complicated by atrial fibrillation, which is common due to chronic left atrial stretch and remodeling. In sinus rhythm, a mitral stenosis murmur features 'presystolic accentuation,' where late atrial contraction forces blood across the stenotic valve, intensifying the murmur just before S1. When atrial fibrillation develops, coordinated atrial contraction is lost, causing the murmur to lose its presystolic accentuation. On the JVP tracing, the 'a' wave is produced by coordinated right atrial contraction. Therefore, the development of atrial fibrillation results in the complete absence of the 'a' wave. Additionally, because the 'x' descent depends partly on organized atrial relaxation following contraction, it becomes blunted or flattened, leaving the JVP tracing dominated by a prominent 'v' wave and an irregular 'y' descent.`,
+            distractors: [
+                `<strong>Option A is incorrect:</strong> Cannon 'a' waves require a forceful, synchronized atrial contraction against a closed tricuspid valve during AV dissociation. In atrial fibrillation, the atria are quivering without any coordinated contraction, making it mechanically impossible to generate a cannon 'a' wave.`,
+                `<strong>Option B is incorrect:</strong> A giant, amplified 'a' wave requires powerful, coordinated atrial contraction against increased resistance (e.g., tricuspid stenosis or RV hypertrophy). In atrial fibrillation, no such coordinated contraction occurs, so an 'a' wave cannot be generated.`,
+                `<strong>Option C is incorrect:</strong> The 'c' wave is a minor deflection caused by the tricuspid valve bulging into the right atrium during early ventricular systole. It does not become amplified or replace the diastolic filling phase due to an atrial arrhythmia.`,
+                `<strong>Option D is incorrect:</strong> A sharp 'x' descent with an early diastolic knock is a classic sign of constrictive pericarditis. This patient's pathology is valvular and electrical, without the rigid pericardial constraint needed to produce a diastolic knock.`,
+            ]
+        },
+        {
+            num: 14,
+            vignette: `A 56-year-old male is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a variable intensity of the first heart sound (S1) from beat to beat on auscultation, accompanied by a severe, bradycardic regular rhythm of 35 beats per minute. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) Intermittent, towering cannon 'a' waves occurring unpredictably within the cardiac cycle`,
+                `B) A permanent, fixed amplification of every single 'v' wave during ventricular ejection`,
+                `C) A profound blunting of both the 'x' and 'y' descents, mimicking a static fluid column`,
+                `D) A paradoxical drop in the height of the jugular venous column during deep expiration`,
+                `E) Complete absence of the 'c' wave with an isolated, towering early diastolic 'y' descent`,
+            ],
+            correct: 0,
+            rationale: `This patient presents with third-degree (complete) atrioventricular (AV) dissociation. In complete heart block, the sinus node depolarizes the atria at a normal rate, while an independent junctional or ventricular escape rhythm drives the ventricles at a much slower, regular rate. Because there is no electrical communication between the two systems, the atria and ventricles contract completely independently. This independent contraction creates two distinct physical exam findings. First, S1 varies in intensity from beat to beat because the distance between the mitral valve leaflets varies depending on when the atrium contracted relative to ventricular systole. Second, whenever the right atrium happens to contract while the tricuspid valve is closed during ventricular systole, the atrial volume is forced against a solid muscular barrier. This drives a massive pressure wave backward into the vena cavae, presenting on the JVP tracing as an intermittent, towering cannon 'a' wave.`,
+            distractors: [
+                `<strong>Option B is incorrect:</strong> A fixed, permanent amplification of every 'v' wave is caused by a structural valvular defect, specifically tricuspid regurgitation. In complete heart block, the tricuspid valve functions normally, so the 'v' wave is unaffected during regular cycles when the valve is open.`,
+                `<strong>Option C is incorrect:</strong> Blunting of both the 'x' and 'y' descents occurs in conditions that restrict fluid movement throughout the entire cardiac cycle, such as severe right ventricular infarction or restrictive cardiomyopathy. Complete heart block does not alter these descents during normal cardiac cycles.`,
+                `<strong>Option D is incorrect:</strong> A drop in JVP during inspiration (and a subsequent rise during expiration) is a normal respiratory finding, not a pathological feature of complete heart block. It does not provide diagnostic insight into AV dissociation.`,
+                `<strong>Option E is incorrect:</strong> The 'c' wave and 'y' descent reflect normal valve closure and early diastolic emptying. They are not selectively altered or isolated in complete heart block, which is primarily characterized by the intermittent appearance of cannon 'a' waves.`,
+            ]
+        },
+        {
+            num: 15,
+            vignette: `A 67-year-old female is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a harsh systolic ejection murmur heard best along the left lower sternal border that intensifies dramatically when the patient performs a Valsalva maneuver. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) A prominent, towering 'a' wave caused by reduced right ventricular compliance from septal hypertrophy`,
+                `B) A giant fused 'v' wave that completely obliterates the normal systolic 'x' descent`,
+                `C) A steep, rapid 'y' descent that terminates in a loud, audible pericardial knock`,
+                `D) A complete absence of the 'a' wave with irregular, chaotic venous pulsations`,
+                `E) An isolated elevation of the 'c' wave that occurs exclusively during the straining phase`,
+            ],
+            correct: 0,
+            rationale: `This clinical scenario describes Hypertrophic Obstructive Cardiomyopathy (HOCM). The classic murmur is a harsh systolic ejection murmur along the left lower sternal border that increases with maneuvers that reduce left ventricular volume, such as the Valsalva maneuver or standing. These maneuvers reduce venous return, causing the hypertrophied interventricular septum and the anterior leaflet of the mitral valve to come into closer contact, worsening the outflow tract obstruction. HOCM is characterized by marked, asymmetric hypertrophy of the interventricular septum. Because the septum forms a shared wall between both ventricles, this massive muscular thickening impinges upon the right ventricular lumen as well, reducing right ventricular compliance and restricting diastolic filling. To overcome this resistance, the right atrium must contract with increased force during late diastole, which produces a prominent, towering 'a' wave on the JVP tracing.`,
+            distractors: [
+                `<strong>Option B is incorrect:</strong> A giant, fused 'v' wave is caused by severe tricuspid regurgitation, where ventricular contraction forces blood backward into the right atrium. HOCM affects ventricular outflow and compliance; it does not typically involve acute tricuspid valve incompetence.`,
+                `<strong>Option C is incorrect:</strong> A steep 'y' descent terminating in a pericardial knock is a classic feature of constrictive pericarditis, a disease of the pericardium. HOCM is an intrinsic myocardial disease that impairs diastolic relaxation without producing a pericardial knock.`,
+                `<strong>Option D is incorrect:</strong> The complete absence of the 'a' wave occurs in atrial fibrillation, where organized atrial contraction is lost. While patients with HOCM are at increased risk for atrial fibrillation due to chronic left atrial stretch, the vignette describes a classic presentation in sinus rhythm, meaning the 'a' wave is prominent rather than absent.`,
+                `<strong>Option E is incorrect:</strong> The 'c' wave represents the minor pressure transient from tricuspid valve closure. It does not undergo isolated elevation or serve as a diagnostic marker for the ventricular septal hypertrophy characteristic of HOCM.`,
+            ]
+        },
+        {
+            num: 16,
+            vignette: `A 29-year-old male is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a loud, harsh holosystolic murmur heard best at the left lower sternal border, accompanied by a prominent, palpable thrill and signs of fluid overload. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) A baseline low JVP column with an isolated, deep 'x' descent during diastole`,
+                `B) An elevated overall JVP column with prominent 'v' waves reflecting right-sided volume overload`,
+                `C) Intermittent cannon 'a' waves that correlate with irregular peripheral pulses`,
+                `D) A complete loss of both the 'a' and 'c' waves with a highly prolonged 'y' descent`,
+                `E) A paradoxical drop in the height of the neck veins when the patient breathes in deeply`,
+            ],
+            correct: 1,
+            rationale: `This patient presents with a large Ventricular Septal Defect (VSD), which causes a high-velocity, left-to-right shunt during ventricular systole, producing a loud, harsh holosystolic murmur along the left lower sternal border with a palpable thrill. In a large, uncorrected VSD, the substantial left-to-right shunt exposes the pulmonary vasculature to chronic volume and pressure overload, leading to pulmonary hypertension. This increased afterload causes right ventricular hypertrophy and, eventually, right-sided heart failure. As the right ventricle fails, blood backs up into the right atrium and venous system, elevating the overall baseline JVP. During ventricular systole, the elevated right-sided volumes and secondary tricuspid regurgitation lead to increased right atrial filling, which manifests on the JVP tracing as a prominent, amplified 'v' wave.`,
+            distractors: [
+                `<strong>Option A is incorrect:</strong> A large VSD with right heart failure causes a high, distended venous column due to fluid retention and backup, not a low JVP column, and the 'x' descent is typically blunted rather than deep.`,
+                `<strong>Option C is incorrect:</strong> Cannon 'a' waves are caused by atrioventricular dissociation, an electrical conduction block. A VSD is a structural congenital defect that does not inherently cause independent atrial and ventricular rhythms.`,
+                `<strong>Option D is incorrect:</strong> The 'a' wave represents right atrial contraction, which remains fully intact as long as the patient is in sinus rhythm. A VSD does not cause a loss of the 'a' and 'c' waves.`,
+                `<strong>Option E is incorrect:</strong> A drop in JVP during inspiration is a normal physiological finding due to decreased intrathoracic pressure. A paradoxical rise (Kussmaul's sign) occurs in compliance conditions, but a normal respiratory drop is not a primary diagnostic indicator for a structural left-to-right shunt.`,
+            ]
+        },
+        {
+            num: 17,
+            vignette: `A 44-year-old female is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a low-pitched, rumbling mid-diastolic murmur heard best at the apex with the patient in the left lateral decubitus position, preceded by a high-pitched, sharp opening snap. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) A prominent, towering 'a' wave due to adaptive right ventricular hypertrophy and pressure overload`,
+                `B) A completely flattened 'a' wave combined with an isolated, giant systolic 'v' wave`,
+                `C) An exceptionally sharp, rapid 'y' descent that terminates abruptly with an early diastolic knock`,
+                `D) A selective prolongation of the 'c' wave due to delayed transmission of left-sided pressures`,
+                `E) Intermittent, highly erratic cannon 'a' waves occurring predominantly during inspiration`,
+            ],
+            correct: 0,
+            rationale: `This clinical image describes severe rheumatic Mitral Stenosis (MS). The stenosis restricts left ventricular inflow, elevating left atrial pressures and causing retrograde congestion through the pulmonary vasculature. Over time, this chronic pulmonary venous congestion leads to reactive pulmonary arterial hypertension and severe right ventricular pressure overload. The right ventricle responds by undergoing concentric hypertrophy, which severely limits its diastolic compliance. To successfully drive blood into this stiffened, thick-walled right ventricle, the right atrium must contract with extreme force during late diastole. This hyper-forceful atrial kick is directly captured on the JVP tracing as a towering, prominent 'a' wave, indicating elevated right-sided filling pressures secondary to chronic upstream left-sided valvular disease.`,
+            distractors: [
+                `<strong>Option B is incorrect:</strong> A flattened 'a' wave with a giant 'v' wave describes the combined effect of atrial fibrillation and tricuspid regurgitation. While severe mitral stenosis frequently causes left atrial enlargement and subsequent atrial fibrillation, the vignette specifies a classical sinus rhythm profile with an opening snap and a mid-diastolic rumble without defining an irregular rhythm, making an isolated giant 'v' wave incorrect.`,
+                `<strong>Option C is incorrect:</strong> A sharp, rapid 'y' descent terminating in an early diastolic knock is pathognomonic for constrictive pericarditis. In constrictive pericarditis, the rigid pericardial shell limits the total volume of the cardiac silhouette. Early filling occurs rapidly because atrial pressures are high, but it stops abruptly when the expanding wall hits the unyielding pericardium, creating a 'knock'. In mitral stenosis, filling is restricted across the mitral valve, affecting the left heart directly, and the right heart changes are driven by compliance rather than direct external restriction.`,
+                `<strong>Option D is incorrect:</strong> The JVP 'c' wave represents the minor pressure spike caused by the tricuspid valve bulging into the right atrium during early right ventricular contraction. It is completely independent of left-sided valvular mechanics and does not undergo selective prolongation or modification due to mitral valve calcification.`,
+                `<strong>Option E is incorrect:</strong> Cannon 'a' waves are severe, erratic waves produced exclusively during complete atrioventricular (AV) dissociation. This occurs when the right atrium contracts against a fully closed tricuspid valve because the sinus node and the ventricular pacemaker are firing independently. Mitral stenosis creates a fixed mechanical resistance due to compliance changes, which produces a consistent, uniform enlargement of the 'a' wave with every single cardiac cycle, rather than intermittent cannon waves.`,
+            ]
+        },
+        {
+            num: 18,
+            vignette: `A 51-year-old male is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a sharp, high-pitched early diastolic sound, described as a pericardial knock, heard best along the left sternal border, without an associated classic murmur. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) A complete loss of the 'x' descent during the middle phase of ventricular ejection`,
+                `B) An isolated, towering 'v' wave that exceeds the height of the normal arterial pulse`,
+                `C) A paradoxical rise in overall JVP during inspiration coupled with an exceptionally sharp, deep 'y' descent`,
+                `D) Bounding, rhythmic cannon 'a' waves that correlate directly with peripheral pulse deficits`,
+                `E) A complete flattening of all waves and descents, creating a straight-line static venous pressure`,
+            ],
+            correct: 2,
+            rationale: `This patient exhibits the classic clinical presentation of constrictive pericarditis, often caused by prior viral pericarditis, tuberculosis, or cardiac surgery. The rigid, fibrotic, and frequently calcified pericardium acts as a non-yielding shell around the entire heart, fixing the maximum total cardiac volume. This produces two distinct hemodynamic phenomena. First, during inspiration, the normal drop in intrathoracic pressure increases venous return to the right heart. However, because the rigid pericardium prevents the right-sided chambers from expanding outward, the incoming blood cannot be accommodated, causing a paradoxical rise in jugular venous pressure during inspiration, known as Kussmaul's sign. Second, when the tricuspid valve opens in early diastole, the high pressure in the right atrium drives blood into the right ventricle with extreme speed. This rapid filling is abruptly halted when the ventricular wall hits the rigid pericardial boundary, resulting in an exceptionally steep, rapid, and deep 'y' descent on the JVP tracing, known as Friedreich's sign.`,
+            distractors: [
+                `<strong>Option A is incorrect:</strong> The 'x' descent, which represents right atrial relaxation and the downward movement of the tricuspid annulus during ventricular systole, is fully preserved or even exaggerated in constrictive pericarditis. The rigid pericardium does not impair systolic downward translation of the cardiac floor, meaning the 'x' descent remains highly prominent.`,
+                `<strong>Option B is incorrect:</strong> A towering, isolated 'v' wave is caused by systolic regurgitation of blood into the right atrium, which is characteristic of tricuspid regurgitation. Constrictive pericarditis is a disease of diastolic filling restriction affecting all four chambers equally; it does not involve an incompetent valvular apparatus that would drive a systolic regurgitant pressure spike.`,
+                `<strong>Option D is incorrect:</strong> Cannon 'a' waves are caused by an electrical dysrhythmia resulting in atrioventricular dissociation. In constrictive pericarditis, the mechanical and structural constraints of the pericardium do not cause independent atrial and ventricular rhythms, meaning there are no regular or irregular cannon waves.`,
+                `<strong>Option E is incorrect:</strong> The JVP tracing in constrictive pericarditis is highly dynamic and exaggerated, featuring prominent 'M' or 'W' wave shapes due to the sharp 'x' and 'y' descents. It is never flat or static, as the rapid pressure shifts within the restricted cardiac chambers are directly transmitted up the venous system.`,
+            ]
+        },
+        {
+            num: 19,
+            vignette: `A 62-year-old female is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a markedly distant, muffled heart sounds along with an impalpable apex beat, hypotension, and a clear chest on auscultation. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) A towering, prominent 'a' wave that disappears completely when the patient stands`,
+                `B) Fused, giant 'a' and 'v' waves creating a single massive systolic wave`,
+                `C) A steep, rapid, and exaggerated 'y' descent that dominates the entire tracking cycle`,
+                `D) A prominent, deep 'x' descent accompanied by a severely blunted or entirely abolished 'y' descent`,
+                `E) Regular, rhythmic cannon 'a' waves that occur precisely during ventricular diastole`,
+            ],
+            correct: 3,
+            rationale: `This clinical picture represents cardiac tamponade, defined by Beck's triad: hypotension, muffled heart sounds, and jugular venous distension. In tamponade, fluid accumulates within the pericardial space under high pressure, compressing all four cardiac chambers throughout the entire cardiac cycle. This high external pressure severely disrupts normal hemodynamics. During ventricular systole, as blood is ejected from the heart, the total cardiac volume briefly decreases. This drop in volume reduces the external pressure within the pericardial space, allowing the right atrium to relax and its floor to move downward normally. This preserves or exaggerates the 'x' descent. However, during early diastole, when the tricuspid valve opens, the high external fluid pressure completely prevents the right ventricle from expanding to receive passive venous flow. As a result, right atrial emptying is severely restricted, which blunts or entirely abolished the 'y' descent on the JVP tracing. This distinct pattern—a prominent 'x' descent with an absent 'y' descent—is a key diagnostic feature that distinguishes cardiac tamponade from constrictive pericarditis.`,
+            distractors: [
+                `<strong>Option A is incorrect:</strong> While the 'a' wave may be elevated due to high baseline right atrial pressures, it does not selectively disappear based on postural changes like standing, and a prominent 'a' wave is not the definitive diagnostic feature of tamponade physiology.`,
+                `<strong>Option B is incorrect:</strong> Fused 'a' and 'v' waves (ventricularization) are caused by severe tricuspid regurgitation, where systolic regurgitant volume merges with passive filling. In tamponade, the tricuspid valve is mechanically competent, so there is no retrograde systolic jet to fuse these waveforms.`,
+                `<strong>Option C is incorrect:</strong> A steep, rapid 'y' descent is characteristic of constrictive pericarditis (Friedreich's sign). In tamponade, the 'y' descent is blunted or absent because the high external fluid pressure prevents the right ventricle from expanding during early diastole, preventing rapid passive filling.`,
+                `<strong>Option E is incorrect:</strong> Cannon 'a' waves require atrioventricular dissociation, an electrical rhythm disorder where the atrium contracts against a closed tricuspid valve. Cardiac tamponade is a mechanical compression emergency caused by fluid accumulation, not an electrical block, so it does not produce cannon waves.`,
+            ]
+        },
+        {
+            num: 20,
+            vignette: `A 73-year-old male is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a mid-diastolic, low-pitched rumbling murmur heard best at the apex, which completely lacks any late diastolic or presystolic accentuation. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) Intermittent, highly elevated cannon 'a' waves during phases of ventricular contraction`,
+                `B) A giant, hyper-amplified 'a' wave that tracks synchronously with an irregularly irregular pulse`,
+                `C) A prominent 'c' wave that completely replaces the normal diastolic venous filling phase`,
+                `D) A sharp, steep 'x' descent that terminates in an early diastolic pericardial knock`,
+                `E) Complete and total absence of the 'a' wave along with a flattened or blunted 'x' descent`,
+            ],
+            correct: 4,
+            rationale: `This patient has mitral stenosis complicated by atrial fibrillation, which is common due to chronic left atrial stretch and remodeling. In sinus rhythm, a mitral stenosis murmur features 'presystolic accentuation,' where late atrial contraction forces blood across the stenotic valve, intensifying the murmur just before S1. When atrial fibrillation develops, coordinated atrial contraction is lost, causing the murmur to lose its presystolic accentuation. On the JVP tracing, the 'a' wave is produced by coordinated right atrial contraction. Therefore, the development of atrial fibrillation results in the complete absence of the 'a' wave. Additionally, because the 'x' descent depends partly on organized atrial relaxation following contraction, it becomes blunted or flattened, leaving the JVP tracing dominated by a prominent 'v' wave and an irregular 'y' descent.`,
+            distractors: [
+                `<strong>Option A is incorrect:</strong> Cannon 'a' waves require a forceful, synchronized atrial contraction against a closed tricuspid valve during AV dissociation. In atrial fibrillation, the atria are quivering without any coordinated contraction, making it mechanically impossible to generate a cannon 'a' wave.`,
+                `<strong>Option B is incorrect:</strong> A giant, amplified 'a' wave requires powerful, coordinated atrial contraction against increased resistance (e.g., tricuspid stenosis or RV hypertrophy). In atrial fibrillation, no such coordinated contraction occurs, so an 'a' wave cannot be generated.`,
+                `<strong>Option C is incorrect:</strong> The 'c' wave is a minor deflection caused by the tricuspid valve bulging into the right atrium during early ventricular systole. It does not become amplified or replace the diastolic filling phase due to an atrial arrhythmia.`,
+                `<strong>Option D is incorrect:</strong> A sharp 'x' descent with an early diastolic knock is a classic sign of constrictive pericarditis. This patient's pathology is valvular and electrical, without the rigid pericardial constraint needed to produce a diastolic knock.`,
+            ]
+        },
+        {
+            num: 21,
+            vignette: `A 38-year-old female is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a variable intensity of the first heart sound (S1) from beat to beat on auscultation, accompanied by a severe, bradycardic regular rhythm of 35 beats per minute. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) Intermittent, towering cannon 'a' waves occurring unpredictably within the cardiac cycle`,
+                `B) A permanent, fixed amplification of every single 'v' wave during ventricular ejection`,
+                `C) A profound blunting of both the 'x' and 'y' descents, mimicking a static fluid column`,
+                `D) A paradoxical drop in the height of the jugular venous column during deep expiration`,
+                `E) Complete absence of the 'c' wave with an isolated, towering early diastolic 'y' descent`,
+            ],
+            correct: 0,
+            rationale: `This patient presents with third-degree (complete) atrioventricular (AV) dissociation. In complete heart block, the sinus node depolarizes the atria at a normal rate, while an independent junctional or ventricular escape rhythm drives the ventricles at a much slower, regular rate. Because there is no electrical communication between the two systems, the atria and ventricles contract completely independently. This independent contraction creates two distinct physical exam findings. First, S1 varies in intensity from beat to beat because the distance between the mitral valve leaflets varies depending on when the atrium contracted relative to ventricular systole. Second, whenever the right atrium happens to contract while the tricuspid valve is closed during ventricular systole, the atrial volume is forced against a solid muscular barrier. This drives a massive pressure wave backward into the vena cavae, presenting on the JVP tracing as an intermittent, towering cannon 'a' wave.`,
+            distractors: [
+                `<strong>Option B is incorrect:</strong> A fixed, permanent amplification of every 'v' wave is caused by a structural valvular defect, specifically tricuspid regurgitation. In complete heart block, the tricuspid valve functions normally, so the 'v' wave is unaffected during regular cycles when the valve is open.`,
+                `<strong>Option C is incorrect:</strong> Blunting of both the 'x' and 'y' descents occurs in conditions that restrict fluid movement throughout the entire cardiac cycle, such as severe right ventricular infarction or restrictive cardiomyopathy. Complete heart block does not alter these descents during normal cardiac cycles.`,
+                `<strong>Option D is incorrect:</strong> A drop in JVP during inspiration (and a subsequent rise during expiration) is a normal respiratory finding, not a pathological feature of complete heart block. It does not provide diagnostic insight into AV dissociation.`,
+                `<strong>Option E is incorrect:</strong> The 'c' wave and 'y' descent reflect normal valve closure and early diastolic emptying. They are not selectively altered or isolated in complete heart block, which is primarily characterized by the intermittent appearance of cannon 'a' waves.`,
+            ]
+        },
+        {
+            num: 22,
+            vignette: `A 56-year-old male is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a harsh systolic ejection murmur heard best along the left lower sternal border that intensifies dramatically when the patient performs a Valsalva maneuver. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) A prominent, towering 'a' wave caused by reduced right ventricular compliance from septal hypertrophy`,
+                `B) A giant fused 'v' wave that completely obliterates the normal systolic 'x' descent`,
+                `C) A steep, rapid 'y' descent that terminates in a loud, audible pericardial knock`,
+                `D) A complete absence of the 'a' wave with irregular, chaotic venous pulsations`,
+                `E) An isolated elevation of the 'c' wave that occurs exclusively during the straining phase`,
+            ],
+            correct: 0,
+            rationale: `This clinical scenario describes Hypertrophic Obstructive Cardiomyopathy (HOCM). The classic murmur is a harsh systolic ejection murmur along the left lower sternal border that increases with maneuvers that reduce left ventricular volume, such as the Valsalva maneuver or standing. These maneuvers reduce venous return, causing the hypertrophied interventricular septum and the anterior leaflet of the mitral valve to come into closer contact, worsening the outflow tract obstruction. HOCM is characterized by marked, asymmetric hypertrophy of the interventricular septum. Because the septum forms a shared wall between both ventricles, this massive muscular thickening impinges upon the right ventricular lumen as well, reducing right ventricular compliance and restricting diastolic filling. To overcome this resistance, the right atrium must contract with increased force during late diastole, which produces a prominent, towering 'a' wave on the JVP tracing.`,
+            distractors: [
+                `<strong>Option B is incorrect:</strong> A giant, fused 'v' wave is caused by severe tricuspid regurgitation, where ventricular contraction forces blood backward into the right atrium. HOCM affects ventricular outflow and compliance; it does not typically involve acute tricuspid valve incompetence.`,
+                `<strong>Option C is incorrect:</strong> A steep 'y' descent terminating in a pericardial knock is a classic feature of constrictive pericarditis, a disease of the pericardium. HOCM is an intrinsic myocardial disease that impairs diastolic relaxation without producing a pericardial knock.`,
+                `<strong>Option D is incorrect:</strong> The complete absence of the 'a' wave occurs in atrial fibrillation, where organized atrial contraction is lost. While patients with HOCM are at increased risk for atrial fibrillation due to chronic left atrial stretch, the vignette describes a classic presentation in sinus rhythm, meaning the 'a' wave is prominent rather than absent.`,
+                `<strong>Option E is incorrect:</strong> The 'c' wave represents the minor pressure transient from tricuspid valve closure. It does not undergo isolated elevation or serve as a diagnostic marker for the ventricular septal hypertrophy characteristic of HOCM.`,
+            ]
+        },
+        {
+            num: 23,
+            vignette: `A 67-year-old female is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a loud, harsh holosystolic murmur heard best at the left lower sternal border, accompanied by a prominent, palpable thrill and signs of fluid overload. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) A baseline low JVP column with an isolated, deep 'x' descent during diastole`,
+                `B) An elevated overall JVP column with prominent 'v' waves reflecting right-sided volume overload`,
+                `C) Intermittent cannon 'a' waves that correlate with irregular peripheral pulses`,
+                `D) A complete loss of both the 'a' and 'c' waves with a highly prolonged 'y' descent`,
+                `E) A paradoxical drop in the height of the neck veins when the patient breathes in deeply`,
+            ],
+            correct: 1,
+            rationale: `This patient presents with a large Ventricular Septal Defect (VSD), which causes a high-velocity, left-to-right shunt during ventricular systole, producing a loud, harsh holosystolic murmur along the left lower sternal border with a palpable thrill. In a large, uncorrected VSD, the substantial left-to-right shunt exposes the pulmonary vasculature to chronic volume and pressure overload, leading to pulmonary hypertension. This increased afterload causes right ventricular hypertrophy and, eventually, right-sided heart failure. As the right ventricle fails, blood backs up into the right atrium and venous system, elevating the overall baseline JVP. During ventricular systole, the elevated right-sided volumes and secondary tricuspid regurgitation lead to increased right atrial filling, which manifests on the JVP tracing as a prominent, amplified 'v' wave.`,
+            distractors: [
+                `<strong>Option A is incorrect:</strong> A large VSD with right heart failure causes a high, distended venous column due to fluid retention and backup, not a low JVP column, and the 'x' descent is typically blunted rather than deep.`,
+                `<strong>Option C is incorrect:</strong> Cannon 'a' waves are caused by atrioventricular dissociation, an electrical conduction block. A VSD is a structural congenital defect that does not inherently cause independent atrial and ventricular rhythms.`,
+                `<strong>Option D is incorrect:</strong> The 'a' wave represents right atrial contraction, which remains fully intact as long as the patient is in sinus rhythm. A VSD does not cause a loss of the 'a' and 'c' waves.`,
+                `<strong>Option E is incorrect:</strong> A drop in JVP during inspiration is a normal physiological finding due to decreased intrathoracic pressure. A paradoxical rise (Kussmaul's sign) occurs in compliance conditions, but a normal respiratory drop is not a primary diagnostic indicator for a structural left-to-right shunt.`,
+            ]
+        },
+        {
+            num: 24,
+            vignette: `A 29-year-old male is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a low-pitched, rumbling mid-diastolic murmur heard best at the apex with the patient in the left lateral decubitus position, preceded by a high-pitched, sharp opening snap. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) A prominent, towering 'a' wave due to adaptive right ventricular hypertrophy and pressure overload`,
+                `B) A completely flattened 'a' wave combined with an isolated, giant systolic 'v' wave`,
+                `C) An exceptionally sharp, rapid 'y' descent that terminates abruptly with an early diastolic knock`,
+                `D) A selective prolongation of the 'c' wave due to delayed transmission of left-sided pressures`,
+                `E) Intermittent, highly erratic cannon 'a' waves occurring predominantly during inspiration`,
+            ],
+            correct: 0,
+            rationale: `This clinical image describes severe rheumatic Mitral Stenosis (MS). The stenosis restricts left ventricular inflow, elevating left atrial pressures and causing retrograde congestion through the pulmonary vasculature. Over time, this chronic pulmonary venous congestion leads to reactive pulmonary arterial hypertension and severe right ventricular pressure overload. The right ventricle responds by undergoing concentric hypertrophy, which severely limits its diastolic compliance. To successfully drive blood into this stiffened, thick-walled right ventricle, the right atrium must contract with extreme force during late diastole. This hyper-forceful atrial kick is directly captured on the JVP tracing as a towering, prominent 'a' wave, indicating elevated right-sided filling pressures secondary to chronic upstream left-sided valvular disease.`,
+            distractors: [
+                `<strong>Option B is incorrect:</strong> A flattened 'a' wave with a giant 'v' wave describes the combined effect of atrial fibrillation and tricuspid regurgitation. While severe mitral stenosis frequently causes left atrial enlargement and subsequent atrial fibrillation, the vignette specifies a classical sinus rhythm profile with an opening snap and a mid-diastolic rumble without defining an irregular rhythm, making an isolated giant 'v' wave incorrect.`,
+                `<strong>Option C is incorrect:</strong> A sharp, rapid 'y' descent terminating in an early diastolic knock is pathognomonic for constrictive pericarditis. In constrictive pericarditis, the rigid pericardial shell limits the total volume of the cardiac silhouette. Early filling occurs rapidly because atrial pressures are high, but it stops abruptly when the expanding wall hits the unyielding pericardium, creating a 'knock'. In mitral stenosis, filling is restricted across the mitral valve, affecting the left heart directly, and the right heart changes are driven by compliance rather than direct external restriction.`,
+                `<strong>Option D is incorrect:</strong> The JVP 'c' wave represents the minor pressure spike caused by the tricuspid valve bulging into the right atrium during early right ventricular contraction. It is completely independent of left-sided valvular mechanics and does not undergo selective prolongation or modification due to mitral valve calcification.`,
+                `<strong>Option E is incorrect:</strong> Cannon 'a' waves are severe, erratic waves produced exclusively during complete atrioventricular (AV) dissociation. This occurs when the right atrium contracts against a fully closed tricuspid valve because the sinus node and the ventricular pacemaker are firing independently. Mitral stenosis creates a fixed mechanical resistance due to compliance changes, which produces a consistent, uniform enlargement of the 'a' wave with every single cardiac cycle, rather than intermittent cannon waves.`,
+            ]
+        },
+        {
+            num: 25,
+            vignette: `A 44-year-old female is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a sharp, high-pitched early diastolic sound, described as a pericardial knock, heard best along the left sternal border, without an associated classic murmur. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) A complete loss of the 'x' descent during the middle phase of ventricular ejection`,
+                `B) An isolated, towering 'v' wave that exceeds the height of the normal arterial pulse`,
+                `C) A paradoxical rise in overall JVP during inspiration coupled with an exceptionally sharp, deep 'y' descent`,
+                `D) Bounding, rhythmic cannon 'a' waves that correlate directly with peripheral pulse deficits`,
+                `E) A complete flattening of all waves and descents, creating a straight-line static venous pressure`,
+            ],
+            correct: 2,
+            rationale: `This patient exhibits the classic clinical presentation of constrictive pericarditis, often caused by prior viral pericarditis, tuberculosis, or cardiac surgery. The rigid, fibrotic, and frequently calcified pericardium acts as a non-yielding shell around the entire heart, fixing the maximum total cardiac volume. This produces two distinct hemodynamic phenomena. First, during inspiration, the normal drop in intrathoracic pressure increases venous return to the right heart. However, because the rigid pericardium prevents the right-sided chambers from expanding outward, the incoming blood cannot be accommodated, causing a paradoxical rise in jugular venous pressure during inspiration, known as Kussmaul's sign. Second, when the tricuspid valve opens in early diastole, the high pressure in the right atrium drives blood into the right ventricle with extreme speed. This rapid filling is abruptly halted when the ventricular wall hits the rigid pericardial boundary, resulting in an exceptionally steep, rapid, and deep 'y' descent on the JVP tracing, known as Friedreich's sign.`,
+            distractors: [
+                `<strong>Option A is incorrect:</strong> The 'x' descent, which represents right atrial relaxation and the downward movement of the tricuspid annulus during ventricular systole, is fully preserved or even exaggerated in constrictive pericarditis. The rigid pericardium does not impair systolic downward translation of the cardiac floor, meaning the 'x' descent remains highly prominent.`,
+                `<strong>Option B is incorrect:</strong> A towering, isolated 'v' wave is caused by systolic regurgitation of blood into the right atrium, which is characteristic of tricuspid regurgitation. Constrictive pericarditis is a disease of diastolic filling restriction affecting all four chambers equally; it does not involve an incompetent valvular apparatus that would drive a systolic regurgitant pressure spike.`,
+                `<strong>Option D is incorrect:</strong> Cannon 'a' waves are caused by an electrical dysrhythmia resulting in atrioventricular dissociation. In constrictive pericarditis, the mechanical and structural constraints of the pericardium do not cause independent atrial and ventricular rhythms, meaning there are no regular or irregular cannon waves.`,
+                `<strong>Option E is incorrect:</strong> The JVP tracing in constrictive pericarditis is highly dynamic and exaggerated, featuring prominent 'M' or 'W' wave shapes due to the sharp 'x' and 'y' descents. It is never flat or static, as the rapid pressure shifts within the restricted cardiac chambers are directly transmitted up the venous system.`,
+            ]
+        },
+        {
+            num: 26,
+            vignette: `A 51-year-old male is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a markedly distant, muffled heart sounds along with an impalpable apex beat, hypotension, and a clear chest on auscultation. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) A towering, prominent 'a' wave that disappears completely when the patient stands`,
+                `B) Fused, giant 'a' and 'v' waves creating a single massive systolic wave`,
+                `C) A steep, rapid, and exaggerated 'y' descent that dominates the entire tracking cycle`,
+                `D) A prominent, deep 'x' descent accompanied by a severely blunted or entirely abolished 'y' descent`,
+                `E) Regular, rhythmic cannon 'a' waves that occur precisely during ventricular diastole`,
+            ],
+            correct: 3,
+            rationale: `This clinical picture represents cardiac tamponade, defined by Beck's triad: hypotension, muffled heart sounds, and jugular venous distension. In tamponade, fluid accumulates within the pericardial space under high pressure, compressing all four cardiac chambers throughout the entire cardiac cycle. This high external pressure severely disrupts normal hemodynamics. During ventricular systole, as blood is ejected from the heart, the total cardiac volume briefly decreases. This drop in volume reduces the external pressure within the pericardial space, allowing the right atrium to relax and its floor to move downward normally. This preserves or exaggerates the 'x' descent. However, during early diastole, when the tricuspid valve opens, the high external fluid pressure completely prevents the right ventricle from expanding to receive passive venous flow. As a result, right atrial emptying is severely restricted, which blunts or entirely abolished the 'y' descent on the JVP tracing. This distinct pattern—a prominent 'x' descent with an absent 'y' descent—is a key diagnostic feature that distinguishes cardiac tamponade from constrictive pericarditis.`,
+            distractors: [
+                `<strong>Option A is incorrect:</strong> While the 'a' wave may be elevated due to high baseline right atrial pressures, it does not selectively disappear based on postural changes like standing, and a prominent 'a' wave is not the definitive diagnostic feature of tamponade physiology.`,
+                `<strong>Option B is incorrect:</strong> Fused 'a' and 'v' waves (ventricularization) are caused by severe tricuspid regurgitation, where systolic regurgitant volume merges with passive filling. In tamponade, the tricuspid valve is mechanically competent, so there is no retrograde systolic jet to fuse these waveforms.`,
+                `<strong>Option C is incorrect:</strong> A steep, rapid 'y' descent is characteristic of constrictive pericarditis (Friedreich's sign). In tamponade, the 'y' descent is blunted or absent because the high external fluid pressure prevents the right ventricle from expanding during early diastole, preventing rapid passive filling.`,
+                `<strong>Option E is incorrect:</strong> Cannon 'a' waves require atrioventricular dissociation, an electrical rhythm disorder where the atrium contracts against a closed tricuspid valve. Cardiac tamponade is a mechanical compression emergency caused by fluid accumulation, not an electrical block, so it does not produce cannon waves.`,
+            ]
+        },
+        {
+            num: 27,
+            vignette: `A 62-year-old female is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a mid-diastolic, low-pitched rumbling murmur heard best at the apex, which completely lacks any late diastolic or presystolic accentuation. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) Intermittent, highly elevated cannon 'a' waves during phases of ventricular contraction`,
+                `B) A giant, hyper-amplified 'a' wave that tracks synchronously with an irregularly irregular pulse`,
+                `C) A prominent 'c' wave that completely replaces the normal diastolic venous filling phase`,
+                `D) A sharp, steep 'x' descent that terminates in an early diastolic pericardial knock`,
+                `E) Complete and total absence of the 'a' wave along with a flattened or blunted 'x' descent`,
+            ],
+            correct: 4,
+            rationale: `This patient has mitral stenosis complicated by atrial fibrillation, which is common due to chronic left atrial stretch and remodeling. In sinus rhythm, a mitral stenosis murmur features 'presystolic accentuation,' where late atrial contraction forces blood across the stenotic valve, intensifying the murmur just before S1. When atrial fibrillation develops, coordinated atrial contraction is lost, causing the murmur to lose its presystolic accentuation. On the JVP tracing, the 'a' wave is produced by coordinated right atrial contraction. Therefore, the development of atrial fibrillation results in the complete absence of the 'a' wave. Additionally, because the 'x' descent depends partly on organized atrial relaxation following contraction, it becomes blunted or flattened, leaving the JVP tracing dominated by a prominent 'v' wave and an irregular 'y' descent.`,
+            distractors: [
+                `<strong>Option A is incorrect:</strong> Cannon 'a' waves require a forceful, synchronized atrial contraction against a closed tricuspid valve during AV dissociation. In atrial fibrillation, the atria are quivering without any coordinated contraction, making it mechanically impossible to generate a cannon 'a' wave.`,
+                `<strong>Option B is incorrect:</strong> A giant, amplified 'a' wave requires powerful, coordinated atrial contraction against increased resistance (e.g., tricuspid stenosis or RV hypertrophy). In atrial fibrillation, no such coordinated contraction occurs, so an 'a' wave cannot be generated.`,
+                `<strong>Option C is incorrect:</strong> The 'c' wave is a minor deflection caused by the tricuspid valve bulging into the right atrium during early ventricular systole. It does not become amplified or replace the diastolic filling phase due to an atrial arrhythmia.`,
+                `<strong>Option D is incorrect:</strong> A sharp 'x' descent with an early diastolic knock is a classic sign of constrictive pericarditis. This patient's pathology is valvular and electrical, without the rigid pericardial constraint needed to produce a diastolic knock.`,
+            ]
+        },
+        {
+            num: 28,
+            vignette: `A 73-year-old male is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a variable intensity of the first heart sound (S1) from beat to beat on auscultation, accompanied by a severe, bradycardic regular rhythm of 35 beats per minute. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) Intermittent, towering cannon 'a' waves occurring unpredictably within the cardiac cycle`,
+                `B) A permanent, fixed amplification of every single 'v' wave during ventricular ejection`,
+                `C) A profound blunting of both the 'x' and 'y' descents, mimicking a static fluid column`,
+                `D) A paradoxical drop in the height of the jugular venous column during deep expiration`,
+                `E) Complete absence of the 'c' wave with an isolated, towering early diastolic 'y' descent`,
+            ],
+            correct: 0,
+            rationale: `This patient presents with third-degree (complete) atrioventricular (AV) dissociation. In complete heart block, the sinus node depolarizes the atria at a normal rate, while an independent junctional or ventricular escape rhythm drives the ventricles at a much slower, regular rate. Because there is no electrical communication between the two systems, the atria and ventricles contract completely independently. This independent contraction creates two distinct physical exam findings. First, S1 varies in intensity from beat to beat because the distance between the mitral valve leaflets varies depending on when the atrium contracted relative to ventricular systole. Second, whenever the right atrium happens to contract while the tricuspid valve is closed during ventricular systole, the atrial volume is forced against a solid muscular barrier. This drives a massive pressure wave backward into the vena cavae, presenting on the JVP tracing as an intermittent, towering cannon 'a' wave.`,
+            distractors: [
+                `<strong>Option B is incorrect:</strong> A fixed, permanent amplification of every 'v' wave is caused by a structural valvular defect, specifically tricuspid regurgitation. In complete heart block, the tricuspid valve functions normally, so the 'v' wave is unaffected during regular cycles when the valve is open.`,
+                `<strong>Option C is incorrect:</strong> Blunting of both the 'x' and 'y' descents occurs in conditions that restrict fluid movement throughout the entire cardiac cycle, such as severe right ventricular infarction or restrictive cardiomyopathy. Complete heart block does not alter these descents during normal cardiac cycles.`,
+                `<strong>Option D is incorrect:</strong> A drop in JVP during inspiration (and a subsequent rise during expiration) is a normal respiratory finding, not a pathological feature of complete heart block. It does not provide diagnostic insight into AV dissociation.`,
+                `<strong>Option E is incorrect:</strong> The 'c' wave and 'y' descent reflect normal valve closure and early diastolic emptying. They are not selectively altered or isolated in complete heart block, which is primarily characterized by the intermittent appearance of cannon 'a' waves.`,
+            ]
+        },
+        {
+            num: 29,
+            vignette: `A 38-year-old female is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a harsh systolic ejection murmur heard best along the left lower sternal border that intensifies dramatically when the patient performs a Valsalva maneuver. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) A prominent, towering 'a' wave caused by reduced right ventricular compliance from septal hypertrophy`,
+                `B) A giant fused 'v' wave that completely obliterates the normal systolic 'x' descent`,
+                `C) A steep, rapid 'y' descent that terminates in a loud, audible pericardial knock`,
+                `D) A complete absence of the 'a' wave with irregular, chaotic venous pulsations`,
+                `E) An isolated elevation of the 'c' wave that occurs exclusively during the straining phase`,
+            ],
+            correct: 0,
+            rationale: `This clinical scenario describes Hypertrophic Obstructive Cardiomyopathy (HOCM). The classic murmur is a harsh systolic ejection murmur along the left lower sternal border that increases with maneuvers that reduce left ventricular volume, such as the Valsalva maneuver or standing. These maneuvers reduce venous return, causing the hypertrophied interventricular septum and the anterior leaflet of the mitral valve to come into closer contact, worsening the outflow tract obstruction. HOCM is characterized by marked, asymmetric hypertrophy of the interventricular septum. Because the septum forms a shared wall between both ventricles, this massive muscular thickening impinges upon the right ventricular lumen as well, reducing right ventricular compliance and restricting diastolic filling. To overcome this resistance, the right atrium must contract with increased force during late diastole, which produces a prominent, towering 'a' wave on the JVP tracing.`,
+            distractors: [
+                `<strong>Option B is incorrect:</strong> A giant, fused 'v' wave is caused by severe tricuspid regurgitation, where ventricular contraction forces blood backward into the right atrium. HOCM affects ventricular outflow and compliance; it does not typically involve acute tricuspid valve incompetence.`,
+                `<strong>Option C is incorrect:</strong> A steep 'y' descent terminating in a pericardial knock is a classic feature of constrictive pericarditis, a disease of the pericardium. HOCM is an intrinsic myocardial disease that impairs diastolic relaxation without producing a pericardial knock.`,
+                `<strong>Option D is incorrect:</strong> The complete absence of the 'a' wave occurs in atrial fibrillation, where organized atrial contraction is lost. While patients with HOCM are at increased risk for atrial fibrillation due to chronic left atrial stretch, the vignette describes a classic presentation in sinus rhythm, meaning the 'a' wave is prominent rather than absent.`,
+                `<strong>Option E is incorrect:</strong> The 'c' wave represents the minor pressure transient from tricuspid valve closure. It does not undergo isolated elevation or serve as a diagnostic marker for the ventricular septal hypertrophy characteristic of HOCM.`,
+            ]
+        },
+        {
+            num: 30,
+            vignette: `A 56-year-old male is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a loud, harsh holosystolic murmur heard best at the left lower sternal border, accompanied by a prominent, palpable thrill and signs of fluid overload. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) A baseline low JVP column with an isolated, deep 'x' descent during diastole`,
+                `B) An elevated overall JVP column with prominent 'v' waves reflecting right-sided volume overload`,
+                `C) Intermittent cannon 'a' waves that correlate with irregular peripheral pulses`,
+                `D) A complete loss of both the 'a' and 'c' waves with a highly prolonged 'y' descent`,
+                `E) A paradoxical drop in the height of the neck veins when the patient breathes in deeply`,
+            ],
+            correct: 1,
+            rationale: `This patient presents with a large Ventricular Septal Defect (VSD), which causes a high-velocity, left-to-right shunt during ventricular systole, producing a loud, harsh holosystolic murmur along the left lower sternal border with a palpable thrill. In a large, uncorrected VSD, the substantial left-to-right shunt exposes the pulmonary vasculature to chronic volume and pressure overload, leading to pulmonary hypertension. This increased afterload causes right ventricular hypertrophy and, eventually, right-sided heart failure. As the right ventricle fails, blood backs up into the right atrium and venous system, elevating the overall baseline JVP. During ventricular systole, the elevated right-sided volumes and secondary tricuspid regurgitation lead to increased right atrial filling, which manifests on the JVP tracing as a prominent, amplified 'v' wave.`,
+            distractors: [
+                `<strong>Option A is incorrect:</strong> A large VSD with right heart failure causes a high, distended venous column due to fluid retention and backup, not a low JVP column, and the 'x' descent is typically blunted rather than deep.`,
+                `<strong>Option C is incorrect:</strong> Cannon 'a' waves are caused by atrioventricular dissociation, an electrical conduction block. A VSD is a structural congenital defect that does not inherently cause independent atrial and ventricular rhythms.`,
+                `<strong>Option D is incorrect:</strong> The 'a' wave represents right atrial contraction, which remains fully intact as long as the patient is in sinus rhythm. A VSD does not cause a loss of the 'a' and 'c' waves.`,
+                `<strong>Option E is incorrect:</strong> A drop in JVP during inspiration is a normal physiological finding due to decreased intrathoracic pressure. A paradoxical rise (Kussmaul's sign) occurs in compliance conditions, but a normal respiratory drop is not a primary diagnostic indicator for a structural left-to-right shunt.`,
+            ]
+        },
+        {
+            num: 31,
+            vignette: `A 67-year-old female is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a low-pitched, rumbling mid-diastolic murmur heard best at the apex with the patient in the left lateral decubitus position, preceded by a high-pitched, sharp opening snap. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) A prominent, towering 'a' wave due to adaptive right ventricular hypertrophy and pressure overload`,
+                `B) A completely flattened 'a' wave combined with an isolated, giant systolic 'v' wave`,
+                `C) An exceptionally sharp, rapid 'y' descent that terminates abruptly with an early diastolic knock`,
+                `D) A selective prolongation of the 'c' wave due to delayed transmission of left-sided pressures`,
+                `E) Intermittent, highly erratic cannon 'a' waves occurring predominantly during inspiration`,
+            ],
+            correct: 0,
+            rationale: `This clinical image describes severe rheumatic Mitral Stenosis (MS). The stenosis restricts left ventricular inflow, elevating left atrial pressures and causing retrograde congestion through the pulmonary vasculature. Over time, this chronic pulmonary venous congestion leads to reactive pulmonary arterial hypertension and severe right ventricular pressure overload. The right ventricle responds by undergoing concentric hypertrophy, which severely limits its diastolic compliance. To successfully drive blood into this stiffened, thick-walled right ventricle, the right atrium must contract with extreme force during late diastole. This hyper-forceful atrial kick is directly captured on the JVP tracing as a towering, prominent 'a' wave, indicating elevated right-sided filling pressures secondary to chronic upstream left-sided valvular disease.`,
+            distractors: [
+                `<strong>Option B is incorrect:</strong> A flattened 'a' wave with a giant 'v' wave describes the combined effect of atrial fibrillation and tricuspid regurgitation. While severe mitral stenosis frequently causes left atrial enlargement and subsequent atrial fibrillation, the vignette specifies a classical sinus rhythm profile with an opening snap and a mid-diastolic rumble without defining an irregular rhythm, making an isolated giant 'v' wave incorrect.`,
+                `<strong>Option C is incorrect:</strong> A sharp, rapid 'y' descent terminating in an early diastolic knock is pathognomonic for constrictive pericarditis. In constrictive pericarditis, the rigid pericardial shell limits the total volume of the cardiac silhouette. Early filling occurs rapidly because atrial pressures are high, but it stops abruptly when the expanding wall hits the unyielding pericardium, creating a 'knock'. In mitral stenosis, filling is restricted across the mitral valve, affecting the left heart directly, and the right heart changes are driven by compliance rather than direct external restriction.`,
+                `<strong>Option D is incorrect:</strong> The JVP 'c' wave represents the minor pressure spike caused by the tricuspid valve bulging into the right atrium during early right ventricular contraction. It is completely independent of left-sided valvular mechanics and does not undergo selective prolongation or modification due to mitral valve calcification.`,
+                `<strong>Option E is incorrect:</strong> Cannon 'a' waves are severe, erratic waves produced exclusively during complete atrioventricular (AV) dissociation. This occurs when the right atrium contracts against a fully closed tricuspid valve because the sinus node and the ventricular pacemaker are firing independently. Mitral stenosis creates a fixed mechanical resistance due to compliance changes, which produces a consistent, uniform enlargement of the 'a' wave with every single cardiac cycle, rather than intermittent cannon waves.`,
+            ]
+        },
+        {
+            num: 32,
+            vignette: `A 29-year-old male is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a sharp, high-pitched early diastolic sound, described as a pericardial knock, heard best along the left sternal border, without an associated classic murmur. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) A complete loss of the 'x' descent during the middle phase of ventricular ejection`,
+                `B) An isolated, towering 'v' wave that exceeds the height of the normal arterial pulse`,
+                `C) A paradoxical rise in overall JVP during inspiration coupled with an exceptionally sharp, deep 'y' descent`,
+                `D) Bounding, rhythmic cannon 'a' waves that correlate directly with peripheral pulse deficits`,
+                `E) A complete flattening of all waves and descents, creating a straight-line static venous pressure`,
+            ],
+            correct: 2,
+            rationale: `This patient exhibits the classic clinical presentation of constrictive pericarditis, often caused by prior viral pericarditis, tuberculosis, or cardiac surgery. The rigid, fibrotic, and frequently calcified pericardium acts as a non-yielding shell around the entire heart, fixing the maximum total cardiac volume. This produces two distinct hemodynamic phenomena. First, during inspiration, the normal drop in intrathoracic pressure increases venous return to the right heart. However, because the rigid pericardium prevents the right-sided chambers from expanding outward, the incoming blood cannot be accommodated, causing a paradoxical rise in jugular venous pressure during inspiration, known as Kussmaul's sign. Second, when the tricuspid valve opens in early diastole, the high pressure in the right atrium drives blood into the right ventricle with extreme speed. This rapid filling is abruptly halted when the ventricular wall hits the rigid pericardial boundary, resulting in an exceptionally steep, rapid, and deep 'y' descent on the JVP tracing, known as Friedreich's sign.`,
+            distractors: [
+                `<strong>Option A is incorrect:</strong> The 'x' descent, which represents right atrial relaxation and the downward movement of the tricuspid annulus during ventricular systole, is fully preserved or even exaggerated in constrictive pericarditis. The rigid pericardium does not impair systolic downward translation of the cardiac floor, meaning the 'x' descent remains highly prominent.`,
+                `<strong>Option B is incorrect:</strong> A towering, isolated 'v' wave is caused by systolic regurgitation of blood into the right atrium, which is characteristic of tricuspid regurgitation. Constrictive pericarditis is a disease of diastolic filling restriction affecting all four chambers equally; it does not involve an incompetent valvular apparatus that would drive a systolic regurgitant pressure spike.`,
+                `<strong>Option D is incorrect:</strong> Cannon 'a' waves are caused by an electrical dysrhythmia resulting in atrioventricular dissociation. In constrictive pericarditis, the mechanical and structural constraints of the pericardium do not cause independent atrial and ventricular rhythms, meaning there are no regular or irregular cannon waves.`,
+                `<strong>Option E is incorrect:</strong> The JVP tracing in constrictive pericarditis is highly dynamic and exaggerated, featuring prominent 'M' or 'W' wave shapes due to the sharp 'x' and 'y' descents. It is never flat or static, as the rapid pressure shifts within the restricted cardiac chambers are directly transmitted up the venous system.`,
+            ]
+        },
+        {
+            num: 33,
+            vignette: `A 44-year-old female is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a markedly distant, muffled heart sounds along with an impalpable apex beat, hypotension, and a clear chest on auscultation. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) A towering, prominent 'a' wave that disappears completely when the patient stands`,
+                `B) Fused, giant 'a' and 'v' waves creating a single massive systolic wave`,
+                `C) A steep, rapid, and exaggerated 'y' descent that dominates the entire tracking cycle`,
+                `D) A prominent, deep 'x' descent accompanied by a severely blunted or entirely abolished 'y' descent`,
+                `E) Regular, rhythmic cannon 'a' waves that occur precisely during ventricular diastole`,
+            ],
+            correct: 3,
+            rationale: `This clinical picture represents cardiac tamponade, defined by Beck's triad: hypotension, muffled heart sounds, and jugular venous distension. In tamponade, fluid accumulates within the pericardial space under high pressure, compressing all four cardiac chambers throughout the entire cardiac cycle. This high external pressure severely disrupts normal hemodynamics. During ventricular systole, as blood is ejected from the heart, the total cardiac volume briefly decreases. This drop in volume reduces the external pressure within the pericardial space, allowing the right atrium to relax and its floor to move downward normally. This preserves or exaggerates the 'x' descent. However, during early diastole, when the tricuspid valve opens, the high external fluid pressure completely prevents the right ventricle from expanding to receive passive venous flow. As a result, right atrial emptying is severely restricted, which blunts or entirely abolished the 'y' descent on the JVP tracing. This distinct pattern—a prominent 'x' descent with an absent 'y' descent—is a key diagnostic feature that distinguishes cardiac tamponade from constrictive pericarditis.`,
+            distractors: [
+                `<strong>Option A is incorrect:</strong> While the 'a' wave may be elevated due to high baseline right atrial pressures, it does not selectively disappear based on postural changes like standing, and a prominent 'a' wave is not the definitive diagnostic feature of tamponade physiology.`,
+                `<strong>Option B is incorrect:</strong> Fused 'a' and 'v' waves (ventricularization) are caused by severe tricuspid regurgitation, where systolic regurgitant volume merges with passive filling. In tamponade, the tricuspid valve is mechanically competent, so there is no retrograde systolic jet to fuse these waveforms.`,
+                `<strong>Option C is incorrect:</strong> A steep, rapid 'y' descent is characteristic of constrictive pericarditis (Friedreich's sign). In tamponade, the 'y' descent is blunted or absent because the high external fluid pressure prevents the right ventricle from expanding during early diastole, preventing rapid passive filling.`,
+                `<strong>Option E is incorrect:</strong> Cannon 'a' waves require atrioventricular dissociation, an electrical rhythm disorder where the atrium contracts against a closed tricuspid valve. Cardiac tamponade is a mechanical compression emergency caused by fluid accumulation, not an electrical block, so it does not produce cannon waves.`,
+            ]
+        },
+        {
+            num: 34,
+            vignette: `A 51-year-old male is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a mid-diastolic, low-pitched rumbling murmur heard best at the apex, which completely lacks any late diastolic or presystolic accentuation. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) Intermittent, highly elevated cannon 'a' waves during phases of ventricular contraction`,
+                `B) A giant, hyper-amplified 'a' wave that tracks synchronously with an irregularly irregular pulse`,
+                `C) A prominent 'c' wave that completely replaces the normal diastolic venous filling phase`,
+                `D) A sharp, steep 'x' descent that terminates in an early diastolic pericardial knock`,
+                `E) Complete and total absence of the 'a' wave along with a flattened or blunted 'x' descent`,
+            ],
+            correct: 4,
+            rationale: `This patient has mitral stenosis complicated by atrial fibrillation, which is common due to chronic left atrial stretch and remodeling. In sinus rhythm, a mitral stenosis murmur features 'presystolic accentuation,' where late atrial contraction forces blood across the stenotic valve, intensifying the murmur just before S1. When atrial fibrillation develops, coordinated atrial contraction is lost, causing the murmur to lose its presystolic accentuation. On the JVP tracing, the 'a' wave is produced by coordinated right atrial contraction. Therefore, the development of atrial fibrillation results in the complete absence of the 'a' wave. Additionally, because the 'x' descent depends partly on organized atrial relaxation following contraction, it becomes blunted or flattened, leaving the JVP tracing dominated by a prominent 'v' wave and an irregular 'y' descent.`,
+            distractors: [
+                `<strong>Option A is incorrect:</strong> Cannon 'a' waves require a forceful, synchronized atrial contraction against a closed tricuspid valve during AV dissociation. In atrial fibrillation, the atria are quivering without any coordinated contraction, making it mechanically impossible to generate a cannon 'a' wave.`,
+                `<strong>Option B is incorrect:</strong> A giant, amplified 'a' wave requires powerful, coordinated atrial contraction against increased resistance (e.g., tricuspid stenosis or RV hypertrophy). In atrial fibrillation, no such coordinated contraction occurs, so an 'a' wave cannot be generated.`,
+                `<strong>Option C is incorrect:</strong> The 'c' wave is a minor deflection caused by the tricuspid valve bulging into the right atrium during early ventricular systole. It does not become amplified or replace the diastolic filling phase due to an atrial arrhythmia.`,
+                `<strong>Option D is incorrect:</strong> A sharp 'x' descent with an early diastolic knock is a classic sign of constrictive pericarditis. This patient's pathology is valvular and electrical, without the rigid pericardial constraint needed to produce a diastolic knock.`,
+            ]
+        },
+        {
+            num: 35,
+            vignette: `A 62-year-old female is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a variable intensity of the first heart sound (S1) from beat to beat on auscultation, accompanied by a severe, bradycardic regular rhythm of 35 beats per minute. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) Intermittent, towering cannon 'a' waves occurring unpredictably within the cardiac cycle`,
+                `B) A permanent, fixed amplification of every single 'v' wave during ventricular ejection`,
+                `C) A profound blunting of both the 'x' and 'y' descents, mimicking a static fluid column`,
+                `D) A paradoxical drop in the height of the jugular venous column during deep expiration`,
+                `E) Complete absence of the 'c' wave with an isolated, towering early diastolic 'y' descent`,
+            ],
+            correct: 0,
+            rationale: `This patient presents with third-degree (complete) atrioventricular (AV) dissociation. In complete heart block, the sinus node depolarizes the atria at a normal rate, while an independent junctional or ventricular escape rhythm drives the ventricles at a much slower, regular rate. Because there is no electrical communication between the two systems, the atria and ventricles contract completely independently. This independent contraction creates two distinct physical exam findings. First, S1 varies in intensity from beat to beat because the distance between the mitral valve leaflets varies depending on when the atrium contracted relative to ventricular systole. Second, whenever the right atrium happens to contract while the tricuspid valve is closed during ventricular systole, the atrial volume is forced against a solid muscular barrier. This drives a massive pressure wave backward into the vena cavae, presenting on the JVP tracing as an intermittent, towering cannon 'a' wave.`,
+            distractors: [
+                `<strong>Option B is incorrect:</strong> A fixed, permanent amplification of every 'v' wave is caused by a structural valvular defect, specifically tricuspid regurgitation. In complete heart block, the tricuspid valve functions normally, so the 'v' wave is unaffected during regular cycles when the valve is open.`,
+                `<strong>Option C is incorrect:</strong> Blunting of both the 'x' and 'y' descents occurs in conditions that restrict fluid movement throughout the entire cardiac cycle, such as severe right ventricular infarction or restrictive cardiomyopathy. Complete heart block does not alter these descents during normal cardiac cycles.`,
+                `<strong>Option D is incorrect:</strong> A drop in JVP during inspiration (and a subsequent rise during expiration) is a normal respiratory finding, not a pathological feature of complete heart block. It does not provide diagnostic insight into AV dissociation.`,
+                `<strong>Option E is incorrect:</strong> The 'c' wave and 'y' descent reflect normal valve closure and early diastolic emptying. They are not selectively altered or isolated in complete heart block, which is primarily characterized by the intermittent appearance of cannon 'a' waves.`,
+            ]
+        },
+        {
+            num: 36,
+            vignette: `A 73-year-old male is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a harsh systolic ejection murmur heard best along the left lower sternal border that intensifies dramatically when the patient performs a Valsalva maneuver. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) A prominent, towering 'a' wave caused by reduced right ventricular compliance from septal hypertrophy`,
+                `B) A giant fused 'v' wave that completely obliterates the normal systolic 'x' descent`,
+                `C) A steep, rapid 'y' descent that terminates in a loud, audible pericardial knock`,
+                `D) A complete absence of the 'a' wave with irregular, chaotic venous pulsations`,
+                `E) An isolated elevation of the 'c' wave that occurs exclusively during the straining phase`,
+            ],
+            correct: 0,
+            rationale: `This clinical scenario describes Hypertrophic Obstructive Cardiomyopathy (HOCM). The classic murmur is a harsh systolic ejection murmur along the left lower sternal border that increases with maneuvers that reduce left ventricular volume, such as the Valsalva maneuver or standing. These maneuvers reduce venous return, causing the hypertrophied interventricular septum and the anterior leaflet of the mitral valve to come into closer contact, worsening the outflow tract obstruction. HOCM is characterized by marked, asymmetric hypertrophy of the interventricular septum. Because the septum forms a shared wall between both ventricles, this massive muscular thickening impinges upon the right ventricular lumen as well, reducing right ventricular compliance and restricting diastolic filling. To overcome this resistance, the right atrium must contract with increased force during late diastole, which produces a prominent, towering 'a' wave on the JVP tracing.`,
+            distractors: [
+                `<strong>Option B is incorrect:</strong> A giant, fused 'v' wave is caused by severe tricuspid regurgitation, where ventricular contraction forces blood backward into the right atrium. HOCM affects ventricular outflow and compliance; it does not typically involve acute tricuspid valve incompetence.`,
+                `<strong>Option C is incorrect:</strong> A steep 'y' descent terminating in a pericardial knock is a classic feature of constrictive pericarditis, a disease of the pericardium. HOCM is an intrinsic myocardial disease that impairs diastolic relaxation without producing a pericardial knock.`,
+                `<strong>Option D is incorrect:</strong> The complete absence of the 'a' wave occurs in atrial fibrillation, where organized atrial contraction is lost. While patients with HOCM are at increased risk for atrial fibrillation due to chronic left atrial stretch, the vignette describes a classic presentation in sinus rhythm, meaning the 'a' wave is prominent rather than absent.`,
+                `<strong>Option E is incorrect:</strong> The 'c' wave represents the minor pressure transient from tricuspid valve closure. It does not undergo isolated elevation or serve as a diagnostic marker for the ventricular septal hypertrophy characteristic of HOCM.`,
+            ]
+        },
+        {
+            num: 37,
+            vignette: `A 38-year-old female is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a loud, harsh holosystolic murmur heard best at the left lower sternal border, accompanied by a prominent, palpable thrill and signs of fluid overload. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) A baseline low JVP column with an isolated, deep 'x' descent during diastole`,
+                `B) An elevated overall JVP column with prominent 'v' waves reflecting right-sided volume overload`,
+                `C) Intermittent cannon 'a' waves that correlate with irregular peripheral pulses`,
+                `D) A complete loss of both the 'a' and 'c' waves with a highly prolonged 'y' descent`,
+                `E) A paradoxical drop in the height of the neck veins when the patient breathes in deeply`,
+            ],
+            correct: 1,
+            rationale: `This patient presents with a large Ventricular Septal Defect (VSD), which causes a high-velocity, left-to-right shunt during ventricular systole, producing a loud, harsh holosystolic murmur along the left lower sternal border with a palpable thrill. In a large, uncorrected VSD, the substantial left-to-right shunt exposes the pulmonary vasculature to chronic volume and pressure overload, leading to pulmonary hypertension. This increased afterload causes right ventricular hypertrophy and, eventually, right-sided heart failure. As the right ventricle fails, blood backs up into the right atrium and venous system, elevating the overall baseline JVP. During ventricular systole, the elevated right-sided volumes and secondary tricuspid regurgitation lead to increased right atrial filling, which manifests on the JVP tracing as a prominent, amplified 'v' wave.`,
+            distractors: [
+                `<strong>Option A is incorrect:</strong> A large VSD with right heart failure causes a high, distended venous column due to fluid retention and backup, not a low JVP column, and the 'x' descent is typically blunted rather than deep.`,
+                `<strong>Option C is incorrect:</strong> Cannon 'a' waves are caused by atrioventricular dissociation, an electrical conduction block. A VSD is a structural congenital defect that does not inherently cause independent atrial and ventricular rhythms.`,
+                `<strong>Option D is incorrect:</strong> The 'a' wave represents right atrial contraction, which remains fully intact as long as the patient is in sinus rhythm. A VSD does not cause a loss of the 'a' and 'c' waves.`,
+                `<strong>Option E is incorrect:</strong> A drop in JVP during inspiration is a normal physiological finding due to decreased intrathoracic pressure. A paradoxical rise (Kussmaul's sign) occurs in compliance conditions, but a normal respiratory drop is not a primary diagnostic indicator for a structural left-to-right shunt.`,
+            ]
+        },
+        {
+            num: 38,
+            vignette: `A 56-year-old male is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a low-pitched, rumbling mid-diastolic murmur heard best at the apex with the patient in the left lateral decubitus position, preceded by a high-pitched, sharp opening snap. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) A prominent, towering 'a' wave due to adaptive right ventricular hypertrophy and pressure overload`,
+                `B) A completely flattened 'a' wave combined with an isolated, giant systolic 'v' wave`,
+                `C) An exceptionally sharp, rapid 'y' descent that terminates abruptly with an early diastolic knock`,
+                `D) A selective prolongation of the 'c' wave due to delayed transmission of left-sided pressures`,
+                `E) Intermittent, highly erratic cannon 'a' waves occurring predominantly during inspiration`,
+            ],
+            correct: 0,
+            rationale: `This clinical image describes severe rheumatic Mitral Stenosis (MS). The stenosis restricts left ventricular inflow, elevating left atrial pressures and causing retrograde congestion through the pulmonary vasculature. Over time, this chronic pulmonary venous congestion leads to reactive pulmonary arterial hypertension and severe right ventricular pressure overload. The right ventricle responds by undergoing concentric hypertrophy, which severely limits its diastolic compliance. To successfully drive blood into this stiffened, thick-walled right ventricle, the right atrium must contract with extreme force during late diastole. This hyper-forceful atrial kick is directly captured on the JVP tracing as a towering, prominent 'a' wave, indicating elevated right-sided filling pressures secondary to chronic upstream left-sided valvular disease.`,
+            distractors: [
+                `<strong>Option B is incorrect:</strong> A flattened 'a' wave with a giant 'v' wave describes the combined effect of atrial fibrillation and tricuspid regurgitation. While severe mitral stenosis frequently causes left atrial enlargement and subsequent atrial fibrillation, the vignette specifies a classical sinus rhythm profile with an opening snap and a mid-diastolic rumble without defining an irregular rhythm, making an isolated giant 'v' wave incorrect.`,
+                `<strong>Option C is incorrect:</strong> A sharp, rapid 'y' descent terminating in an early diastolic knock is pathognomonic for constrictive pericarditis. In constrictive pericarditis, the rigid pericardial shell limits the total volume of the cardiac silhouette. Early filling occurs rapidly because atrial pressures are high, but it stops abruptly when the expanding wall hits the unyielding pericardium, creating a 'knock'. In mitral stenosis, filling is restricted across the mitral valve, affecting the left heart directly, and the right heart changes are driven by compliance rather than direct external restriction.`,
+                `<strong>Option D is incorrect:</strong> The JVP 'c' wave represents the minor pressure spike caused by the tricuspid valve bulging into the right atrium during early right ventricular contraction. It is completely independent of left-sided valvular mechanics and does not undergo selective prolongation or modification due to mitral valve calcification.`,
+                `<strong>Option E is incorrect:</strong> Cannon 'a' waves are severe, erratic waves produced exclusively during complete atrioventricular (AV) dissociation. This occurs when the right atrium contracts against a fully closed tricuspid valve because the sinus node and the ventricular pacemaker are firing independently. Mitral stenosis creates a fixed mechanical resistance due to compliance changes, which produces a consistent, uniform enlargement of the 'a' wave with every single cardiac cycle, rather than intermittent cannon waves.`,
+            ]
+        },
+        {
+            num: 39,
+            vignette: `A 67-year-old female is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a sharp, high-pitched early diastolic sound, described as a pericardial knock, heard best along the left sternal border, without an associated classic murmur. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) A complete loss of the 'x' descent during the middle phase of ventricular ejection`,
+                `B) An isolated, towering 'v' wave that exceeds the height of the normal arterial pulse`,
+                `C) A paradoxical rise in overall JVP during inspiration coupled with an exceptionally sharp, deep 'y' descent`,
+                `D) Bounding, rhythmic cannon 'a' waves that correlate directly with peripheral pulse deficits`,
+                `E) A complete flattening of all waves and descents, creating a straight-line static venous pressure`,
+            ],
+            correct: 2,
+            rationale: `This patient exhibits the classic clinical presentation of constrictive pericarditis, often caused by prior viral pericarditis, tuberculosis, or cardiac surgery. The rigid, fibrotic, and frequently calcified pericardium acts as a non-yielding shell around the entire heart, fixing the maximum total cardiac volume. This produces two distinct hemodynamic phenomena. First, during inspiration, the normal drop in intrathoracic pressure increases venous return to the right heart. However, because the rigid pericardium prevents the right-sided chambers from expanding outward, the incoming blood cannot be accommodated, causing a paradoxical rise in jugular venous pressure during inspiration, known as Kussmaul's sign. Second, when the tricuspid valve opens in early diastole, the high pressure in the right atrium drives blood into the right ventricle with extreme speed. This rapid filling is abruptly halted when the ventricular wall hits the rigid pericardial boundary, resulting in an exceptionally steep, rapid, and deep 'y' descent on the JVP tracing, known as Friedreich's sign.`,
+            distractors: [
+                `<strong>Option A is incorrect:</strong> The 'x' descent, which represents right atrial relaxation and the downward movement of the tricuspid annulus during ventricular systole, is fully preserved or even exaggerated in constrictive pericarditis. The rigid pericardium does not impair systolic downward translation of the cardiac floor, meaning the 'x' descent remains highly prominent.`,
+                `<strong>Option B is incorrect:</strong> A towering, isolated 'v' wave is caused by systolic regurgitation of blood into the right atrium, which is characteristic of tricuspid regurgitation. Constrictive pericarditis is a disease of diastolic filling restriction affecting all four chambers equally; it does not involve an incompetent valvular apparatus that would drive a systolic regurgitant pressure spike.`,
+                `<strong>Option D is incorrect:</strong> Cannon 'a' waves are caused by an electrical dysrhythmia resulting in atrioventricular dissociation. In constrictive pericarditis, the mechanical and structural constraints of the pericardium do not cause independent atrial and ventricular rhythms, meaning there are no regular or irregular cannon waves.`,
+                `<strong>Option E is incorrect:</strong> The JVP tracing in constrictive pericarditis is highly dynamic and exaggerated, featuring prominent 'M' or 'W' wave shapes due to the sharp 'x' and 'y' descents. It is never flat or static, as the rapid pressure shifts within the restricted cardiac chambers are directly transmitted up the venous system.`,
+            ]
+        },
+        {
+            num: 40,
+            vignette: `A 29-year-old male is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a markedly distant, muffled heart sounds along with an impalpable apex beat, hypotension, and a clear chest on auscultation. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) A towering, prominent 'a' wave that disappears completely when the patient stands`,
+                `B) Fused, giant 'a' and 'v' waves creating a single massive systolic wave`,
+                `C) A steep, rapid, and exaggerated 'y' descent that dominates the entire tracking cycle`,
+                `D) A prominent, deep 'x' descent accompanied by a severely blunted or entirely abolished 'y' descent`,
+                `E) Regular, rhythmic cannon 'a' waves that occur precisely during ventricular diastole`,
+            ],
+            correct: 3,
+            rationale: `This clinical picture represents cardiac tamponade, defined by Beck's triad: hypotension, muffled heart sounds, and jugular venous distension. In tamponade, fluid accumulates within the pericardial space under high pressure, compressing all four cardiac chambers throughout the entire cardiac cycle. This high external pressure severely disrupts normal hemodynamics. During ventricular systole, as blood is ejected from the heart, the total cardiac volume briefly decreases. This drop in volume reduces the external pressure within the pericardial space, allowing the right atrium to relax and its floor to move downward normally. This preserves or exaggerates the 'x' descent. However, during early diastole, when the tricuspid valve opens, the high external fluid pressure completely prevents the right ventricle from expanding to receive passive venous flow. As a result, right atrial emptying is severely restricted, which blunts or entirely abolished the 'y' descent on the JVP tracing. This distinct pattern—a prominent 'x' descent with an absent 'y' descent—is a key diagnostic feature that distinguishes cardiac tamponade from constrictive pericarditis.`,
+            distractors: [
+                `<strong>Option A is incorrect:</strong> While the 'a' wave may be elevated due to high baseline right atrial pressures, it does not selectively disappear based on postural changes like standing, and a prominent 'a' wave is not the definitive diagnostic feature of tamponade physiology.`,
+                `<strong>Option B is incorrect:</strong> Fused 'a' and 'v' waves (ventricularization) are caused by severe tricuspid regurgitation, where systolic regurgitant volume merges with passive filling. In tamponade, the tricuspid valve is mechanically competent, so there is no retrograde systolic jet to fuse these waveforms.`,
+                `<strong>Option C is incorrect:</strong> A steep, rapid 'y' descent is characteristic of constrictive pericarditis (Friedreich's sign). In tamponade, the 'y' descent is blunted or absent because the high external fluid pressure prevents the right ventricle from expanding during early diastole, preventing rapid passive filling.`,
+                `<strong>Option E is incorrect:</strong> Cannon 'a' waves require atrioventricular dissociation, an electrical rhythm disorder where the atrium contracts against a closed tricuspid valve. Cardiac tamponade is a mechanical compression emergency caused by fluid accumulation, not an electrical block, so it does not produce cannon waves.`,
+            ]
+        }
+    ];
+
+    let currentIdx = 0;
+    let selectedIdx = null;
+    let isSubmitted = false;
+    let score = 0;
+    let totalSeconds = 90 * 60;
+    let timerInterval = null;
+
+    // Timer Implementation
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            if (totalSeconds <= 0) {
+                clearInterval(timerInterval);
+                finishQuiz();
+                return;
+            }
+            totalSeconds--;
+            let mins = Math.floor(totalSeconds / 60);
+            let secs = totalSeconds % 60;
+            document.getElementById('time-display').innerText = 
+                String(mins).padStart(2, '0') + ":" + String(secs).padStart(2, '0');
+        }, 1000);
+    }
+
+    // Render current question
+    function renderQuestion() {
+        isSubmitted = false;
+        selectedIdx = null;
+        
+        const q = dataset[currentIdx];
+        document.getElementById('progress-text').innerText = `Question ${q.num} of ${dataset.length}`;
+        document.getElementById('vignette-box').innerText = q.vignette;
+        
+        const oBox = document.getElementById('options-box');
+        oBox.innerHTML = '';
+        
+        q.options.forEach((opt, idx) => {
+            const card = document.createElement('div');
+            card.className = 'option-card';
+            card.id = `opt-${idx}`;
+            card.onclick = () => selectOption(idx);
+            
+            const dot = document.createElement('span');
+            dot.className = 'radio-dot';
+            
+            const label = document.createElement('span');
+            label.innerText = opt;
+            
+            card.appendChild(dot);
+            card.appendChild(label);
+            oBox.appendChild(card);
+        });
+
+        // Hide explanation panel and reset button state
+        document.getElementById('explanation-box').style.display = 'none';
+        const aBtn = document.getElementById('action-btn');
+        aBtn.innerText = "Submit Answer";
+        aBtn.className = "btn btn-primary";
+        aBtn.disabled = true;
+        aBtn.setAttribute("onclick", "submitCurrentAnswer()");
+    }
+
+    function selectOption(idx) {
+        if (isSubmitted) return;
+        
+        selectedIdx = idx;
+        document.getElementById('action-btn').disabled = false;
+        
+        // Clear previous selection states
+        dataset[currentIdx].options.forEach((_, i) => {
+            document.getElementById(`opt-${i}`).classList.remove('selected');
+        });
+        
+        // Set selected state
+        document.getElementById(`opt-${idx}`).classList.add('selected');
+    }
+
+    function submitCurrentAnswer() {
+        if (selectedIdx === null || isSubmitted) return;
+        isSubmitted = true;
+        
+        const q = dataset[currentIdx];
+        
+        // Grade matching logic
+        if (selectedIdx === q.correct) {
+            score++;
+            document.getElementById(`opt-${selectedIdx}`).classList.add('correct-highlight');
+        } else {
+            document.getElementById(`opt-${selectedIdx}`).classList.add('wrong-highlight');
+            document.getElementById(`opt-${q.correct}`).classList.add('correct-highlight');
+        }
+        
+        // Remove simple selection borders
+        q.options.forEach((_, i) => {
+            document.getElementById(`opt-${i}`).classList.remove('selected');
+        });
+
+        // Reveal detailed explanations panels
+        document.getElementById('rationale-box').innerText = q.rationale;
+        
+        const dBox = document.getElementById('distractors-box');
+        dBox.innerHTML = '';
+        q.distractors.forEach(dist => {
+            const p = document.createElement('div');
+            p.className = 'distractor-paragraph';
+            p.innerHTML = dist;
+            dBox.appendChild(p);
+        });
+        
+        document.getElementById('explanation-box').style.display = 'block';
+
+        // Mutate actions behavior to handle sequencing
+        const aBtn = document.getElementById('action-btn');
+        if (currentIdx < dataset.length - 1) {
+            aBtn.innerText = "Next Question";
+            aBtn.className = "btn btn-success";
+            aBtn.setAttribute("onclick", "advanceNext()");
+        } else {
+            aBtn.innerText = "View Final Results";
+            aBtn.className = "btn btn-success";
+            aBtn.setAttribute("onclick", "finishQuiz()");
+        }
+    }
+
+    function advanceNext() {
+        currentIdx++;
+        renderQuestion();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function finishQuiz() {
+        clearInterval(timerInterval);
+        document.getElementById('game-view').style.display = 'none';
+        document.getElementById('summary-view').style.display = 'block';
+        document.getElementById('final-score').innerText = `${score} / ${dataset.length}`;
+        
+        let pct = Math.round((score / dataset.length) * 100);
+        document.getElementById('percentage-box').innerText = `${pct}% Correct`;
+    }
+
+    // Launch simulation on frame initialization
+    startTimer();
+    renderQuestion();
+</script>
+
+</body>
+</html>
