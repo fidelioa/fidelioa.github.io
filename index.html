@@ -3,25 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <script>
-        // Check authentication state early (adjust 'isLoggedIn' to match your main.js / Firebase auth state key)
-        const userIsLoggedIn = localStorage.getItem('isLoggedIn') === 'true'; 
-        const currentPath = window.location.pathname;
-
-        // If the user tries to go to protected areas without being logged in, redirect them back to home/login
-        if (!userIsLoggedIn && (currentPath.includes('/blocks') || currentPath.includes('/about'))) {
-            alert("Access Denied. Please follow the White Rabbit to log in first.");
-            window.location.href = "https://ankitx007x.github.io/"; 
-        }
-    </script>
-
-    <script src="main.js" defer type="module"></script>
     <title>The Grand Budapest - Board Review</title>
     
     <link rel="icon" type="image/png" href="./assets/favicon.png">
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script>
+        (function () {
+            const currentPath = window.location.pathname;
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+
+            // If a logged-out visitor tries accessing subfolders, kick them to root
+            if (!isLoggedIn && (currentPath.includes('/blocks') || currentPath.includes('/about'))) {
+                window.location.replace("https://ankitx007x.github.io/");
+            }
+        })();
+    </script>
+
+    <script src="main.js" defer type="module"></script>
+    
     <style>
         /* ========================================================
             ARTSY RESET & BASE (Performance Optimized Canvas)
@@ -47,6 +47,11 @@
             font-family: 'Georgia', serif;
         }
 
+        /* Hides elements completely if user context state is logged-out */
+        .logged-out .protected-link {
+            display: none !important;
+        }
+
         /* ========================================================
             STARRY BACKGROUND CANVAS
            ======================================================== */
@@ -55,12 +60,10 @@
             width: 100% !important;
             min-height: 100vh !important;
             z-index: 1 !important;
-            
             background: 
                 linear-gradient(rgba(9, 15, 29, 0.4), rgba(15, 23, 42, 0.6)),
                 url('./assets/Background.jpg') no-repeat center center !important;
             background-size: cover !important;
-                
             display: flex !important;
             flex-direction: column !important;
             align-items: center !important;
@@ -123,9 +126,8 @@
 
         .nav-links a:hover, .nav-links a.active { color: #fef08a; }
 
-        /* Top Navigation Dynamic Identity Pill */
         .nav-profile-item {
-            display: none; /* Regulated by main.js state */
+            display: none; 
             align-items: center;
             gap: 10px;
             padding: 4px 12px;
@@ -176,7 +178,6 @@
             z-index: 15;
         }
 
-        /* Decorative Gold Corner Borders */
         .art-mainframe::before, .art-mainframe::after {
             content: ''; position: absolute; width: 24px; height: 24px; pointer-events: none; opacity: 0.85;
         }
@@ -202,7 +203,6 @@
             font-weight: 300;
         }
 
-        /* Layout Container to stack UI elements cleanly */
         .cta-container {
             position: relative;
             display: flex;
@@ -252,7 +252,7 @@
             USER DASHBOARD CARD
            ======================================================== */
         .user-dashboard-card {
-            display: none; /* Managed by main.js lifecycle state */
+            display: none; 
             background: rgba(255, 255, 255, 0.04);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
@@ -322,7 +322,7 @@
         }
     </style>
 </head>
-<body>
+<body class="logged-out">
 
     <div class="art-canvas-container">
 
@@ -332,8 +332,8 @@
             </a>
             <ul class="nav-links">
                 <li><a href="https://ankitx007x.github.io/" class="active">Home</a></li>
-                <li><a href="./blocks">Blocks</a></li>
-                <li><a href="./about">About Me</a></li>
+                <li class="protected-link"><a href="./blocks">Blocks</a></li>
+                <li class="protected-link"><a href="./about">About Me</a></li>
                 <li id="nav-user-profile" class="nav-profile-item">
                     <img id="nav-user-photo" src="" alt="User Avatar">
                     <span id="nav-user-name"></span>
