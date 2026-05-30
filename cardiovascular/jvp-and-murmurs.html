@@ -22,6 +22,9 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // Global debounce timer reference to prevent layout-blocking performance drops
+        let debounceSaveTimeout = null;
+
         // ─── Save progress to Firestore ────────────────────────────────────────
         async function saveProgressOnline(uid) {
             const selectedAnswers = {};
@@ -90,7 +93,10 @@
                 if (key.startsWith('revealed_')) {
                     const idx = parseInt(key.replace('revealed_', ''));
                     const card = document.querySelectorAll('.question-card')[idx];
-                    if (card) card.querySelector('.meta-section').classList.add('revealed');
+                    if (card) {
+                        const meta = card.querySelector('.meta-section');
+                        if (meta) meta.classList.add('revealed');
+                    }
                 } else {
                     const answer = saved.selectedAnswers[key];
                     const card = document.querySelectorAll('.question-card')[parseInt(key)];
@@ -149,30 +155,45 @@
             }
         });
 
-        // ─── Expose save function globally for the pause button ───────────────
-        window._saveProgressOnline = async function() {
-            if (window._currentUser) {
-                await saveProgressOnline(window._currentUser.uid);
-                return true;
-            } else {
-                // Offline fallback
-                const clock = document.getElementById('clock-display');
-                let timeRemaining = 0;
-                if (clock) {
-                    const parts = clock.innerText.split(':');
-                    if (parts.length === 2) timeRemaining = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+        // ─── Debounced Save Implementation for Non-Blocking Operations ───────
+        window._saveProgressOnline = function(forceImmediate = false) {
+            return new Promise((resolve) => {
+                if (debounceSaveTimeout) {
+                    clearTimeout(debounceSaveTimeout);
                 }
-                const selectedAnswers = {};
-                document.querySelectorAll('.question-card').forEach((card, idx) => {
-                    const sel = card.querySelector('.choices li.selected');
-                    if (sel) selectedAnswers[idx] = sel.getAttribute('data-ans');
-                    if (card.querySelector('.meta-section.revealed')) selectedAnswers[`revealed_${idx}`] = true;
-                });
-                const activeCard = document.querySelector('.question-card.active');
-                const currentQuestion = activeCard ? parseInt(activeCard.getAttribute('data-qindex')) - 1 : 0;
-                localStorage.setItem('mcqProgress_jvp', JSON.stringify({ currentQuestion, timeRemaining, selectedAnswers }));
-                return false; // not signed in
-            }
+
+                const executionLogic = async () => {
+                    if (window._currentUser) {
+                        await saveProgressOnline(window._currentUser.uid);
+                        resolve(true);
+                    } else {
+                        // Offline fallback structural state capture
+                        const clock = document.getElementById('clock-display');
+                        let timeRemaining = 0;
+                        if (clock) {
+                            const parts = clock.innerText.split(':');
+                            if (parts.length === 2) timeRemaining = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+                        }
+                        const selectedAnswers = {};
+                        document.querySelectorAll('.question-card').forEach((card, idx) => {
+                            const sel = card.querySelector('.choices li.selected');
+                            if (sel) selectedAnswers[idx] = sel.getAttribute('data-ans');
+                            if (card.querySelector('.meta-section.revealed')) selectedAnswers[`revealed_${idx}`] = true;
+                        });
+                        const activeCard = document.querySelector('.question-card.active');
+                        const currentQuestion = activeCard ? parseInt(activeCard.getAttribute('data-qindex')) - 1 : 0;
+                        localStorage.setItem('mcqProgress_jvp', JSON.stringify({ currentQuestion, timeRemaining, selectedAnswers }));
+                        resolve(false);
+                    }
+                };
+
+                if (forceImmediate === true) {
+                    executionLogic();
+                } else {
+                    // Delays actual heavy execution loop until clicking sequences halt for 1.5 seconds
+                    debounceSaveTimeout = setTimeout(executionLogic, 1500);
+                }
+            });
         };
 
         function showResumeToast() {
@@ -635,59 +656,191 @@
         </div>
     </div>
 
+    <div class="action-container">
+        <button class="btn btn-submit" id="submit-action-btn" onclick="submitAnswer()">Submit Answer</button>
+        <button class="btn btn-next" id="next-action-btn" onclick="navigateToNextQuestion()">Next Question</button>
+    </div>
+
+    <div class="results-screen" id="end-block-results">
+        <h2>Block Completed!</h2>
+        <p id="score-text-output" style="font-size: 1.3rem; font-weight: 600; margin: 20px 0; color: #2b6cb0;"></p>
+        <p>Your performance history and metrics have been synced with your training profile.</p>
+    </div>
+
     <script>
-        // Placeholder for main block dynamic execution handlers
-        // (Ensuring your countdownTimerInterval and routing functions handle gracefully)
-        let countdownTimerInterval;
+        let countdownTimerInterval = null;
+        let totalQuestionsCount = 15; // Adjusted to match the questions inside block container layout array
         window._currentQNum = 1;
 
-        window._setRestoredTime = function(seconds) {
-            if (seconds <= 0) return;
-            const display = document.getElementById('clock-display');
-            if (!display) return;
-            const m = Math.floor(seconds / 60).toString().padStart(2, '0');
-            const s = (seconds % 60).toString().padStart(2, '0');
-            display.innerText = `${m}:${s}`;
+        // Sync helper to configure custom restored timers
+        window._setRestoredTime = function(secondsLeft) {
+            const clock = document.getElementById('clock-display');
+            if (clock) {
+                let m = Math.floor(secondsLeft / 60);
+                let s = secondsLeft % 60;
+                clock.innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            }
         };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            totalQuestionsCount = document.querySelectorAll('.question-card').length;
+            const tracker = document.getElementById('tracker-display');
+            if (tracker) tracker.innerText = `Question ${window._currentQNum} of ${totalQuestionsCount}`;
+            initializeCountdownClock(90 * 60);
+        });
+
+        // Event listener hooks applied layout-wide onto all choice rows
+        document.querySelectorAll('.choices li').forEach(choice => {
+            choice.addEventListener('click', function() {
+                const card = this.closest('.question-card');
+                
+                // Block choice updates if answers have already been processed / revealed
+                if (card.querySelector('.meta-section.revealed')) return;
+
+                card.querySelectorAll('.choices li').forEach(item => item.classList.remove('selected'));
+                this.classList.add('selected');
+
+                // Fire off non-blocking debounced save
+                if (window._saveProgressOnline) {
+                    window._saveProgressOnline(false);
+                }
+            });
+        });
+
+        function initializeCountdownClock(durationSeconds) {
+            let timer = durationSeconds;
+            const display = document.getElementById('clock-display');
+
+            countdownTimerInterval = setInterval(() => {
+                // Parse existing view states to maintain state alignment
+                if (display) {
+                    const parts = display.innerText.split(':');
+                    if (parts.length === 2) {
+                        const currentDomSeconds = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+                        // If DOM timer changed independently (e.g. from restore), align internal tracker
+                        if (Math.abs(timer - currentDomSeconds) > 2) {
+                            timer = currentDomSeconds;
+                        }
+                    }
+                }
+
+                timer--;
+                let minutes = Math.floor(timer / 60);
+                let seconds = timer % 60;
+
+                if (display) {
+                    display.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }
+
+                if (timer <= 0) {
+                    clearInterval(countdownTimerInterval);
+                    terminateSessionAndScore();
+                }
+            }, 1000);
+        }
+
+        function submitAnswer() {
+            const activeCard = document.querySelector('.question-card.active');
+            if (!activeCard) return;
+
+            const selection = activeCard.querySelector('.choices li.selected');
+            if (!selection) {
+                alert("Please select an option before submitting.");
+                return;
+            }
+
+            const meta = activeCard.querySelector('.meta-section');
+            if (meta) meta.classList.add('revealed');
+
+            document.getElementById('submit-action-btn').style.display = 'none';
+            document.getElementById('next-action-btn').style.display = 'block';
+
+            // Trigger structural updates on explicit milestone confirmation changes
+            if (window._saveProgressOnline) {
+                window._saveProgressOnline(false);
+            }
+        }
+
+        function navigateToNextQuestion() {
+            const activeCard = document.querySelector('.question-card.active');
+            if (!activeCard) return;
+
+            if (window._currentQNum >= totalQuestionsCount) {
+                clearInterval(countdownTimerInterval);
+                terminateSessionAndScore();
+                return;
+            }
+
+            activeCard.classList.remove('active');
+            window._currentQNum++;
+
+            const targetCard = document.querySelectorAll('.question-card')[window._currentQNum - 1];
+            if (targetCard) targetCard.classList.add('active');
+
+            document.getElementById('tracker-display').innerText = `Question ${window._currentQNum} of ${totalQuestionsCount}`;
+
+            const submitBtn = document.getElementById('submit-action-btn');
+            const nextBtn = document.getElementById('next-action-btn');
+
+            // Handle visibility depending on the state of the target card
+            if (targetCard && targetCard.querySelector('.meta-section.revealed')) {
+                if (submitBtn) submitBtn.style.display = 'none';
+                if (nextBtn) nextBtn.style.display = 'block';
+            } else {
+                if (submitBtn) submitBtn.style.display = 'block';
+                if (nextBtn) nextBtn.style.display = 'none';
+            }
+
+            // Save layout update to storage profile
+            if (window._saveProgressOnline) {
+                window._saveProgressOnline(false);
+            }
+        }
+
+        function terminateSessionAndScore() {
+            document.getElementById('qbank-container').style.display = 'none';
+            document.querySelector('.action-container').style.display = 'none';
+
+            let correctCount = 0;
+            document.querySelectorAll('.question-card').forEach(card => {
+                const selected = card.querySelector('.choices li.selected');
+                const rawAns = card.querySelector('.correct-answer').innerText; 
+                const correctLetter = rawAns.replace('Correct Answer:', '').trim();
+
+                if (selected && selected.getAttribute('data-ans') === correctLetter) {
+                    correctCount++;
+                }
+            });
+
+            const percent = Math.round((correctCount / totalQuestionsCount) * 100);
+            const finalScoreContainerOutputElement = document.getElementById('end-block-results');
+            finalScoreContainerOutputElement.style.display = 'block';
+            document.getElementById('score-text-output').innerText = `Block Score: ${correctCount} / ${totalQuestionsCount} (${percent}%)`;
+        }
 
         // ─── Pause & Save → redirect to /cardiovascular ───────────────────────
         window.pauseSession = async function() {
             const btn = document.getElementById('pause-btn');
-            if (btn) { 
-                btn.disabled = true; 
-                btn.textContent = 'Saving…'; 
-            }
+            if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
 
-            // Halt countdown clock parameters safely 
-            if (typeof countdownTimerInterval !== 'undefined') {
-                clearInterval(countdownTimerInterval);
-            }
+            clearInterval(countdownTimerInterval);
 
-            // Requests modular Firebase authentication context save
-            const isOnline = await window._saveProgressOnline();
+            // True overrides the delay to issue immediate database write updates
+            const isOnline = await window._saveProgressOnline(true);
 
             if (btn) {
                 btn.textContent = isOnline ? '✓ Saved!' : '✓ Saved (offline)';
             }
 
-            // Clean direct routing auto-redirect as requested
+            // Brief visual confirmation before redirect
             setTimeout(() => {
                 window.location.href = '/cardiovascular';
-            }, 700);
-        };
+            }, 900);
+        }
 
-        // Auto-save on choice selections
-        document.querySelectorAll('.choices li').forEach(choice => {
-            choice.addEventListener('click', () => {
-                setTimeout(() => {
-                    if (window._saveProgressOnline) window._saveProgressOnline();
-                }, 150);
-            });
-        });
-
-        // Safe cleanup hooks before browser unload views close
+        // Save before unload (e.g. browser close / navigation)
         window.addEventListener('beforeunload', () => {
-            if (window._saveProgressOnline) window._saveProgressOnline();
+            if (window._saveProgressOnline) window._saveProgressOnline(true);
         });
     </script>
 </body>
