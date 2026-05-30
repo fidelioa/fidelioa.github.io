@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Cardiovascular Pathology QBank</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f7f6;
+            user-select: text !important;
+        }
+        
+        .qbank-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #1a365d;
+            color: #fff;
+            padding: 15px 25px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question-counter {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #90cdf4;
+        }
+        
+        .timer-display {
+            font-size: 1.2rem;
+            font-weight: bold;
+            background-color: #2c5282;
+            padding: 6px 15px;
+            border-radius: 5px;
+            border: 1px solid #4299e1;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .question-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
+            display: none;
+        }
+        
+        .question-card.active {
+            display: block;
+        }
+
+        .vignette {
+            font-weight: 500;
+            margin-bottom: 22px;
+            color: #2d3748;
+            font-size: 1.1rem;
+            text-align: justify;
+        }
+
+        .choices {
+            list-style-type: none;
+            padding-left: 0;
+            margin-bottom: 25px;
+        }
+
+        .choices li {
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            background-color: #f7fafc;
+            border-radius: 6px;
+            border-left: 4px solid #cbd5e0;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .choices li:hover {
+            background-color: #edf2f7;
+            border-left-color: #4299e1;
+        }
+
+        .choices li.selected {
+            background-color: #ebf8ff;
+            border-left-color: #2b6cb0;
+            font-weight: 600;
+        }
+
+        .meta-section {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-top: 2px solid #e2e8f0;
+            display: none;
+        }
+        
+        .meta-section.revealed {
+            display: block;
+        }
+
+        .correct-answer {
+            background-color: #f0fff4;
+            border: 1px solid #c6f6d5;
+            color: #22543d;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding: 10px 14px;
+            border-radius: 5px;
+            font-size: 1.05rem;
+        }
+
+        .explanation {
+            background-color: #ebf8ff;
+            border: 1px solid #bee3f8;
+            color: #2a4365;
+            padding: 18px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 1rem;
+            text-align: justify;
+        }
+
+        .edu-objective {
+            background-color: #fffaf0;
+            border: 1px solid #feebc8;
+            color: #744210;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-style: italic;
+        }
+
+        .action-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-submit {
+            background-color: #3182ce;
+            color: white;
+        }
+
+        .btn-submit:hover {
+            background-color: #2b6cb0;
+        }
+
+        .btn-next {
+            background-color: #38a169;
+            color: white;
+            display: none;
+        }
+
+        .btn-next:hover {
+            background-color: #2f855a;
+        }
+
+        .results-screen {
+            display: none;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        strong {
+            color: #1a202c;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="qbank-header">
+        <div class="question-counter" id="tracker-display">Question 1 of 40</div>
+        <div class="timer-display" id="clock-display">90:00</div>
+    </div>
+
+    <div id="qbank-container">
+        <div class="question-card active" data-qindex="1">
+            <div class="vignette">A 68-year-old male presents with progressive dyspnea and episodic syncope over the past year. Physical examination reveals a late-peaking, harsh systolic crescendo-decrescendo murmur at the right upper sternal border that radiates to the carotid arteries. His carotid pulses are delayed and weak (pulsus parvus et tardus). Which of the following histopathological changes is most likely responsible for this patient's condition?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Chronic inflammation and fibrosis with commissural fusion</li>
+                <li data-ans="B">B. Age-related dystrophic calcification of the aortic valve cusps</li>
+                <li data-ans="C">C. Myxomatous degeneration with degradation of collagen</li>
+                <li data-ans="D">D. Non-bacterial thrombotic vegetations along the line of closure</li>
+                <li data-ans="E">E. Large, friable bacterial vegetations destructive to the valve ring</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient presents with severe calcific aortic stenosis (AS), indicated by the classic triad symptoms (dyspnea, syncope), late-peaking systolic murmur radiating to the carotids, and pulsus parvus et tardus. In developed countries, the most common cause of AS in older adults (>65 years) is age-related wear-and-tear leading to dystrophic calcification without commissural fusion. Chronic inflammation with commissural fusion is characteristic of rheumatic heart disease, which is more common in developing nations or younger patients.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Senile calcific aortic stenosis is driven by progressive, wear-and-tear dystrophic calcification of the valve leaflets without commissural fusion.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="2">
+            <div class="vignette">A 34-year-old female presents with persistent fatigue and an irregular pulse. Auscultation reveals a loud S1, an opening snap shortly after S2, and a low-pitched diastolic rumble at the apex. A history reveals she immigrated from a rural region with limited healthcare access. Which of the following changes to the jugular venous pressure (JVP) waveform is expected if this condition leads to right-sided heart failure?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Complete absence of the "a" wave and a steep "y" descent</li>
+                <li data-ans="B">B. Intermittent, giant cannon "a" waves during ventricular systole</li>
+                <li data-ans="C">C. A prominent, towering "a" wave and a slow, prolonged "y" descent</li>
+                <li data-ans="D">D. Fusion of the "c" and "v" waves into a single systolic wave</li>
+                <li data-ans="E">E. Hyper-acute, sharp "x" descent with an absent "y" descent</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: C</div>
+                <div class="explanation"><strong>Explanation:</strong> The patient has rheumatic mitral stenosis (MS). Chronic MS leads to elevated left atrial pressures, pulmonary venous hypertension, reactive pulmonary arterial hypertension, and eventually right ventricular hypertrophy (RVH) and tricuspid stenosis/RV dysfunction. The stiffened, non-compliant right ventricle offers resistance to right atrial emptying, forcing the right atrium to contract harder and creating a prominent, giant "a" wave. Tricuspid stenosis features a prolonged "y" descent as a result of delayed right ventricular filling. If she develops atrial fibrillation, the "a" wave would disappear completely.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Mitral stenosis can cause pulmonary hypertension and secondary right heart strain, characterized by a prominent JVP "a" wave due to atrial contraction against a non-compliant right ventricle.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="3">
+            <div class="vignette">A 24-year-old male collapses during a high-intensity soccer match and cannot be resuscitated. A post-mortem examination reveals asymmetric hypertrophy of the interventricular septum. Microscopic evaluation shows marked myofiber disarray and interstitial fibrosis. Which of the following maneuvers would have most likely increased the intensity of this patient's cardiac murmur during life?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Passive leg raise</li>
+                <li data-ans="B">B. Abrupt standing from a squatting position</li>
+                <li data-ans="C">C. Sustained isometric handgrip exercise</li>
+                <li data-ans="D">D. Administration of phenylephrine</li>
+                <li data-ans="E">E. Squatting position</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> The autopsy findings of asymmetric septal hypertrophy and myofiber disarray are pathognomonic for hypertrophic obstructive cardiomyopathy (HOCM), a leading cause of sudden cardiac death in young athletes. The murmur of HOCM is caused by dynamic dynamic left ventricular outflow tract (LVOT) obstruction. Maneuvers that decrease left ventricular volume (preload or afterload), such as sudden standing or the Valsalva strain phase, bring the hypertrophied septum and the anterior leaflet of the mitral valve closer together, worsening the obstruction and intensifying the murmur. Squatting, leg raise, and handgrip all increase LV volume and decrease the murmur.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> The dynamic obstruction murmur of HOCM increases with maneuvers that decrease ventricular volume (e.g., standing, Valsalva strain).</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="4">
+            <div class="vignette">A 45-year-old male with a history of intravenous drug use presents with acute onset of severe dyspnea, orthopnea, and frothy pink sputum. On examination, he is tachycardic and hypotensive. Auscultation reveals a new, blowing early diastolic decrescendo murmur heard best along the left sternal border. His peripheral pulses are hyperdynamic and bounding. Which of the following physiological changes is acutely taking place in his left ventricle?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Marked concentric hypertrophy with minimal change in end-diastolic volume</li>
+                <li data-ans="B">B. Severe increase in left ventricular end-diastolic pressure within a non-compliant chamber</li>
+                <li data-ans="C">C. Massive eccentric hypertrophy with a large increase in end-diastolic volume and normal pressures</li>
+                <li data-ans="D">D. Significant decrease in left ventricular stroke volume due to dynamic outflow tract obstruction</li>
+                <li data-ans="E">E. Primary restriction of diastolic filling due to pericardial constraint</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient has acute aortic regurgitation (AR), likely secondary to infective endocarditis from IV drug use. In acute AR, the left ventricle does not have time to compensate or dilate eccentrically. The sudden, large volume of regurgitant blood backflowing into a normal-sized, non-compliant left ventricle leads to a dramatic rise in left ventricular end-diastolic pressure (LVEDP). This pressure is transmitted backward into the pulmonary circulation, causing acute pulmonary edema (flash pulmonary edema). Chronic AR presents with eccentric hypertrophy.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Acute aortic regurgitation causes a sudden, severe elevation in left ventricular end-diastolic pressure because the non-dilated chamber cannot accommodate the regurgitant volume, leading to acute pulmonary edema.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="5">
+            <div class="vignette">A 56-year-old female presents with signs of severe right-sided heart failure, including hepatomegaly, ascites, and marked peripheral edema. On examination of her neck, her JVP waveform shows a distinct pattern where the normal systolic collapse ("x" descent) is completely absent, replaced by a large positive wave during ventricular systole, followed by an extremely rapid "y" descent. Which of the following valvular lesions is most closely correlated with this waveform?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Tricuspid valve stenosis</li>
+                <li data-ans="B">B. Pulmonic valve stenosis</li>
+                <li data-ans="C">C. Mitral valve stenosis</li>
+                <li data-ans="D">D. Tricuspid valve regurgitation</li>
+                <li data-ans="E">E. Aortic valve regurgitation</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: D</div>
+                <div class="explanation"><strong>Explanation:</strong> The loss of the systolic "x" descent and its replacement by a large positive wave during ventricular systole describes a giant "v" wave (or a fused c-v wave), which is pathognomonic for severe tricuspid regurgitation (TR). During ventricular contraction, blood escapes backward through the incompetent tricuspid valve directly into the right atrium, inflating right atrial pressure during systole and obliterating the normal drop in pressure (x descent) that occurs as the atrium relaxes. The rapid "y" descent follows as the large volume of blood empties quickly into the RV at the start of diastole.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Severe tricuspid regurgitation obliterates the JVP x descent, replacing it with a giant v wave due to systolic backflow into the right atrium.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="6">
+            <div class="vignette">A 74-year-old female with an extensive history of chronic hypertension presents with worsening exertional dyspnea. Cardiac auscultation demonstrates a low-pitched presystolic sound heard loudest at the apex in the left lateral decubitus position. This sound disappears immediately when she goes into a rapid, irregular rhythm. What is the underlying pathophysiology of this specific acoustic finding?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Rapid passive filling of a volume-overloaded, dilated ventricle</li>
+                <li data-ans="B">B. Sudden tensing of the chordae tendineae during mitral valve prolapse</li>
+                <li data-ans="C">C. Atrial contraction forcing blood into a stiff, non-compliant left ventricle</li>
+                <li data-ans="D">D. Abrupt halting of the opening excursion of a stenotic mitral valve</li>
+                <li data-ans="E">E. Friction between visceral and parietal pericardial layers</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: C</div>
+                <div class="explanation"><strong>Explanation:</strong> The sound described is a fourth heart sound (S4), an atrial gallop. An S4 occurs in late diastole (presystole) and is caused by active atrial contraction pushing blood into a stiff, hypertrophied, non-compliant ventricle (often due to long-standing systemic hypertension or concentric LV hypertrophy). Because it is caused by atrial contraction, it disappears immediately with the onset of atrial fibrillation, which lacks organized atrial mechanical activity. A passive volume overload state produces an S3.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> An S4 heart sound is generated by atrial contraction into a stiffened, non-compliant ventricle and disappears if atrial fibrillation develops.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="7">
+            <div class="vignette">A 29-year-old male presenting with a high-pitched, blowing diastolic decrescendo murmur along the right sternal border is scheduled for surgery. He has a history of hyperextensible skin, hypermobile joints, and long fingers. Which of the following underlying pathology states is the primary cause of his cardiac murmur?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Rheumatic chordal shortening and thickening</li>
+                <li data-ans="B">B. Calcific stenosis of a bicuspid valve configuration</li>
+                <li data-ans="C">C. Aortic root dilation secondary to connective tissue disease</li>
+                <li data-ans="D">D. Syphilitic obliterative endarteritis of the vasa vasorum</li>
+                <li data-ans="E">E. Rupture of a sinus of Valsalva aneurysm into the right atrium</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: C</div>
+                <div class="explanation"><strong>Explanation:</strong> The patient shows signs of a connective tissue disorder such as Marfan syndrome or Ehlers-Danlos syndrome. Aortic regurgitation (AR) murmurs caused by intrinsic valve disease are heard loudest along the left sternal border. However, AR murmurs due to aortic root pathology (such as aortic root dilation or aneurysm formation common in connective tissue diseases) alter the geometry of the aortic root and are characteristically heard loudest along the right sternal border.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Aortic regurgitation murmurs originating from primary valvular disease are loudest at the left sternal border, whereas those driven by aortic root dilation are loudest at the right sternal border.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="8">
+            <div class="vignette">A 62-year-old male experiences sudden-onset, crushing substernal chest pain that radiates to his left arm. ECG demonstrates ST-segment elevations in leads V1–V4. Three days later, while in the coronary care unit, he develops sudden respiratory distress and hemodynamic instability. Examination reveals a new, harsh holosystolic murmur at the apex that radiates to the left axilla. What is the most likely structural explanation for this new murmur?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Free wall rupture leading to hemopericardium and cardiac tamponade</li>
+                <li data-ans="B">B. Rupture of the interventricular septum creating a left-to-right shunt</li>
+                <li data-ans="C">C. Papillary muscle rupture or dysfunction causing acute mitral regurgitation</li>
+                <li data-ans="D">D. Acute aortic dissection extending retrograde into the valve leaflet</li>
+                <li data-ans="E">E. Ventricular pseudoaneurysm formation with paradoxical systolic expanding</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: C</div>
+                <div class="explanation"><strong>Explanation:</strong> The patient has had an acute anterior wall myocardial infarction (MI) and developed a new holosystolic murmur radiating to the axilla 3 days later, signaling acute mitral regurgitation (MR). Papillary muscle rupture or ischemic dysfunction typically occurs 2 to 7 days post-MI due to coagulative necrosis. It causes acute, massive backflow into the left atrium, presenting as rapid hemodynamic collapse and flash pulmonary edema. Interventricular septal rupture would cause a holosystolic murmur at the left sternal border, typically accompanied by a palpable thrill.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Post-myocardial infarction papillary muscle rupture causes acute severe mitral regurgitation, manifesting as a new holosystolic apical murmur and rapid pulmonary edema.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="9">
+            <div class="vignette">A 48-year-old female presents with progressive shortness of breath and abdominal fullness. Her JVP is elevated to 14 cm H2O. During physical examination, the clinician notes that the JVP column paradoxically rises during deep inspiration. Auscultation reveals a sharp, high-pitched early diastolic sound along the left sternal border. Which of the following conditions is most consistent with these physical signs?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Acute cardiac tamponade</li>
+                <li data-ans="B">B. Constrictive pericarditis</li>
+                <li data-ans="C">C. Hypertrophic obstructive cardiomyopathy</li>
+                <li data-ans="D">D. Severe mitral regurgitation</li>
+                <li data-ans="E">E. Dilated cardiomyopathy</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> A paradoxical rise in JVP during inspiration is known as Kussmaul's sign. Normally, inspiration decreases intrathoracic pressure, drawing more blood into the right heart and causing JVP to fall. In constrictive pericarditis, a rigid, calcified pericardium encases the heart, preventing the right ventricle from expanding to accommodate this inspiratory volume surge, forcing blood back up into the jugular veins. The high-pitched early diastolic sound is a pericardial knock, caused by the abrupt cessation of ventricular filling during early diastole. Cardiac tamponade features a prominent x descent but lacks a pericardial knock and Kussmaul's sign.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Constrictive pericarditis presents with Kussmaul's sign (paradoxical inspiratory rise in JVP) and a pericardial knock sound during early diastole.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="10">
+            <div class="vignette">A 22-year-old female is referred for a cardiovascular evaluation after a systolic murmur was detected during a pre-employment physical. She is asymptomatic. On examination, she has a fixed split-second heart sound (S2) that does not change with inspiration or expiration, and a mid-systolic ejection murmur at the left upper sternal border. What is the mechanism behind the systolic murmur heard in this patient?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Left-to-right shunting of blood directly through an atrial septal defect</li>
+                <li data-ans="B">B. Increased stroke volume and blood flow across a structurally normal pulmonic valve</li>
+                <li data-ans="C">C. Severe narrowing of the pulmonic valve orifice due to congenital fusion</li>
+                <li data-ans="D">D. Regurgitant flow through an incompetent tricuspid valve during ventricular systole</li>
+                <li data-ans="E">E. Turbulent flow across an aberrant subaortic fibrous band</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> The combination of a fixed split S2 and a mid-systolic ejection murmur at the left upper sternal border is characteristic of an atrial septal defect (ASD). The shunting of blood from the left atrium to the right atrium creates chronic volume overload in the right heart. Crucially, the ASD itself is a low-velocity, low-pressure shunt and is silent. The audible mid-systolic murmur is generated by the abnormally large volume of blood (increased stroke volume) being ejected across a structurally normal pulmonic valve.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> The systolic murmur in an ASD is caused by increased blood flow across a structurally normal pulmonic valve, not by direct flow through the defect itself.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="11">
+            <div class="vignette">A 53-year-old male with an extensive history of chronic hypertension is admitted to the hospital with severe pulmonary venous congestion. While inspecting his internal jugular venous pulsations, the clinician notices that the "a" wave is remarkably tall and prominent (giant "a" wave). Which of the following states is the most direct cause of a giant "a" wave in this patient's clinical scenario?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Loss of all synchronized mechanical activity within the right atrium</li>
+                <li data-ans="B">B. Right atrial contraction against increased resistance from a non-compliant right ventricle</li>
+                <li data-ans="C">C. Severe regurgitation across the tricuspid valve filling the atrium during systole</li>
+                <li data-ans="D">D. Prolapse of a left atrial myxoma across the mitral valve orifice</li>
+                <li data-ans="E">E. Bulging of the tricuspid valve during right ventricular isovolumetric contraction</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> A giant "a" wave reflects forceful right atrial contraction against an elevated resistance. In this patient, chronic left-sided heart failure secondary to severe hypertension has caused backward failure into the pulmonary vasculature, creating secondary pulmonary hypertension. This leads to right ventricular hypertrophy (RVH). The hypertrophied RV is stiff and non-compliant during diastole, requiring the right atrium to contract harder to complete right ventricular filling, which amplifies the "a" wave.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Giant JVP "a" waves are caused by right atrial contraction against increased right ventricular resistance, which commonly occurs in right ventricular hypertrophy or tricuspid stenosis.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="12">
+            <div class="vignette">A 38-year-old male presents with atypical chest pains. Auscultation reveals a sharp, high-pitched mid-systolic click heard best at the apex, followed immediately by a late systolic crescendo murmur. The patient is asked to perform a Valsalva maneuver (strain phase). How will the timing of the click and the overall duration of the murmur change?</div>
+            <ul class="choices">
+                <li data-ans="A">A. The click occurs later in systole, and the murmur becomes shorter in duration</li>
+                <li data-ans="B">B. The click occurs earlier in systole, and the murmur becomes longer in duration</li>
+                <li data-ans="C">C. The click occurs earlier in systole, and the murmur becomes shorter in duration</li>
+                <li data-ans="D">D. The click occurs later in systole, and the murmur becomes longer in duration</li>
+                <li data-ans="E">E. The click and murmur timing remain completely unchanged</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient has mitral valve prolapse (MVP). The strain phase of the Valsalva maneuver reduces venous return (preload), which decreases left ventricular end-diastolic volume, making the LV cavity smaller. In a smaller LV cavity, the redundant, myxomatous mitral valve leaflets slacken earlier in systole and prolapse into the left atrium sooner. This shifts the mid-systolic click earlier (closer to S1) and extends the duration of the regurgitant murmur.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Decreasing left ventricular volume (via Valsalva strain or standing) causes mitral valve prolapse to happen earlier in systole, moving the click closer to S1 and lengthening the murmur.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="13">
+            <div class="vignette">A 61-year-old male presents with recurrent syncope and chest tightness during physical exertion. Auscultation reveals a harsh systolic crescendo-decrescendo murmur at the right upper sternal border. To help differentiate between aortic stenosis and hypertrophic obstructive cardiomyopathy (HOCM), the clinician administers a dose of amyl nitrite. The intensity of the patient's murmur decreases significantly. Which statement best explains this change?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Amyl nitrite reduces afterload, which decreases the transvalvular gradient in aortic stenosis</li>
+                <li data-ans="B">B. Amyl nitrite increases preload, which opens up the left ventricular outflow tract in HOCM</li>
+                <li data-ans="C">C. Amyl nitrite lowers afterload, promoting forward flow and softening an aortic stenosis murmur</li>
+                <li data-ans="D">D. Amyl nitrite increases systemic vascular resistance, reducing regurgitant flow</li>
+                <li data-ans="E">E. Amyl nitrite slows the heart rate, allowing for more complete ventricular filling</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: A</div>
+                <div class="explanation"><strong>Explanation:</strong> This question tests dynamic auscultation. Amyl nitrite is a rapid vasodilator that decreases systemic vascular resistance (afterload). In aortic stenosis (AS), lowering afterload drops the pressure gradient across the stenotic aortic valve, reducing turbulence and forward flow velocity, which softens the murmur. In contrast, in HOCM, reducing afterload and preload decreases left ventricular volume, worsening the dynamic LVOT obstruction and significantly intensifying the murmur. This decrease rules out HOCM.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Amyl nitrite decreases afterload, which reduces the pressure gradient and softens an aortic stenosis murmur, while intensifying a HOCM murmur.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="14">
+            <div class="vignette">A 19-year-old female presents with low-grade fevers, malaise, and migratory joint pains three weeks after recovering from a severe sore throat. A cardiac examination reveals a new friction rub and a soft holosystolic murmur. Endomyocardial biopsy shows focal areas of interstitial inflammation with multinucleated giant cells and large, plump macrophages with slender, wavy nuclei. These specific macrophages are referred to as:</div>
+            <ul class="choices">
+                <li data-ans="A">A. Langhans giant cells</li>
+                <li data-ans="B">B. Anitschkow cells</li>
+                <li data-ans="C">C. Touton giant cells</li>
+                <li data-ans="D">D. Reed-Sternberg cells</li>
+                <li data-ans="E">E. Gaucher cells</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient is experiencing acute rheumatic carditis secondary to acute rheumatic fever (ARF) from a Group A Streptococcus infection. The biopsy description details an Aschoff body, which is the pathognomonic myocardial lesion of ARF. Aschoff bodies consist of foci of T-lymphocytes, plasma cells, and plump activated macrophages called Anitschkow cells (or "caterpillar cells") because of their characteristic slender, wavy, chromatin organization. Langhans cells are seen in tuberculosis; Reed-Sternberg in Hodgkin lymphoma.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Aschoff bodies containing Anitschkow cells (caterpillar cells) are pathognomonic microscopic structures seen in acute rheumatic carditis.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="15">
+            <div class="vignette">A patient presenting with acute hypotension, muffled heart sounds, and jugular venous distension is diagnosed with cardiac tamponade. A structural assessment of the patient's jugular venous pressure (JVP) tracer reveals a highly characteristic abnormal contour. Which of the following descriptions matches the JVP profile of cardiac tamponade?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Prominent, steep "x" descent with a severely blunted or absent "y" descent</li>
+                <li data-ans="B">B. Absent "x" descent with a towering, single giant "v" wave</li>
+                <li data-ans="C">C. Intermittent, high-amplitude cannon "a" waves during systole</li>
+                <li data-ans="D">D. Deep, hyper-acute "x" descent followed by an equally steep, sharp "y" descent</li>
+                <li data-ans="E">E. Gradual, uniform flattening of all waveforms with no distinct descents</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: A</div>
+                <div class="explanation"><strong>Explanation:</strong> In cardiac tamponade, high intrapericardial pressure compresses the heart chambers and restricts filling throughout the cardiac cycle. During ventricular systole, the ventricular volume drops as blood is ejected, allowing a small window for the compressed atrium to expand, which preserves or enhances the JVP "x" descent (atrial relaxation and downward pulling of the tricuspid ring). However, once diastole begins, early passive ventricular filling is prevented by the rigid fluid shell, resulting in a severely blunted or completely absent "y" descent. In constrictive pericarditis, both x and y descents are steep and prominent.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Cardiac tamponade features an elevated JVP with a preserved or prominent x descent but a blunted or absent y descent, reflecting restricted early diastolic filling.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="16">
+            <div class="vignette">A 42-year-old female presents with persistent fevers, fatigue, and weight loss over the past two months. Cardiac auscultation reveals a low-pitched, rumbling diastolic murmur at the apex that varies in intensity with changes in body position. Echocardiography demonstrates a large, mobile, gelatinous mass attached by a stalk to the fossa ovalis within the left atrium. Histopathological evaluation of this mass is most likely to show:</div>
+            <ul class="choices">
+                <li data-ans="A">A. Bundles of elongated spindle cells forming wavy, interlacing patterns</li>
+                <li data-ans="B">B. Stellated or globular myxoma cells embedded within an abundant acid mucopolysaccharide-rich stroma</li>
+                <li data-ans="C">C. Malignant pleomorphic cells with frequent atypical mitotic figures and necrosis</li>
+                <li data-ans="D">D. Dense lamellar collagen sheets with focal areas of dystrophic calcification</li>
+                <li data-ans="E">E. Branching fungal hyphae embedded within a matrix of fibrin and platelets</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient has a left atrial myxoma, the most common primary cardiac tumor in adults. Myxomas characteristically originate from the left atrial interatrial septum near the fossa ovalis. They are mobile, gelatinous masses that can prolapse into the mitral valve orifice during diastole, producing a "tumor plop" sound and a positional diastolic murmur that mimics mitral stenosis. Histologically, they consist of stellate or globular myxoma cells (undifferentiated mesenchymal cells) surrounded by an abundant, loose myxoid stroma rich in mucopolysaccharides.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Cardiac myxomas are primary cardiac tumors composed of stellate cells within a myxoid stroma, often presenting with a positional diastolic murmur.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="17">
+            <div class="vignette">A 45-year-old chronic alcoholic presents with progressive dyspnea on exertion, orthopnea, and severe bilateral lower extremity edema. Physical examination reveals an displaced apical impulse, a third heart sound (S3) gallop, and generalized cardiomegaly on chest X-ray. Echocardiogram demonstrates global hypokinesis with an ejection fraction of 24%. Which of the following structural changes is characteristic of this patient's underlying cardiac condition?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Concentric thickening of the left ventricular wall with reduced chamber size</li>
+                <li data-ans="B">B. Asymmetric hypertrophy of the interventricular septum with ventricular tract narrowing</li>
+                <li data-ans="C">C. Four-chamber dilation with eccentric hypertrophy and patchy interstitial fibrosis</li>
+                <li data-ans="D">D. Marked deposition of amorphous extracellular amyloid fibrils within the interstitium</li>
+                <li data-ans="E">E. Diffuse fibroelastic thickening confined strictly to the endocardium</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: C</div>
+                <div class="explanation"><strong>Explanation:</strong> This presentation describes dilated cardiomyopathy (DCM), likely secondary to chronic alcohol toxicity (alcoholic cardiomyopathy). DCM is characterized by structural four-chamber dilation and eccentric hypertrophy (sarcomeres added in series), resulting in impaired systolic function (reduced ejection fraction) and an S3 gallop caused by rapid blood filling into a large, dilated, compliant cavity. Histopathology shows non-specific myocyte hypertrophy, elongation, and patchy interstitial fibrosis. Concentric hypertrophy is seen in hypertension; amyloid in restrictive cardiomyopathy.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Dilated cardiomyopathy features four-chamber enlargement and eccentric hypertrophy, resulting in impaired systolic contractility and an S3 gallop.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="18">
+            <div class="vignette">A 71-year-old male with a history of severe atherosclerosis presents with a sudden, sharp pain in his upper abdomen and back. While evaluating his peripheral pulses, the clinician notes that the amplitude of the arterial pulse alternates from beat to beat despite a completely regular cardiac rhythm on the ECG monitor. This finding (pulsus alternans) is a specific indicator of which underlying condition?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Acute severe cardiac tamponade</li>
+                <li data-ans="B">B. Severe left ventricular systolic failure</li>
+                <li data-ans="C">C. Severe aortic regurgitation with wide pulse pressure</li>
+                <li data-ans="D">D. Constrictive pericarditis with respiratory variation</li>
+                <li data-ans="E">E. Hypertrophic obstructive cardiomyopathy</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> Pulsus alternans is characterized by a regular alternating pattern of strong and weak peripheral pulses despite a regular cardiac rhythm. It is a highly specific physical exam finding indicating severe left ventricular systolic impairment or heart failure. It occurs because end-diastolic volume changes from beat to beat, causing alternating myocardial contractility via the Frank-Starling mechanism. Pulsus paradoxus (an inspiratory drop in systolic blood pressure >10 mmHg) is associated with cardiac tamponade and constrictive pericarditis.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Pulsus alternans is an alternating pattern of strong and weak pulses during a regular rhythm, indicating advanced left ventricular systolic dysfunction.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="19">
+            <div class="vignette">A 32-year-old male presents with severe fatigue and peripheral edema. An electrocardiogram shows low voltage complexes across all leads, and a cardiac MRI demonstrates bilateral atrial enlargement with normal ventricular chamber dimensions, but marked thickening of the ventricular walls. A tissue biopsy stained with Congo red exhibits an apple-green birefringence under polarized light. This patient's diastolic dysfunction is primarily classified as:</div>
+            <ul class="choices">
+                <li data-ans="A">A. Dilated cardiomyopathy</li>
+                <li data-ans="B">B. Hypertrophic cardiomyopathy</li>
+                <li data-ans="C">C. Restrictive cardiomyopathy</li>
+                <li data-ans="D">D. Arrhythmogenic right ventricular cardiomyopathy</li>
+                <li data-ans="E">E. Obliterative endomyocardial fibrosis</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: C</div>
+                <div class="explanation"><strong>Explanation:</strong> The combination of low ECG voltage, normal ventricular dimensions with stiffened walls, and Congo red positive staining with apple-green birefringence indicates cardiac amyloidosis. Amyloidosis is a classic cause of restrictive cardiomyopathy (RCM). In RCM, infiltrative materials deposit into the myocardium, causing extreme stiffness and severe diastolic dysfunction (impaired filling) with preserved or near-preserved systolic function initially. Bilateral atrial enlargement occurs as the atria work harder to pump blood into non-compliant ventricles.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Restrictive cardiomyopathy can be caused by infiltrative processes like amyloidosis, which produces apple-green birefringence under polarized light and leads to severe diastolic dysfunction.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="20">
+            <div class="vignette">A 65-year-old male presents with worsening exertional angina and dyspnea. On examination, a prominent, harsh systolic murmur is noted at the right upper sternal border. The clinician notes that the second heart sound (S2) is split during expiration but becomes single during deep inspiration. This finding is known as paradoxical splitting of S2. Which of the following conditions is most likely responsible for this auscultatory sign?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Severe pulmonic valve stenosis</li>
+                <li data-ans="B">B. Right bundle branch block (RBBB)</li>
+                <li data-ans="C">C. Severe calcific aortic stenosis</li>
+                <li data-ans="D">D. Atrial septal defect (ASD)</li>
+                <li data-ans="E">E. Large ventricular septal defect (VSD)</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: C</div>
+                <div class="explanation"><strong>Explanation:</strong> Paradoxical splitting occurs when the closure of the aortic valve (A2) is significantly delayed, causing it to occur after the pulmonic valve closure (P2) during expiration. During inspiration, normal physiological delay of P2 moves P2 closer to the delayed A2, making the split disappear or become single. Severe aortic stenosis (AS) or left bundle branch block (LBBB) delays left ventricular emptying, causing paradoxical splitting. Pulmonic stenosis or RBBB delays P2 closure further, creating a wide, non-fixed split S2. ASD creates a fixed split S2.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Paradoxical splitting of S2 occurs when aortic valve closure is delayed past pulmonic valve closure, a finding characteristic of severe aortic stenosis or left bundle branch block.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="21">
+            <div class="vignette">A 58-year-old male undergoes a routine evaluation. While evaluating his jugular venous pulsations, the clinician is looking for the "c" wave in the normal tracer. Which of the following physiological mechanisms is directly responsible for the creation of the JVP "c" wave?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Active contraction of the right atrium during late ventricular diastole</li>
+                <li data-ans="B">B. Bulging of the closed tricuspid valve into the right atrium during right ventricular isovolumetric contraction</li>
+                <li data-ans="C">C. Rapid passive emptying of the right atrium into the ventricle upon valve opening</li>
+                <li data-ans="D">D. Passive filling of the right atrium against a closed tricuspid valve during ventricular systole</li>
+                <li data-ans="E">E. Downward displacement of the tricuspid annulus by ventricular shortening</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> The "c" wave on a standard jugular venous pulse waveform occurs during early ventricular systole. It is generated by the rapid rise in pressure within the right ventricle during isovolumetric contraction, which forces the closed tricuspid valve leaflets to bulge backward into the right atrium, creating a transient spike in right atrial pressure transmitted up the jugular vein. The "a" wave is atrial contraction; the "v" wave is passive venous filling; the "x" descent is atrial relaxation.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> The JVP "c" wave corresponds to early ventricular systole and is caused by the tricuspid valve bulging into the right atrium during isovolumetric contraction.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="22">
+            <div class="vignette">A 31-year-old female with a known history of systemic lupus erythematosus (SLE) presents with mild fevers and a new heart murmur. Echocardiography reveals small, sterile, granular vegetations located on both the upstream and downstream surfaces of the mitral valve leaflets, extending onto the chordae tendineae. This pathology finding describes:</div>
+            <ul class="choices">
+                <li data-ans="A">A. Acute rheumatic endocarditis</li>
+                <li data-ans="B">B. Libman-Sacks endocarditis</li>
+                <li data-ans="C">C. Marantic (non-bacterial thrombotic) endocarditis</li>
+                <li data-ans="D">D. Subacute bacterial endocarditis</li>
+                <li data-ans="E">E. Carcinoid heart disease</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> Libman-Sacks endocarditis (non-bacterial verrucous endocarditis) is a cardiovascular manifestation of systemic lupus erythematosus (SLE). It is characterized by small, sterile, flat or granular vegetations that unique can develop on *both* sides of the valve leaflets (underneath and on top) as well as the chordae tendineae. Acute rheumatic fever vegetations occur strictly along the lines of closure on the flow surface. Marantic endocarditis occurs on the valve edges in patients with advanced malignancies or wasting states.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Libman-Sacks endocarditis is associated with SLE and presents with small, sterile verrucae on both the superior and inferior surfaces of the valve leaflets.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="23">
+            <div class="vignette">A 50-year-old male with a history of intravenous drug use is admitted with fever and multiple cavitary lung nodules. Auscultation reveals a holosystolic murmur at the left lower sternal border that increases noticeably during deep inspiration. Which of the following JVP alterations is most expected in this patient?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Intermittent cannon "a" waves shooting up the neck</li>
+                <li data-ans="B">B. A slow, attenuated "y" descent</li>
+                <li data-ans="C">C. Prominent "v" waves and loss of the systolic "x" descent</li>
+                <li data-ans="D">D. Completely flat venous waveform tracking below 3 cm H2O</li>
+                <li data-ans="E">E. Paradoxical drop in JVP height during expiration</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: C</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient has right-sided infective endocarditis involving the tricuspid valve, leading to severe tricuspid regurgitation (TR). Tricuspid regurgitation is indicated by a holosystolic murmur at the left lower sternal border that increases with inspiration (Carvallo's sign) due to increased venous return. Severe TR causes blood to regurgitate back into the right atrium during ventricular systole, creating a prominent "v" wave and erasing the normal systolic "x" descent.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Tricuspid regurgitation presents with a holosystolic murmur that increases on inspiration and produces giant v waves on the JVP waveform.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="24">
+            <div class="vignette">A 26-year-old male presents with exertional dyspnea and palpitations. Physical examination reveals a bounding peripheral pulse with a rapid rise and fall (Water-hammer pulse), along with capillary pulsations in the nail beds (Quincke's sign). Which of the following valvular lesions is responsible for these peripheral signs?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Mitral stenosis</li>
+                <li data-ans="B">B. Mitral regurgitation</li>
+                <li data-ans="C">C. Aortic stenosis</li>
+                <li data-ans="D">D. Aortic regurgitation</li>
+                <li data-ans="E">E. Pulmonic regurgitation</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: D</div>
+                <div class="explanation"><strong>Explanation:</strong> Water-hammer pulses and Quincke's sign are peripheral manifestations of a widened pulse pressure, which is characteristic of chronic severe aortic regurgitation (AR). In AR, a large volume of blood flows back into the left ventricle during diastole, causing low diastolic pressure. During systole, the hypercompliant left ventricle ejects an abnormally large stroke volume, causing an elevated systolic pressure. This combination creates a large pulse pressure and hyperdynamic peripheral signs.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Chronic aortic regurgitation leads to a widened pulse pressure, presenting with hyperdynamic bounding pulses (Water-hammer pulse) and capillary pulsations.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="25">
+            <div class="vignette">A 43-year-old male undergoes an elective cardiac catheterization. While recording hemodynamic data from the right atrium, the clinician notices that the "y" descent on the pressure tracing is abnormally slow and prolonged. Which of the following conditions matches this slow right atrial emptying pattern?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Tricuspid regurgitation</li>
+                <li data-ans="B">B. Tricuspid stenosis</li>
+                <li data-ans="C">C. Constrictive pericarditis</li>
+                <li data-ans="D">D. Cardiac tamponade</li>
+                <li data-ans="E">E. Atrial fibrillation</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> The "y" descent on a JVP waveform represents the passive emptying of blood from the right atrium into the right ventricle immediately after the tricuspid valve opens in early diastole. If the tricuspid valve orifice is stenotic or obstructed (tricuspid stenosis), blood flow is restricted, leading to a slow, prolonged, and elongated "y" descent. Constrictive pericarditis presents with a steep, rapid y descent (Friedreich's sign). Tamponade features an absent/blunted y descent.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Tricuspid stenosis slows blood flow from the right atrium to the right ventricle during diastole, resulting in a prolonged and slow JVP y descent.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="26">
+            <div class="vignette">A 35-year-old female presents with an unprovoked episode of syncope. Her history is notable for mild progressive dyspnea. On examination, she is found to have intermittent, regular, extremely high-amplitude waves shooting up her internal jugular veins ("cannon a waves"). Her ECG reveals a regular wide-complex rhythm at 160 beats per minute. What is the mechanism driving the cannon waves in this patient?</div>
+            <ul class="choices">
+                <li data-ans="A">A. The right atrium contracting against a permanently fused tricuspid valve ring</li>
+                <li data-ans="B">B. Right atrial contraction coinciding with ventricular systole when the tricuspid valve is closed</li>
+                <li data-ans="C">C. High-volume blood backflow during a ventricular pseudoaneurysm compression</li>
+                <li data-ans="D">D. Loss of all coordinated right atrial electrical activation parameters</li>
+                <li data-ans="E">E. Severe collapse of the superior vena cava during deep inspiration phases</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> Cannon "a" waves occur when the right atrium contracts against a firmly closed tricuspid valve. This pushes blood backward into the superior vena cava and internal jugular veins, creating a massive venous pulsation. This finding occurs during periods of atrioventricular (AV) dissociation, such as complete heart block or ventricular tachycardia (indicated by her regular wide-complex tachycardia), where the atria and ventricles beat independently. Persistent giant a waves occur in tricuspid stenosis or pulmonary hypertension.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Intermittent cannon "a" waves indicate AV dissociation, occurring when atrial contraction takes place against a closed tricuspid valve during ventricular systole.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="27">
+            <div class="vignette">A 49-year-old male presents with worsening exertional dyspnea and fatigue. On auscultation, a low-pitched diastolic murmur is heard best at the apex with the patient in the left lateral decubitus position. A mid-diastolic low-pitched rumble is also heard at the apex following a high-pitched blowing early diastolic murmur at the left sternal border. This apical rumble is determined to be an Austin Flint murmur. What is the mechanism behind this sound?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Concurrent structural rheumatic stenosis of the mitral valve leaflets</li>
+                <li data-ans="B">B. A severe regurgitant aortic jet striking the anterior leaflet of the mitral valve, restricting its opening</li>
+                <li data-ans="C">C. Left atrial myxoma fragment blocking the mitral valve orifice</li>
+                <li data-ans="D">D. High-output forward flow across an anatomically stenosed tricuspid valve ring</li>
+                <li data-ans="E">E. Rapid passive filling into an eccentric, dilated left ventricular cavity</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> The Austin Flint murmur is a functional mid-to-late diastolic murmur heard at the apex in patients with severe aortic regurgitation (AR). It is caused by the backward regurgitant jet of blood from the aorta striking the anterior leaflet of the mitral valve. This causes partial closure or fluttering of the mitral leaflet during diastole, restricting normal mitral inflow and creating turbulence that mimics structural mitral stenosis without an opening snap.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> The Austin Flint murmur is a functional diastolic rumble caused by an aortic regurgitation jet impinging on the anterior mitral valve leaflet.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="28">
+            <div class="vignette">A 60-year-old male with a history of long-standing systemic hypertension presents to the emergency room with severe chest pain. Cardiac auscultation reveals a high-pitched, decrescendo diastolic murmur heard best at the left sternal border. Handgrip exercise is performed at the bedside. How will this maneuver change the intensity of his murmur?</div>
+            <ul class="choices">
+                <li data-ans="A">A. The murmur will soften significantly due to decreased systemic vascular resistance</li>
+                <li data-ans="B">B. The murmur will intensify due to increased systemic vascular resistance and afterload</li>
+                <li data-ans="C">C. The murmur will remain unchanged because it is fixed by structural calcification</li>
+                <li data-ans="D">D. The murmur will shorten in duration due to reflex tachycardia</li>
+                <li data-ans="E">E. The murmur will disappear completely due to left ventricular volume loading</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> The high-pitched, decrescendo diastolic murmur at the left sternal border indicates aortic regurgitation (AR). Handgrip exercise increases systemic vascular resistance (afterload). When afterload increases, resistance to forward blood flow out of the aorta rises, forcing a larger volume of blood backward across the incompetent aortic valve into the left ventricle, which intensifies the regurgitant murmur. Aortic stenosis and HOCM murmurs soften with handgrip.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Handgrip exercise increases afterload, which drives more regurgitant flow and intensifies the murmur of aortic regurgitation.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="29">
+            <div class="vignette">A 34-year-old male with a history of intravenous drug use presents with high fevers and a new heart murmur. Blood cultures grow Staphylococcus aureus. A diagnosis of acute infective endocarditis is made. Which of the following pathological features is most characteristic of acute endocarditis vegetations compared to subacute forms?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Small, sterile verrucae arranged along the lines of valve closure</li>
+                <li data-ans="B">B. Large, bulky, and highly friable vegetations with extensive valvular destruction</li>
+                <li data-ans="C">C. Dense fibrous organization with minimal polymorphonuclear infiltration</li>
+                <li data-ans="D">D. Exclusively mural endocardial lesions without leaflet involvement</li>
+                <li data-ans="E">E. Sterile platelet-fibrin aggregates with no demonstrable micro-organisms</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> Acute infective endocarditis (often caused by highly virulent organisms like *Staphylococcus aureus*) is characterized by the rapid formation of large, bulky, friable vegetations that cause extensive destruction, ulceration, or perforation of the valve leaflets. Subacute endocarditis (often caused by less virulent organisms like *Streptococcus viridans*) forms smaller vegetations with less valve destruction and more granulation tissue/fibrous repair. Libman-Sacks and marantic endocarditis form small, sterile vegetations.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Acute infective endocarditis is characterized by large, bulky, friable vegetations that cause significant tissue destruction on previously normal valves.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="30">
+            <div class="vignette">A 55-year-old male presents with persistent palpitations. His pulse is irregularly irregular, and an ECG confirms atrial fibrillation. Which of the following changes to his jugular venous pressure (JVP) waveform is an inevitable consequence of this dysrhythmia?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Intermittent production of giant cannon "a" waves</li>
+                <li data-ans="B">B. Complete disappearance of the "a" wave</li>
+                <li data-ans="C">C. Exaggeration and widening of the "x" descent</li>
+                <li data-ans="D">D. Sudden flattening of the diastolic "y" descent</li>
+                <li data-ans="E">E. Elevation of the overall tracer column above 15 cm H2O</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> The "a" wave on the JVP waveform is generated by active, coordinated right atrial contraction at the end of ventricular diastole. In atrial fibrillation, coordinated electrical and mechanical atrial activity is lost and replaced by rapid, chaotic fibrillatory waves. As a result, the JVP "a" wave completely disappears. The S4 heart sound also relies on atrial contraction and would disappear in atrial fibrillation.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Because the JVP "a" wave is produced by active atrial contraction, it is completely absent in patients with atrial fibrillation.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="31">
+            <div class="vignette">A 73-year-old female presents with severe dyspnea, orthopnea, and lower extremity edema. On physical exam, her JVP is elevated at 15 cm H2O. The clinician applies firm, steady pressure over her right upper quadrant for 15 seconds while observing the neck veins. The JVP column rises by an additional 4 cm and remains persistently elevated at that level throughout the entire 15-second compression period. This finding describes a positive hepatojugular reflux test, which is most diagnostic of:</div>
+            <ul class="choices">
+                <li data-ans="A">A. Portal hypertension due to liver cirrhosis</li>
+                <li data-ans="B">B. Inability of the right ventricle to accommodate increased venous return</li>
+                <li data-ans="C">C. High-output cardiac failure due to severe anemia</li>
+                <li data-ans="D">D. Preserved right ventricular function with isolated left ventricular failure</li>
+                <li data-ans="E">E. Extrinsic compression of the superior vena cava</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> A positive hepatojugular reflux (HJR) is defined as a persistent rise in JVP of >3 cm sustained throughout 10-15 seconds of abdominal compression. Abdominal compression manually increases venous return (preload) to the right atrium. A healthy right ventricle accommodates this volume load by increasing output without a sustained pressure rise. However, a failing, volume-overloaded, or non-compliant right ventricle cannot handle the extra preload, causing back-pressure that sustains elevation in the jugular venous column.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> A positive hepatojugular reflux test indicates right ventricular dysfunction or volume overload, showing the right heart cannot accommodate an acute increase in venous preload.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="32">
+            <div class="vignette">A 25-year-old asymptomatic male is evaluated during a routine screening. Auscultation reveals a soft (Grade 2/6), musical, mid-systolic murmur heard best at the left lower sternal border. The murmur decreases in loudness when the patient stands up quickly, and the second heart sound (S2) splits normally with respiration. What is the most appropriate next step in management?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Reassurance without further diagnostic testing</li>
+                <li data-ans="B">B. Urgent referral for a cardiac catheterization</li>
+                <li data-ans="C">C. Scheduling an outpatient transesophageal echocardiogram</li>
+                <li data-ans="D">D. Initiating beta-blocker therapy to prevent dynamic obstruction</li>
+                <li data-ans="E">E. Ordering a 24-hour ambulatory Holter monitor</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: A</div>
+                <div class="explanation"><strong>Explanation:</strong> This presentation describes a benign, innocent murmur (such as a Still's murmur), which is common in children and young adults. Innocent murmurs are soft (grade 1 or 2), mid-systolic, heard along the left sternal border, lack radiation, and feature normal physiological splitting of S2. Crucially, they soften or disappear with maneuvers that decrease preload (such as standing), as less blood volume passes across the normal valve structures. No further testing or restriction is required. Structural murmurs like HOCM increase with standing.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Benign innocent murmurs are soft, systolic, decrease with reduced preload (standing), and feature a normally split S2; they require reassurance only.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="33">
+            <div class="vignette">A 67-year-old male with a history of long-standing aortic stenosis presents with worsening dyspnea. On auscultation, a harsh systolic crescendo-decrescendo murmur is heard at the right upper sternal border. The clinician notes that the murmur peaks very late in systole and that the aortic component of S2 is soft and muffled. These features indicate:</div>
+            <ul class="choices">
+                <li data-ans="A">A. Progression toward mild, non-obstructive valvular sclerosis</li>
+                <li data-ans="B">B. Severe, advanced aortic valve stenosis</li>
+                <li data-ans="C">C. Coexisting severe mitral valve regurgitation</li>
+                <li data-ans="D">D. Normal cardiovascular status in an aging adult</li>
+                <li data-ans="E">E. Resolution of the dynamic left ventricular outflow gradient</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> As aortic stenosis (AS) increases in severity, it takes longer for the left ventricle to generate enough pressure to force blood across the rigid, narrowed valve orifice. Consequently, the systolic murmur peaks later in systole. Furthermore, the aortic valve leaflets become so calcified and rigid that their closure becomes silent or muffled, leading to a soft or absent A2 component of S2. A late-peaking murmur and a soft A2 are markers of severe AS.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Severe aortic stenosis is indicated by a late-peaking systolic murmur, a soft or absent A2 sound, and paradoxical splitting of the second heart sound.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="34">
+            <div class="vignette">A 44-year-old male with a history of carcinoid syndrome presents with symptoms of right-sided heart failure. Echocardiography reveals marked fibrous plaque-like thickening of the tricuspid and pulmonic valve leaflets, leading to tricuspid regurgitation and pulmonic stenosis. The left-sided valves are completely normal. Why are the left-sided heart valves typically spared in carcinoid heart disease?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Left-sided valves are structurally resistant to serotonin-mediated injury</li>
+                <li data-ans="B">B. High velocity of blood flow in the left heart prevents plaque deposition</li>
+                <li data-ans="C">C. Serotonin and bradykinin are inactivated in the pulmonary vasculature by endothelial enzymes</li>
+                <li data-ans="D">D. Carcinoid tumors preferentially metastasize to the right ventricular myocardium</li>
+                <li data-ans="E">E. Left atrial compliance buffers the effects of vasoactive peptides</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: C</div>
+                <div class="explanation"><strong>Explanation:</strong> Carcinoid heart disease is caused by bioactive substances (such as serotonin and bradykinin) secreted by carcinoid tumors. These substances cause fibrous endocardial plaque thickening on the right side of the heart. The left side of the heart is typically spared because the lungs contain monoamine oxidase (MAO) and other endothelial enzymes that metabolize and inactivate serotonin as blood passes through the pulmonary circulation. If a patent foramen ovale or pulmonary carcinoid is present, left-sided lesions can occur.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Carcinoid heart disease selectively affects the right-sided valves because pulmonary endothelial enzymes inactivate vasoactive peptides before blood reaches the left heart.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="35">
+            <div class="vignette">A 31-year-old male is evaluated for a new murmur. Auscultation reveals a high-pitched, decrescendo diastolic murmur heard best along the left sternal border at the end of expiration while leaning forward. The clinician performs a bedside maneuver by administering amyl nitrite. How will this maneuver alter the intensity of this murmur?</div>
+            <ul class="choices">
+                <li data-ans="A">A. The murmur will intensify due to increased venous return</li>
+                <li data-ans="B">B. The murmur will soften due to a reduction in systemic vascular resistance (afterload)</li>
+                <li data-ans="C">C. The murmur will lengthen due to reflex bradycardia</li>
+                <li data-ans="D">D. The murmur will remain unchanged due to fixed valvular geometry</li>
+                <li data-ans="E">E. The murmur will shift to the right sternal border</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> The patient features an aortic regurgitation (AR) murmur. Amyl nitrite is a rapid vasodilator that decreases systemic vascular resistance (afterload). When afterload drops, resistance to forward blood flow out of the left ventricle is reduced, promoting forward cardiac output into the systemic circulation and decreasing the volume of blood that leaks backward across the incompetent aortic valve during diastole, thereby softening the murmur. Handgrip increases afterload and intensifies AR.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Aortic regurgitation murmurs are softened by maneuvers that reduce afterload (such as amyl nitrite) and intensified by maneuvers that increase afterload (such as handgrip).</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="36">
+            <div class="vignette">A 52-year-old female presents with dyspnea. On examination, her JVP waveform shows a prominent, rapid descent occurring immediately after the second heart sound, while the descent following the "a" wave is blunted. This rapid diastolic "y" descent is known as Friedreich's sign. Which of the following conditions is most consistently characterized by this finding?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Acute cardiac tamponade</li>
+                <li data-ans="B">B. Severe tricuspid valve stenosis</li>
+                <li data-ans="C">C. Constrictive pericarditis</li>
+                <li data-ans="D">D. Isolated right ventricular infarction</li>
+                <li data-ans="E">E. Persistent Atrial Fibrillation</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: C</div>
+                <div class="explanation"><strong>Explanation:</strong> Friedreich's sign is a sharp, prominent, and rapid JVP "y" descent, characteristically seen in constrictive pericarditis (and sometimes restrictive cardiomyopathy). In constrictive pericarditis, early diastolic ventricular filling is rapid and uninhibited because right atrial pressure is high. However, filling is abruptly halted when the expanding ventricular wall hits the rigid, calcified pericardial shell, causing a sudden bottoming out of right atrial pressure (the steep y descent). Cardiac tamponade features a blunted or absent y descent.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Constrictive pericarditis is characterized by a sharp, prominent JVP y descent (Friedreich's sign) due to rapid but abruptly halted early diastolic filling.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="37">
+            <div class="vignette">A 23-year-old male athlete undergoes a comprehensive physical examination. His heart rate is regular at 50 bpm. While examining his neck in the supine position with the head elevated at 45 degrees, the clinician identifies a non-elevated, normal multi-phasic jugular venous pulsation. A soft, low-pitched sound is heard at the apex during early diastole, approximately 0.15 seconds after S2. The patient is completely asymptomatic. What is the most likely explanation for these findings?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Early-stage restrictive cardiomyopathy due to occult infiltration</li>
+                <li data-ans="B">B. A physiological third heart sound (S3) consistent with a normal, highly trained heart</li>
+                <li data-ans="C">C. Subclinical mitral stenosis with a soft opening snap</li>
+                <li data-ans="D">D. Constrictive pericarditis with an early pericardial knock</li>
+                <li data-ans="E">E. Tricuspid valve stenosis with a prolonged y descent</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> A low-pitched early diastolic sound heard at the apex in a young, healthy, athletic individual is typically a physiological third heart sound (S3). This sound is caused by rapid, passive ventricular filling into a highly compliant left ventricle. A normal, non-elevated JVP waveform further confirms the absence of pathology. A physiological S3 is a normal finding in children, young adults, and trained athletes, and does not signify disease in the absence of other clinical signs. A pathological S3 occurs in heart failure or volume overload states.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> A physiological S3 heart sound can be a normal variant in healthy young adults and athletes, representing rapid passive filling into a highly compliant ventricle.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="38">
+            <div class="vignette">A 66-year-old male with a history of long-standing systemic hypertension presents with exertional dyspnea. Auscultation reveals a prominent low-frequency sound at the apex heard immediately before S1 (presystole). Which of the following conditions is pathologically required for the production of this heart sound?</div>
+            <ul class="choices">
+                <li data-ans="A">A. A large volume-overloaded, dilated ventricular chamber</li>
+                <li data-ans="B">B. Active atrial contraction into a stiff, non-compliant ventricular chamber</li>
+                <li data-ans="C">C. Calcific restriction of the pulmonic valve commissures</li>
+                <li data-ans="D">D. Presence of an atrial septal defect with a large shunt</li>
+                <li data-ans="E">E. Open atrioventricular valves during early rapid passive filling</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> The sound described is a fourth heart sound (S4), an atrial gallop. An S4 occurs in late diastole (presystole) and is generated by active atrial contraction pushing blood into a stiff, thick, non-compliant ventricle (as seen in concentric left ventricular hypertrophy from long-standing hypertension or aortic stenosis). The sound reflects structural vibrations of the ventricular wall as it resists late diastolic filling volume. It requires sinus rhythm to exist.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> An S4 heart sound occurs during active atrial contraction and indicates reduced ventricular compliance (ventricular stiffness).</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="39">
+            <div class="vignette">A 68-year-old female with a history of systemic sclerosis presents with worsening dyspnea and painful pulsations in her neck. Her physical exam is notable for a loud pulmonic component of the second heart sound (P2). Her JVP is elevated at 14 cm H2O and reveals massive, single positive waves occurring during ventricular systole that match the carotid pulse. Which JVP waveform alteration explains this presentation?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Blunted or absent "a" wave</li>
+                <li data-ans="B">B. Fusion of the "v" wave and "c" wave into a single giant "v" wave</li>
+                <li data-ans="C">C. Rapid, hyper-acute "x" descent</li>
+                <li data-ans="D">D. Complete absence of the "y" descent</li>
+                <li data-ans="E">E. Intermittent, extreme "cannon" waves</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">B</div>
+                <div class="explanation"><strong>Explanation:</strong> Systemic sclerosis can cause severe pulmonary arterial hypertension (PAH), leading to right ventricular pressure overload, right heart strain, and functional tricuspid regurgitation (TR) due to right ventricular and annular dilation. In severe TR, high-pressure systolic blood regurgitates backward into the right atrium, obliterating the normal systolic collapse (x descent) and causing the c wave and v wave to fuse into a single, massive giant v wave (ventricularization of the atrial pressure).</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Severe tricuspid regurgitation causes loss of the normal systolic x descent, resulting in a large, fused c-v wave that presents as a prominent systolic venous pulsation in the neck.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="40">
+            <div class="vignette">A clinician is considering either calcific aortic stenosis or a congenital bicuspid aortic valve in a 42-year-old patient presenting with a harsh systolic murmur. Which of the following findings on auscultation would point most strongly toward a congenital bicuspid aortic valve over senile calcific aortic stenosis?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Presence of an early systolic, high-pitched ejection click that disappears when the valve becomes heavily calcified</li>
+                <li data-ans="B">B. Radiation of the systolic murmur into the left axillary line</li>
+                <li data-ans="C">C. Absence of normal respiratory variation in the second heart sound</li>
+                <li data-ans="D">D. Combination with a mid-diastolic opening snap</li>
+                <li data-ans="E">E. Development of an intermittent cannon "a" wave on JVP inspection</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: A</div>
+                <div class="explanation"><strong>Explanation:</strong> A congenital bicuspid aortic valve often presents in younger or middle-aged adults (30–50 years old) with a systolic ejection murmur preceded by a sharp, high-pitched systolic ejection click. This click occurs as the flexible but structurally abnormal bicuspid leaflets abruptly halt their opening excursion at the onset of ejection. In contrast, senile calcific aortic stenosis occurs in older adults (>65–70 years old) and rarely features a click because the valve leaflets are rigid and heavily calcified from the outset.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> A systolic ejection click preceding a crescendo-decrescendo murmur favors a congenital bicuspid aortic valve before heavy calcification takes place.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="action-container">
+        <button class="btn btn-submit" id="submit-action-btn">Submit Answer</button>
+        <button class="btn btn-next" id="next-action-btn">Next Question</button>
+    </div>
+
+    <div class="results-screen" id="end-block-results">
+        <h2>Block Finished!</h2>
+        <p id="score-text-output" style="font-size: 1.3rem; margin: 20px 0; color: #2b6cb0;"></p>
+        <p>Review the layout or copy questions for study purposes.</p>
+    </div>
+
+    <script>
+        let currentQuestionNum = 1;
+        const totalQuestionsCount = 40;
+        let selectedOptionListItem = null;
+        
+        let totalSecondsRemaining = 90 * 60;
+        const clockDisplayElement = document.getElementById('clock-display');
+        
+        const countdownTimerInterval = setInterval(() => {
+            if (totalSecondsRemaining <= 0) {
+                clearInterval(countdownTimerInterval);
+                clockDisplayElement.innerText = "00:00";
+                terminateSessionBlock();
+                return;
+            }
+            totalSecondsRemaining--;
+            let minsCalculated = Math.floor(totalSecondsRemaining / 60);
+            let secsCalculated = totalSecondsRemaining % 60;
+            clockDisplayElement.innerText = 
+                (minsCalculated < 10 ? '0' : '') + minsCalculated + ":" + 
+                (secsCalculated < 10 ? '0' : '') + secsCalculated;
+        }, 1000);
+
+        document.querySelectorAll('.choices li').forEach(optionNode => {
+            optionNode.addEventListener('click', function() {
+                const targetCard = this.closest('.question-card');
+                if (targetCard.querySelector('.meta-section').classList.contains('revealed')) {
+                    return; 
+                }
+                
+                targetCard.querySelectorAll('.choices li').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+                selectedOptionListItem = this;
+            });
+        });
+
+        const submitButtonElement = document.getElementById('submit-action-btn');
+        const nextButtonElement = document.getElementById('next-action-btn');
+        
+        submitButtonElement.addEventListener('click', () => {
+            const currentActiveCardNode = document.querySelector('.question-card[data-qindex="' + currentQuestionNum + '"]');
+            const selectedOptionInCard = currentActiveCardNode.querySelector('.choices li.selected');
+            
+            if (!selectedOptionInCard) {
+                alert('Please select an option before checking validation accuracy parameters.');
+                return;
+            }
+            
+            const dynamicMetaRegion = currentActiveCardNode.querySelector('.meta-section');
+            dynamicMetaRegion.classList.add('revealed');
+            
+            submitButtonElement.style.display = 'none';
+            nextButtonElement.style.display = 'block';
+        });
+
+        nextButtonElement.addEventListener('click', () => {
+            const coreCurrentCardNode = document.querySelector('.question-card[data-qindex="' + currentQuestionNum + '"]');
+            coreCurrentCardNode.classList.remove('active');
+            
+            currentQuestionNum++;
+            
+            if (currentQuestionNum <= totalQuestionsCount) {
+                document.getElementById('tracker-display').innerText = "Question " + currentQuestionNum + " of " + totalQuestionsCount;
+                
+                const nextActiveCardNode = document.querySelector('.question-card[data-qindex="' + currentQuestionNum + '"]');
+                nextActiveCardNode.classList.add('active');
+                
+                nextButtonElement.style.display = 'none';
+                submitButtonElement.style.display = 'block';
+                selectedOptionListItem = null;
+            } else {
+                clearInterval(countdownTimerInterval);
+                terminateSessionBlock();
+            }
+        });
+
+        function terminateSessionBlock() {
+            document.getElementById('qbank-container').style.display = 'none';
+            submitButtonElement.style.display = 'none';
+            nextButtonElement.style.display = 'none';
+            document.querySelector('.qbank-header').style.display = 'none';
+            
+            const finalScoreContainerOutputElement = document.getElementById('end-block-results');
+            finalScoreContainerOutputElement.style.display = 'block';
+            document.getElementById('score-text-output').innerText = "Block completed cleanly inside session guidelines.";
+        }
+    </script>
+
+</body>
+</html>
