@@ -1,6 +1,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-analytics.js";
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+// Import the Firebase Realtime Database module
+import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
 
 // Your verified web app's Firebase configuration
 const firebaseConfig = {
@@ -17,8 +19,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
+const database = getDatabase(app); // Initialize Database
 const provider = new GoogleAuthProvider();
-const db = firebase.firestore();
 
 // Target DOM Elements
 const loginBtn = document.getElementById('google-login-btn');
@@ -32,6 +34,41 @@ const navUserPhoto = document.getElementById('nav-user-photo');
 const profileDropdown = document.getElementById('profile-dropdown');
 const userName = document.getElementById('user-name');
 const userEmail = document.getElementById('user-email');
+
+// Track user object globally across modular scopes
+window.currentUser = null;
+
+// Global Online Cloud Persistence Interface
+window.saveProgressOnline = async function(progressData) {
+    if (!window.currentUser) {
+        console.warn("User session missing. Saving locally instead.");
+        return false;
+    }
+    const userId = window.currentUser.uid;
+    try {
+        await set(ref(database, 'users/' + userId + '/qbankProgress'), progressData);
+        console.log("Progress securely written to the cloud database.");
+        return true;
+    } catch (error) {
+        console.error("Firebase Database Write Error:", error);
+        return false;
+    }
+};
+
+window.fetchProgressOnline = async function() {
+    if (!window.currentUser) return null;
+    const userId = window.currentUser.uid;
+    try {
+        const snapshot = await get(ref(database, 'users/' + userId + '/qbankProgress'));
+        if (snapshot.exists()) {
+            return snapshot.val();
+        }
+        return null;
+    } catch (error) {
+        console.error("Firebase Database Read Error:", error);
+        return null;
+    }
+};
 
 // ========================================================
 // DROPDOWN TOGGLE ARCHITECTURE (Always active on boot)
@@ -65,71 +102,57 @@ if (loginBtn) {
 // Sign-Out Click Event Listener
 if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
-        signOut(auth)
-            .then(() => {
-                console.log("Session terminated safely.");
-                window.location.href = "https://ankitx007x.github.io/";
-            })
-            .catch((error) => {
-                console.error("Sign-Out Error:", error.message);
-            });
+        signOut(auth).then(() => {
+            console.log("Successfully signed out.");
+        }).catch((error) => {
+            console.error("Sign-out Error:", error);
+        });
     });
 }
 
-// ========================================================
-// SESSION LIFECYCLE ENGINE (UI Controller)
-// ========================================================
+// Global Auth State Observer Pipeline
 onAuthStateChanged(auth, (user) => {
     const currentPath = window.location.pathname;
 
     if (user) {
-        const fallBackPhoto = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/svgs/solid/user.svg';
-        const finalPhoto = user.photoURL || fallBackPhoto;
+        window.currentUser = user;
         
-        // 1. Fill profile drop down card details
-        if (userName) userName.textContent = user.displayName || "User";
-        if (userEmail) userEmail.textContent = user.email || "";
-        if (navUserPhoto) navUserPhoto.src = finalPhoto;
+        // Dispatch custom global notification event letting other scripts know user is ready
+        document.dispatchEvent(new CustomEvent('authReady', { detail: user }));
 
-        // 2. Hide Google Login Button
         if (loginBtn) loginBtn.classList.add('hidden');
-
-        // 3. Make Profile picture avatar visible inside navigation bar line item
         if (navUserProfile) navUserProfile.style.display = 'flex';
+        if (navUserPhoto) navUserPhoto.src = user.photoURL || "";
+        if (userName) userName.innerText = user.displayName || "User";
+        if (userEmail) userEmail.innerText = user.email || "";
 
-        // 4. Activate center button interactivity states
         if (whiteRabbitBtn) {
             whiteRabbitBtn.classList.remove('disabled-state');
             whiteRabbitBtn.classList.add('active-state');
         }
 
-        // 5. UNLOCK NAVIGATION BLOCKS LINK (Removes blocker pointer filters)
         if (navBlocksLink) {
             navBlocksLink.classList.remove('disabled-link');
             navBlocksLink.classList.add('active-link');
         }
 
     } else {
-        // Route protection: Kicks unauthorized guests home if they try direct routing URLs
+        window.currentUser = null;
+        
         if (currentPath.includes('/blocks') || currentPath.includes('/about')) {
             window.location.replace("https://ankitx007x.github.io/");
         }
 
-        // 1. Return Google login button to layout view array
         if (loginBtn) loginBtn.classList.remove('hidden');
-
-        // 2. Clear layout profile details and pull image view node parameters away
         if (navUserProfile) navUserProfile.style.display = 'none';
         if (navUserPhoto) navUserPhoto.src = "";
         if (profileDropdown) profileDropdown.classList.remove('show');
         
-        // 3. Deactivate white rabbit click events via CSS block rules
         if (whiteRabbitBtn) {
             whiteRabbitBtn.classList.remove('active-state');
             whiteRabbitBtn.classList.add('disabled-state');
         }
 
-        // 4. LOCK DOWN BLOCKS NAV LINK (Blocks pointer executions)
         if (navBlocksLink) {
             navBlocksLink.classList.remove('active-link');
             navBlocksLink.classList.add('disabled-link');
