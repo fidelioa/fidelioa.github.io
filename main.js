@@ -19,27 +19,25 @@ const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-// Target Dashboard Card Elements
-const whiteRabbitBtn = document.getElementById('white-rabbit-btn'); // FIXED: Swapped to White Rabbit button
+// Target DOM Elements
+const loginBtn = document.getElementById('google-login-btn');
+const whiteRabbitBtn = document.getElementById('white-rabbit-btn');
 const logoutBtn = document.getElementById('logout-btn');
 const dashboard = document.getElementById('user-dashboard');
 const userPhoto = document.getElementById('user-photo');
 const userName = document.getElementById('user-name');
 const userEmail = document.getElementById('user-email');
 
-// Target Top Nav Bar Profile Elements
 const navUserProfile = document.getElementById('nav-user-profile');
 const navUserPhoto = document.getElementById('nav-user-photo');
 const navUserName = document.getElementById('nav-user-name');
 
-// Sign-In Click Event Listener attached to White Rabbit Button
-if (whiteRabbitBtn) {
-    whiteRabbitBtn.addEventListener('click', () => {
+// Sign-In Click Event Listener
+if (loginBtn) {
+    loginBtn.addEventListener('click', () => {
         signInWithPopup(auth, provider)
             .then((result) => {
                 console.log("Successfully Authenticated:", result.user);
-                localStorage.setItem('isLoggedIn', 'true'); // Save state immediately
-                window.location.href = "./blocks"; // Redirect directly into app upon login
             })
             .catch((error) => {
                 console.error("Authentication Error:", error.message);
@@ -53,8 +51,7 @@ if (logoutBtn) {
         signOut(auth)
             .then(() => {
                 console.log("Session terminated safely.");
-                localStorage.setItem('isLoggedIn', 'false'); // Clear cache state
-                window.location.href = "https://ankitx007x.github.io/"; // Send back home
+                window.location.href = "https://ankitx007x.github.io/";
             })
             .catch((error) => {
                 console.error("Sign-Out Error:", error.message);
@@ -62,12 +59,11 @@ if (logoutBtn) {
     });
 }
 
-// Session Lifecycle Engine: Toggles view logic instantly across header and layout
+// Session Lifecycle Engine: Toggles view logic instantly across layout
 onAuthStateChanged(auth, (user) => {
-    if (user) {
-        localStorage.setItem('isLoggedIn', 'true');
-        document.body.classList.remove('logged-out'); // Reveals protected nav tabs instantly
+    const currentPath = window.location.pathname;
 
+    if (user) {
         const fallBackPhoto = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/svgs/solid/user.svg';
         const finalPhoto = user.photoURL || fallBackPhoto;
         
@@ -76,20 +72,24 @@ onAuthStateChanged(auth, (user) => {
         if (userName) userName.textContent = user.displayName || "User";
         if (userEmail) userEmail.textContent = user.email || "";
 
-        // 2. Fill Navigation Header Data (Shows first name only to keep nav items tight)
+        // 2. Fill Navigation Header Data (Shows first name only)
         if (navUserPhoto) navUserPhoto.src = finalPhoto;
         if (navUserName) navUserName.textContent = user.displayName ? user.displayName.split(' ')[0] : "User";
 
-        // 3. UI Adjustments
-        if (whiteRabbitBtn) whiteRabbitBtn.style.display = 'none';
+        // 3. UI Adjustment States
+        if (loginBtn) loginBtn.style.display = 'none';            // Hide Google Sign In
+        if (whiteRabbitBtn) whiteRabbitBtn.style.display = 'inline-flex'; // Show White Rabbit Button
         if (dashboard) dashboard.style.display = 'block';
         if (navUserProfile) navUserProfile.style.display = 'inline-flex';
     } else {
-        localStorage.setItem('isLoggedIn', 'false');
-        document.body.classList.add('logged-out'); // Completely hides navigation tags
+        // If logged out and trying to look around inside /blocks or /about, kick them back home!
+        if (currentPath.includes('/blocks') || currentPath.includes('/about')) {
+            window.location.replace("https://ankitx007x.github.io/");
+        }
 
         // Clear layout state if logged out
-        if (whiteRabbitBtn) whiteRabbitBtn.style.display = 'inline-flex';
+        if (loginBtn) loginBtn.style.display = 'inline-flex';     // Show Google Sign In
+        if (whiteRabbitBtn) whiteRabbitBtn.style.display = 'none';   // Hide White Rabbit Button
         if (dashboard) dashboard.style.display = 'none';
         if (navUserProfile) navUserProfile.style.display = 'none';
         
