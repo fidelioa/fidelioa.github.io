@@ -3,391 +3,941 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Grand Budapest - Blocks Selection</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Interactive High-Yield QBank: Hematology & Oncology</title>
     <style>
-        /* ========================================================
-            ARTSY RESET & BASE (Impressionist Oil Canvas Vibe)
-           ======================================================== */
-        body, html, 
-        .main-inner, .content-outer, .post-body, .entry-content,
-        #main, #content, .wrapper, .main-content-wrapper {
-            margin: 0 !important;
-            padding: 0 !important;
-            max-width: 100% !important;
-            width: 100% !important;
-            background: #090f1d !important;
-            min-height: 100%;
-        }
-
-        .sidebar-container, #sidebar-wrapper, .main-header, .blog-header, 
-        header, footer {
-            display: none !important;
-        }
-
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            font-family: 'Georgia', serif;
-        }
-
-        /* ========================================================
-            VAN GOGH WHEATFIELD CANVAS (Performance Tuned Background)
-           ======================================================== */
-        .art-canvas-container {
-            position: relative;
-            width: 100% !important;
-            min-height: 100vh !important;
-            z-index: 999999 !important;
-            background: 
-                linear-gradient(rgba(9, 15, 29, 0.6), rgba(15, 23, 42, 0.75)),
-                url('https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Vincent_van_Gogh_-_Wheatfield_with_crows_-_Google_Art_Project.jpg/1280px-Vincent_van_Gogh_-_Wheatfield_with_crows_-_Google_Art_Project.jpg') no-repeat center center !important;
-            background-size: cover !important;
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
-            justify-content: flex-start !important;
-            overflow-x: hidden !important;
-            padding-bottom: 60px !important;
-            transform: translateZ(0);
-            -webkit-transform: translateZ(0);
-        }
-
-        /* Paint Stroke Texture Overlay */
-        .art-canvas-container::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            opacity: 0.12;
-            pointer-events: none;
-            z-index: 2;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-        }
-
-        /* ========================================================
-            NAVIGATION BAR (Artistic Palette Logo)
-           ======================================================== */
-        .custom-navbar {
-            position: relative;
-            z-index: 20;
-            width: 100%;
-            min-height: 80px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 50px;
-            background: rgba(9, 15, 29, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(234, 179, 8, 0.3);
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .nav-logo {
-            font-size: 1.4rem;
-            font-weight: 700;
-            font-style: italic;
-            letter-spacing: 1px;
-            color: #fef08a;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            text-decoration: none;
-            transition: transform 0.3s ease;
-        }
-        .nav-logo:hover { transform: scale(1.02); }
-        .nav-logo i {
-            color: #eab308;
-            font-size: 1.4rem;
-            filter: drop-shadow(0 0 8px rgba(234, 179, 8, 0.6));
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 35px;
-            list-style: none;
-            align-items: center;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: #cbd5e1;
-            font-size: 0.95rem;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-            position: relative;
-            padding-bottom: 4px;
-        }
-
-        .nav-links a:hover, .nav-links a.active { color: #fef08a; }
-        .nav-links a::after {
-            content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 1px;
-            background: #eab308; transition: width 0.3s ease;
-        }
-        .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
-
-        /* ========================================================
-            MAIN DISPLAY WRAPPER
-           ======================================================== */
-        .main-wrapper {
-            flex-grow: 1;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 60px 20px;
-            z-index: 10;
-            max-width: 1000px;
-        }
-
-        .art-mainframe {
-            position: relative;
-            width: 100%;
-            background: #0d1527; 
-            border: 2px solid #eab308;
-            border-radius: 24px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
-            padding: 50px 40px;
-        }
-
-        /* Decorative Gold Corner Borders */
-        .art-mainframe::before, .art-mainframe::after {
-            content: ''; position: absolute; width: 24px; height: 24px; pointer-events: none; opacity: 0.85;
-        }
-        .art-mainframe::before { top: 20px; left: 20px; border-top: 2px solid #eab308; border-left: 2px solid #eab308; border-top-left-radius: 8px; }
-        .art-mainframe::after { bottom: 20px; right: 20px; border-bottom: 2px solid #eab308; border-right: 2px solid #eab308; border-bottom-right-radius: 8px; }
-
-        .dashboard-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .main-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #ffffff;
-            letter-spacing: -0.5px;
-            margin-bottom: 15px;
-        }
-
-        .main-subtitle {
-            font-size: 1.1rem;
-            color: #94a3b8;
-            font-weight: 300;
-            max-width: 600px;
-            margin: 0 auto;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
+            color: #333;
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f7f6;
+            user-select: text !important;
         }
-
-        /* ========================================================
-            BLOCK CARDS GRID LAYOUT
-           ======================================================== */
-        .blocks-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
-            margin-top: 20px;
-        }
-
-        .block-card {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(234, 179, 8, 0.2);
-            border-radius: 16px;
-            padding: 30px 25px;
+        
+        .qbank-header {
             display: flex;
-            flex-direction: column;
             justify-content: space-between;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            text-decoration: none;
-            color: inherit;
-            position: relative;
-            overflow: hidden;
+            align-items: center;
+            background-color: #1a365d;
+            color: #fff;
+            padding: 15px 25px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-
-        /* Ambient Glow effect on Hover */
-        .block-card::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, rgba(234, 179, 8, 0.05) 0%, transparent 100%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-        }
-
-        .block-card:hover {
-            transform: translateY(-4px);
-            border-color: #eab308;
-            box-shadow: 0 10px 30px rgba(234, 179, 8, 0.15);
-            background: rgba(15, 23, 42, 0.85);
-        }
-
-        .block-card:hover::after {
-            opacity: 1;
-        }
-
-        .block-info-group i {
-            font-size: 1.6rem;
-            color: #eab308;
-            margin-bottom: 15px;
-            display: inline-block;
-            filter: drop-shadow(0 0 4px rgba(234, 179, 8, 0.3));
-        }
-
-        .block-title {
-            font-size: 1.3rem;
+        
+        .question-counter {
+            font-size: 1.2rem;
             font-weight: 600;
-            color: #ffffff;
-            margin-bottom: 8px;
-            letter-spacing: -0.3px;
+            color: #90cdf4;
+        }
+        
+        .timer-display {
+            font-size: 1.2rem;
+            font-weight: bold;
+            background-color: #2c5282;
+            padding: 6px 15px;
+            border-radius: 5px;
+            border: 1px solid #4299e1;
+            font-family: 'Courier New', Courier, monospace;
         }
 
-        .block-meta {
-            font-size: 0.85rem;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .question-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
+            display: none;
+        }
+        
+        .question-card.active {
+            display: block;
+        }
+
+        .vignette {
+            font-weight: 500;
+            margin-bottom: 22px;
+            color: #2d3748;
+            font-size: 1.1rem;
+            text-align: justify;
+        }
+
+        .choices {
+            list-style-type: none;
+            padding-left: 0;
             margin-bottom: 25px;
         }
 
-        .block-action-btn {
-            align-self: flex-start;
-            padding: 10px 22px;
-            font-size: 0.9rem;
+        .choices li {
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            background-color: #f7fafc;
+            border-radius: 6px;
+            border-left: 4px solid #cbd5e0;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .choices li:hover {
+            background-color: #edf2f7;
+            border-left-color: #4299e1;
+        }
+
+        .choices li.selected {
+            background-color: #ebf8ff;
+            border-left-color: #2b6cb0;
             font-weight: 600;
-            border-radius: 30px;
-            border: 1px solid rgba(234, 179, 8, 0.4);
-            background: transparent;
-            color: #fef08a;
-            transition: all 0.3s ease;
         }
 
-        .block-card:hover .block-action-btn {
-            background: linear-gradient(90deg, #fcd34d, #f59e0b);
-            color: #0f172a;
-            border-color: transparent;
-            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+        .meta-section {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-top: 2px solid #e2e8f0;
+            display: none;
+        }
+        
+        .meta-section.revealed {
+            display: block;
         }
 
-        /* Disabled/Locked Card Styles */
-        .block-disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            border-color: rgba(148, 163, 184, 0.15);
-            background: rgba(15, 23, 42, 0.3);
-        }
-        .block-disabled:hover {
-            transform: none;
-            border-color: rgba(148, 163, 184, 0.15);
-            box-shadow: none;
-            background: rgba(15, 23, 42, 0.3);
-        }
-        .block-disabled .block-info-group i {
-            color: #64748b;
-            filter: none;
-        }
-        .block-disabled .block-title {
-            color: #94a3b8;
-        }
-        .block-disabled .block-meta {
-            color: #64748b;
-        }
-        .block-disabled .block-action-btn {
-            border-color: rgba(148, 163, 184, 0.2);
-            color: #64748b;
-        }
-        .block-disabled:hover .block-action-btn {
-            background: transparent;
-            color: #64748b;
-            box-shadow: none;
+        .correct-answer {
+            background-color: #f0fff4;
+            border: 1px solid #c6f6d5;
+            color: #22543d;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding: 10px 14px;
+            border-radius: 5px;
+            font-size: 1.05rem;
         }
 
-        @media (max-width: 768px) {
-            .custom-navbar { padding: 15px 30px; }
-            .main-title { font-size: 2rem; }
-            .art-mainframe { padding: 40px 20px; }
-            .blocks-grid { grid-template-columns: 1fr; }
+        .explanation {
+            background-color: #ebf8ff;
+            border: 1px solid #bee3f8;
+            color: #2a4365;
+            padding: 18px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 1rem;
+            text-align: justify;
+        }
+
+        .edu-objective {
+            background-color: #fffaf0;
+            border: 1px solid #feebc8;
+            color: #744210;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-style: italic;
+        }
+
+        .action-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-submit {
+            background-color: #3182ce;
+            color: white;
+        }
+
+        .btn-submit:hover {
+            background-color: #2b6cb0;
+        }
+
+        .btn-next {
+            background-color: #38a169;
+            color: white;
+            display: none;
+        }
+
+        .btn-next:hover {
+            background-color: #2f855a;
+        }
+
+        .results-screen {
+            display: none;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        strong {
+            color: #1a202c;
         }
     </style>
 </head>
 <body>
 
-    <div class="art-canvas-container">
+    <div class="qbank-header">
+        <div class="question-counter" id="tracker-display">Question 1 of 40</div>
+        <div class="timer-display" id="clock-display">90:00</div>
+    </div>
 
-        <nav class="custom-navbar">
-            <a href="https://ankitx007x.github.io/" class="nav-logo">
-                <i class="fa-solid fa-palette"></i> The Grand Budapest
-            </a>
-            <ul class="nav-links">
-                <li><a href="https://ankitx007x.github.io/">Home</a></li>
-                <li><a href="./blocks" class="active">Blocks</a></li>
-                <li><a href="./about">About Me</a></li>
+    <div id="qbank-container">
+        <div class="question-card active" data-qindex="1">
+            <div class="vignette">A 32-year-old female presents with progressive fatigue and a crawling sensation in her legs at night. Lab evaluation demonstrates a hemoglobin level of 9.2 g/dL, mean corpuscular volume (MCV) of 71 fL, and a high red cell distribution width (RDW). Which of the following biochemical profiles is most consistent with this patient's underlying condition?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Low serum iron, high ferritin, low TIBC</li>
+                <li data-ans="B">B. Low serum iron, low ferritin, high TIBC</li>
+                <li data-ans="C">C. High serum iron, high ferritin, low TIBC</li>
+                <li data-ans="D">D. Low serum iron, high ferritin, high TIBC</li>
+                <li data-ans="E">E. Normal serum iron, normal ferritin, normal TIBC</li>
             </ul>
-        </nav>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient presents with iron deficiency anemia (IDA), evidenced by microcytic anemia (MCV < 80 fL), an elevated RDW, and restless legs syndrome. In IDA, total body iron stores are exhausted, leading to low serum ferritin (the most specific marker). The liver compensates for low iron availability by increasing the production of transferrin, which directly increases the Total Iron Binding Capacity (TIBC). Consequently, transferrin saturation falls dramatically.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Iron deficiency anemia is characterized by low serum iron, low ferritin, elevated TIBC, and decreased transferrin saturation.</div>
+            </div>
+        </div>
 
-        <div class="main-wrapper">
-            
-            <div class="art-mainframe">
-                
-                <div class="dashboard-header">
-                    <h1 class="main-title">Select Studio Block</h1>
-                    <p class="main-subtitle">Targeted high-yield collection configurations crafted for elite examination diagnostics.</p>
-                </div>
+        <div class="question-card" data-qindex="2">
+            <div class="vignette">A 64-year-old male presents with deep dull back pain and constipation. Laboratory testing shows a serum calcium of 11.2 mg/dL, a serum creatinine of 2.1 mg/dL, and mild normocytic anemia. A peripheral blood smear demonstrates red blood cells stacked like coins. Which of the following structural or cellular changes is directly responsible for this specific blood smear finding?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Extramedullary hematopoiesis within the splenic red pulp</li>
+                <li data-ans="B">B. Loss of negative surface charge on erythrocytes due to excess serum paraproteins</li>
+                <li data-ans="C">C. Mechanical destruction of erythrocytes by calcified marrow spicules</li>
+                <li data-ans="D">D. Impaired alpha-globin chain synthesis leading to target cells</li>
+                <li data-ans="E">E. Autoimmune IgG coating of red blood cells causing spherocytosis</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> The clinical triad of hypercalcemia, renal insufficiency, anemia, and bone pain (CRAB) indicates Multiple Myeloma. The stacking of red blood cells on the peripheral smear is known as Rouleaux formation. Monoclonal plasma cells secrete excess immunoglobulins (M-protein/paraproteins). These positively charged proteins neutralize the negative charge (zeta potential) that normally causes erythrocytes to repel one another, allowing them to clump together.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Rouleaux formation in multiple myeloma is driven by elevated serum paraproteins masking the normal negative surface charge of red blood cells.</div>
+            </div>
+        </div>
 
-                <div class="blocks-grid">
-                    
-                    <a href="/cardiovascular/jvp-and-murmurs" class="block-card">
-                        <div class="block-info-group">
-                            <i class="fa-solid fa-heart-pulse"></i>
-                            <div class="block-title">JVP and Murmurs</div>
-                            <div class="block-meta">Cardiovascular • 40 Questions • 90 Mins</div>
-                        </div>
-                        <div class="block-action-btn">Start</div>
-                    </a>
+        <div class="question-card" data-qindex="3">
+            <div class="vignette">A 24-year-old male of African descent is prescribed a course of trimethoprim-sulfamethoxazole for a urinary tract infection. Three days later, he presents with dark, tea-colored urine and scleral icterus. A peripheral blood smear reveals cells containing Heinz bodies and "bite cells." What is the underlying enzymatic mechanism defective in this patient?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Inability to generate NADPH, leaving glutathione in an oxidized state</li>
+                <li data-ans="B">B. Impaired glycolysis due to pyruvate kinase failure</li>
+                <li data-ans="C">C. Defective anchor proteins for decay-accelerating factor (DAF)</li>
+                <li data-ans="D">D. Alteration of spectrin and ankyrin cross-linking structures</li>
+                <li data-ans="E">E. Deficient heme attachment to beta-globin chains</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: A</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient has Glucose-6-Phosphate Dehydrogenase (G6PD) deficiency triggered by an oxidative drug (sulfa medication). G6PD is the rate-limiting enzyme of the pentose phosphate pathway, which generates NADPH. NADPH is crucial for maintaining reduced glutathione, which detoxifies hydrogen peroxide and other free radicals. Without it, oxidative stress cross-links hemoglobin sulfhydryl groups, precipitating them into Heinz bodies. Splenic macrophages pluck these bodies out, leaving "bite cells."</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> G6PD deficiency impairs NADPH production, preventing the reduction of glutathione and leaving erythrocytes vulnerable to oxidative stress and hemolysis.</div>
+            </div>
+        </div>
 
-                    <a href="/cvs-block-2" class="block-card">
-                        <div class="block-info-group">
-                            <i class="fa-solid fa-stethoscope"></i>
-                            <div class="block-title">CVS Block 2</div>
-                            <div class="block-meta">Cardiovascular • Custom Items</div>
-                        </div>
-                        <div class="block-action-btn">Start</div>
-                    </a>
+        <div class="question-card" data-qindex="4">
+            <div class="vignette">A 42-year-old female presents with abnormal vaginal bleeding, epistaxis, and scattered petechiae across her lower extremities. Her platelet count is 14,000/µL, while her white blood cell and red blood cell counts are normal. Bone marrow biopsy reveals increased megakaryocytes without atypia. Which of the following pathogenic mechanisms matches this disorder?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Autoantibodies against GpIb receptors leading to splenic sequestration</li>
+                <li data-ans="B">B. Autoantibodies directed against GpIIb/IIIa receptors on platelets</li>
+                <li data-ans="C">C. Quantitative deficiency of the ADAMTS13 metalloproteinase enzyme</li>
+                <li data-ans="D">D. Mutation in the JAK2 tyrosine kinase gene signaling pathways</li>
+                <li data-ans="E">E. Drug-induced suppression of marrow megakaryocyte lineages</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient presents with Immune Thrombocytopenia (ITP), an autoimmune condition characterized by isolated thrombocytopenia. Splenic plasma cells produce IgG autoantibodies directed against platelet surface antigens, most commonly the Glycoprotein IIb/IIIa (GpIIb/IIIa) receptor complexes. Antibody-coated platelets are subsequently recognized and cleared by splenic macrophages via Fc receptors, causing a shortened platelet lifespan. The bone marrow shows a compensatory increase in megakaryocytes.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Immune Thrombocytopenia (ITP) involves IgG autoantibodies directed against platelet GpIIb/IIIa receptors, causing rapid macrophage-mediated clearance in the spleen.</div>
+            </div>
+        </div>
 
-                    <a href="/hematology-oncology" class="block-card">
-                        <div class="block-info-group">
-                            <i class="fa-solid fa-droplet"></i>
-                            <div class="block-title">Hematology and Oncology</div>
-                            <div class="block-meta">Heme/Onc • 40 Questions • 90 Mins</div>
-                        </div>
-                        <div class="block-action-btn">Start</div>
-                    </a>
+        <div class="question-card" data-qindex="5">
+            <div class="vignette">A 28-year-old male with a history of mechanical aortic valve replacement presents with mild scleral icterus and fatigue. Laboratory findings show an elevated indirect bilirubin, elevated lactate dehydrogenase (LDH), and a decreased haptoglobin level. What morphological feature would be most prominent on his peripheral blood film?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Spherocytes</li>
+                <li data-ans="B">B. Target cells</li>
+                <li data-ans="C">C. Schistocytes</li>
+                <li data-ans="D">D. Sickle cells</li>
+                <li data-ans="E">E. Echinocytes</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: C</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient is experiencing intravascular hemolysis secondary to a mechanical heart valve, a form of microangiopathic hemolytic anemia (MAHA) or macrovascular shearing. The physical impact of red blood cells passing through the prosthetic hardware mechanically tears the erythrocyte membranes apart, producing fragmented red blood cells known as schistocytes (helmet cells). Intravascular lysis releases free hemoglobin into circulation, which binds to and depletes haptoglobin, while spiking serum LDH and indirect bilirubin.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Mechanical hemolysis from prosthetic heart valves causes intravascular fragmentation of red blood cells, resulting in schistocytes on peripheral blood smears.</div>
+            </div>
+        </div>
 
-                    <div class="block-card block-disabled">
-                        <div class="block-info-group">
-                            <i class="fa-solid fa-capsules"></i>
-                            <div class="block-title">Block 4</div>
-                            <div class="block-meta">Unassigned • 0 Items</div>
-                        </div>
-                        <div class="block-action-btn">Locked</div>
-                    </div>
+        <div class="question-card" data-qindex="6">
+            <div class="vignette">A 19-year-old female presents with mild anemia during a pregnancy screen. Her hemoglobin is 10.8 g/dL, MCV is 62 fL, and RBC count is paradoxically elevated at 5.8 x 10^12/L. Hemoglobin electrophoresis reveals an HbA2 level of 5.5% (normal is 1.5–3.5%). What is the most likely diagnosis?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Alpha-thalassemia trait</li>
+                <li data-ans="B">B. Beta-thalassemia minor</li>
+                <li data-ans="C">C. Severe iron deficiency anemia</li>
+                <li data-ans="D">D. Sideroblastic anemia</li>
+                <li data-ans="E">E. Lead poisoning toxicosis</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This presentation features marked microcytosis (MCV < 70 fL) with an elevated total RBC count, which is characteristic of a thalassemia trait rather than iron deficiency. The definitive clue is the hemoglobin electrophoresis showing elevated HbA2 (>3.5%). Beta-thalassemia minor is caused by a heterozygous mutation in the beta-globin gene, resulting in a mild reduction in beta-chain synthesis and a compensatory upregulation of delta-chains (forming HbA2, alpha2-delta2).</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Beta-thalassemia minor presents with asymptomatic microcytic anemia, an elevated total RBC count, and a classic elevation of HbA2 on electrophoresis.</div>
+            </div>
+        </div>
 
-                    <div class="block-card block-disabled">
-                        <div class="block-info-group">
-                            <i class="fa-solid fa-dna"></i>
-                            <div class="block-title">Block 5</div>
-                            <div class="block-meta">Unassigned • 0 Items</div>
-                        </div>
-                        <div class="block-action-btn">Locked</div>
-                    </div>
+        <div class="question-card" data-qindex="7">
+            <div class="vignette">A 61-year-old male presents with generalized pruritus that worsens significantly after a hot shower, along with burning pain in his fingers (erythromelalgia). Physical exam reveals splenomegaly. Labs reveal a hemoglobin of 19.5 g/dL, WBC of 14,500/µL, and platelets of 520,000/µL. Erythropoietin (EPO) levels are subnormal. Which mutation is most central to the pathogenesis of this disease?</div>
+            <ul class="choices">
+                <li data-ans="A">A. BCR-ABL1 translocation</li>
+                <li data-ans="B">B. JAK2 V617F mutation</li>
+                <li data-ans="C">C. PML-RARA fusion gene</li>
+                <li data-ans="D">D. BRAF V600E point mutation</li>
+                <li data-ans="E">E. c-MYC overexpression</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient's symptoms (aquagenic pruritus, erythromelalgia, splenomegaly, panmyelosis) and lab values meet the criteria for Polycythemia Vera (PV), a chronic myeloproliferative neoplasm. PV is driven by a somatic mutation in the Janus Kinase 2 gene (JAK2 V617F) in over 95% of cases. This mutation renders the hematopoietic tyrosine kinase domain constitutively active, causing hematopoietic stem cells to hypersensitively proliferate independently of growth factors like erythropoeitin (hence the low serum EPO).</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Polycythemia vera is a myeloproliferative disorder driven by a constitutive JAK2 V617F tyrosine kinase mutation, presenting with panmyelosis and low EPO levels.</div>
+            </div>
+        </div>
 
-                </div>
+        <div class="question-card" data-qindex="8">
+            <div class="vignette">A 35-year-old male with known sickle cell anemia (HbSS) is admitted for a severe painful vaso-occlusive crisis. He is started on aggressive intravenous hydration and analgesia. The medical team considers optimizing his chronic management regimen to prevent future crises. Which of the following agents is preferred for this purpose, and what is its primary physiological mechanism?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Hydroxyurea; increases fetal hemoglobin (HbF) synthesis to inhibit HbS polymer formation</li>
+                <li data-ans="B">B. Epoetin alfa; drives rapid reticulocytosis to replace damaged sickle erythrocytes</li>
+                <li data-ans="C">C. Deferasirox; chelates free serum iron to increase absolute oxygen affinity</li>
+                <li data-ans="D">D. Hydroxyurea; selectively destroys abnormal sickle cell clones within the marrow matrix</li>
+                <li data-ans="E">E. Aspirin; inhibits thromboxane A2 to keep capillaries permanently dilated</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: A</div>
+                <div class="explanation"><strong>Explanation:</strong> Hydroxyurea is the mainstay therapeutic agent for the chronic prevention of vaso-occlusive crises in sickle cell disease. It acts by ribonucleotide reductase inhibition, which shifts erythropoiesis toward the expression of gamma-globin chains. This increases the concentration of Fetal Hemoglobin (HbF, alpha2-gamma2). HbF dilutes the pathologically polymerizing HbS molecules, dramatically reducing erythrocyte sickling, membrane damage, and microvascular occlusion.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Hydroxyurea reduces vaso-occlusive crises in sickle cell disease primarily by increasing fetal hemoglobin (HbF) levels, which prevents HbS polymerization.</div>
+            </div>
+        </div>
 
+        <div class="question-card" data-qindex="9">
+            <div class="vignette">A 53-year-old female presents with deep vein thrombosis in her left common femoral vein. She states that her father and paternal aunt both died from sudden pulmonary embolisms in middle age. She is started on continuous unfractionated heparin, but her partial thromboplastin time (PTT) fails to prolong appropriately, remaining close to baseline despite escalations in dose. What inherited thrombophilia fits this profile?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Factor V Leiden mutation</li>
+                <li data-ans="B">B. Prothrombin G20210A mutation</li>
+                <li data-ans="C">C. Antithrombin III deficiency</li>
+                <li data-ans="D">D. Protein C deficiency</li>
+                <li data-ans="E">E. Antiphospholipid syndrome</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: C</div>
+                <div class="explanation"><strong>Explanation:</strong> Unfractionated heparin works by binding to and exponentially augmenting the activity of antithrombin III (ATIII), which subsequently neutralizes thrombin (Factor IIa), Factor Xa, and other clotting enzymes. In a patient with an inherited ATIII deficiency, heparin lacks its essential cofactor and cannot express its catalytic anticoagulant effect, resulting in "heparin resistance" (failure of the PTT to prolong as expected).</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Antithrombin III deficiency causes apparent resistance to heparin therapy because heparin requires ATIII to exert its anticoagulant action.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="10">
+            <div class="vignette">A 68-year-old male with advanced castrate-resistant prostate cancer presents with a new onset of continuous bleeding from his intravenous access sites, along with widespread ecchymoses. Laboratory testing reveals a prolonged PT, prolonged PTT, a platelet count of 31,000/µL, a fibrinogen level of 85 mg/dL (normal 200-400), and highly elevated D-dimer levels. Which of the following is the initial step in the pathogenesis of this condition?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Excessive release of tissue factor into systemic circulation causing widespread coagulation cascade activation</li>
+                <li data-ans="B">B. Primary hyperfibrinolysis driven by malignant urokinase excretion</li>
+                <li data-ans="C">C. Severe autoimmune consumption of structural plasma proteins</li>
+                <li data-ans="D">D. Toxic marrow suppression from systemic microvascular osteoblastic metastases</li>
+                <li data-ans="E">E. Isolated endothelial degradation from microangiopathic thrombi</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: A</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient is experiencing Disseminated Intravascular Coagulation (DIC), secondary to an underlying malignancy. DIC is initiated by the systemic exposure/release of procoagulant factors, such as Tissue Factor (Factor III), into the bloodstream. Tissue factor binds to Factor VIIa, triggering widespread, uncontrolled generation of thrombin. This results in disseminated microvascular clot formation, consuming platelets, fibrinogen, and coagulation factors, while activating secondary fibrinolysis (spiking D-dimers and prolonging all clotting times).</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Malignancy-induced DIC is initiated by systemic exposure to tissue factor, leading to runaway thrombin generation and consumption of platelets and clotting factors.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="11">
+            <div class="vignette">A 5-year-old boy presents with severe swelling and deep aching pain in his right knee after falling off his bicycle. He has a history of prolonged oozing after a circumcision as an infant. Coagulation labs show a normal PT, a normal bleeding time, but a significantly prolonged PTT. Mixing the patient's plasma with normal pooled plasma fully corrects the PTT to standard reference range values. What factor is deficient?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Factor VII</li>
+                <li data-ans="B">B. Von Willebrand Factor</li>
+                <li data-ans="C">C. Factor VIII</li>
+                <li data-ans="D">D. Platelet GpIb receptors</li>
+                <li data-ans="E">E. Factor X</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: C</div>
+                <div class="explanation"><strong>Explanation:</strong> The presence of deep tissue/joint bleeding (hemarthrosis) points to a coagulation factor deficiency rather than a platelet defect. A prolonged PTT with a normal PT implicates the intrinsic pathway. The full correction of the PTT on a mixing study indicates a quantitative factor deficiency (supplying the missing factor from normal plasma corrects the time) rather than an inhibitor. Given the X-linked recessive pattern implied by male presentation and history, Hemophilia A (Factor VIII deficiency) or Hemophilia B (Factor IX deficiency) fits best. Among options, Factor VIII is the correct choice.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Hemophilia A presents with hemarthrosis, a prolonged intrinsic pathway (PTT), and a mixing study that corrects to normal, confirming a Factor VIII deficiency.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="12">
+            <div class="vignette">A 26-year-old female presents with severe fatigue and sore tongue. She has adhered to a strict vegan diet for the past 6 years and takes no supplements. Evaluation reveals a macrocytic anemia (MCV 114 fL) and hypersegmented neutrophils on peripheral smear. Neurological exam confirms diminished vibratory sensation and proprioception in her bilateral lower extremities. Which metabolite accumulates in this patient's serum as a direct result of the enzyme block?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Homocysteine only</li>
+                <li data-ans="B">B. Methylmalonic acid only</li>
+                <li data-ans="C">C. Both Homocysteine and Methylmalonic acid</li>
+                <li data-ans="D">D. Folic acid and Formiminoglutamic acid</li>
+                <li data-ans="E">E. Cystathionine and Pyruvate</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: C</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient features vitamin B12 (cobalamin) deficiency due to a strict vegan diet without supplementation. Vitamin B12 is a mandatory cofactor for two main enzymes: methionine synthase (which converts homocysteine to methionine) and methylmalonyl-CoA mutase (which converts methylmalonyl-CoA to succinyl-CoA). Consequently, a deficiency in B12 causes a systemic accumulation of **both** serum homocysteine and methylmalonic acid (MMA). The accumulation of MMA disrupts myelin synthesis, causing subacute combined degeneration of the spinal cord (loss of proprioception/vibration), which differentiates it from folate deficiency (where MMA is normal).</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Vitamin B12 deficiency leads to the accumulation of both homocysteine and methylmalonic acid (MMA), the latter causing characteristic neurological demyelination.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="13">
+            <div class="vignette">A 32-year-old female with a history of recurrent miscarriages presents with pain and swelling in her right calf, diagnosed as an acute deep vein thrombosis. Routine screening reveals a prolonged PTT. Her plasma is mixed 1:1 with normal plasma, but the PTT fails to correct. A false-positive screening test for syphilis (VDRL) is noted on her chart. Which of the following is the most definitive mechanism explaining these lab findings?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Genetic resistance of Factor V to inactivation by activated Protein C</li>
+                <li data-ans="B">B. Lupus anticoagulant antibodies binding to phospholipid-protein complexes</li>
+                <li data-ans="C">C. Autoantibodies targeting the coagulation Factor VIII complex directly</li>
+                <li data-ans="D">D. Acute quantitative depletion of serum plasminogen activators</li>
+                <li data-ans="E">E. Endothelial cell expression of excess thrombomodulin receptors</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient presents with Antiphospholipid Syndrome (APS), suggested by recurrent spontaneous abortions, a new thrombotic event, a false-positive VDRL (due to antibodies reacting with cardiolipin), and a prolonged PTT that does not correct on a mixing study. The lack of correction indicates the presence of a clotting inhibitor—specifically, antiphospholipid antibodies/lupus anticoagulant. In vitro, these antibodies interfere with the phospholipid reagents used to start the PTT test, paradoxically prolonging it, even though they cause a highly hypercoagulable state in vivo.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Antiphospholipid Syndrome involves antibodies that prolong the in vitro PTT by binding phospholipids, despite driving hypercoagulability and thrombosis in vivo.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="14">
+            <div class="vignette">A 72-year-old male presents with generalized weakness, unintentional weight loss, and fullness in his left upper abdomen. Physical exam reveals massive splenomegaly extending past the umbilicus. Laboratory evaluation shows a profound leukocytosis (WBC 142,000/µL) with a full spectrum of granulocytic cells (myelocytes, metamyelocytes, bands, and mature neutrophils) present in the blood. Cytogenetic analysis confirms a t(9;22) chromosomal translocation. Which of the following targeted agents is indicated?</div>
+            <ul class="choices">
+                <li data-ans="A">A. All-trans retinoic acid (ATRA)</li>
+                <li data-ans="B">B. Rituximab</li>
+                <li data-ans="C">C. Imatinib</li>
+                <li data-ans="D">D. Bortezomib</li>
+                <li data-ans="E">E. Venetoclax</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: C</div>
+                <div class="explanation"><strong>Explanation:</strong> The clinical and cytogenetic picture describes Chronic Myelogenous Leukemia (CML), characterized by marked leukocytosis with left-shifted myeloid maturation and the pathognomonic Philadelphia chromosome, t(9;22). This translocation fuses the BCR gene on chromosome 22 with the ABL1 gene on chromosome 9, creating a novel BCR-ABL1 fusion protein with unregulated, constitutive tyrosine kinase activity. Imatinib is a small-molecule competitive inhibitor designed to bind the ATP-binding pocket of this mutant kinase, blocking oncogenic downstream signaling.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Chronic Myelogenous Leukemia is driven by the BCR-ABL1 t(9;22) translocation and is specifically treated with tyrosine kinase inhibitors like imatinib.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="15">
+            <div class="vignette">A 69-year-old female is started on standard therapeutic warfarin for new-onset atrial fibrillation. Two days later, she develops severe, well-demarcated, painful violaceous lesions that progress rapidly to hemorrhagic bullae and necrosis over her breasts and thighs. What underlying inherited cofactor deficiency predisposed this patient to this complication?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Factor V Leiden mutation</li>
+                <li data-ans="B">B. Antithrombin III deficiency</li>
+                <li data-ans="C">C. Protein C or S deficiency</li>
+                <li data-ans="D">D. Dysfibrinogenemia</li>
+                <li data-ans="E">E. Factor XI deficiency</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: C</div>
+                <div class="explanation"><strong>Explanation:</strong> Warfarin inhibits Vitamin K Epoxide Reductase, blocking the synthesis of clotting factors II, VII, IX, and X, as well as endogenous anticoagulants Protein C and Protein S. Protein C has a very short half-life (~6 hours) compared to structural procoagulants like Factor II (prothrombin). Consequently, early in warfarin administration, functional Protein C levels drop rapidly while active procoagulants remain in circulation, creating a transient, severe hypercoagulable state. In patients with an underlying, inherited Protein C or S deficiency, this drop causes microvascular thrombosis within cutaneous capillaries, leading to Warfarin-Induced Skin Necrosis.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Warfarin-induced skin necrosis occurs in patients with underlying Protein C or S deficiencies due to a rapid drop in anticoagulant factors relative to procoagulant factors early in treatment.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="16">
+            <div class="vignette">A 3-year-old boy is brought to the emergency department because of continuous oozing from his gums after losing a tooth. He has eczema on his cheeks and limbs, and a history of recurrent sinopulmonary bacterial infections since infancy. Complete blood count shows a platelet count of 28,000/µL with remarkably small platelets on micro-inspection. What is the diagnosis?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Bernard-Soulier syndrome</li>
+                <li data-ans="B">B. Glanzmann thrombasthenia</li>
+                <li data-ans="C">C. Wiskott-Aldrich syndrome</li>
+                <li data-ans="D">D. Idiopathic thrombocytopenic purpura</li>
+                <li data-ans="E">E. Chediak-Higashi syndrome</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: C</div>
+                <div class="explanation"><strong>Explanation:</strong> Wiskott-Aldrich syndrome is an X-linked recessive immunodeficiency disease characterized by the clinical triad of thrombocytopenia with **microthrombocytes** (small platelets), severe eczema, and recurrent pyogenic infections. It is caused by mutations in the WAS gene, which encodes a protein vital for actin cytoskeleton reorganization in hematopoietic cells. The defective structural framework causes abnormal platelet budding and fast splenic destruction, as well as impaired T- and B-cell responses.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Wiskott-Aldrich syndrome is defined by thrombocytopenia with characteristically small platelets, eczema, and immunodeficiency due to actin cytoskeleton defects.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="17">
+            <div class="vignette">A 23-year-old college student presents with a 2-week history of fever, drenching night sweats, and weight loss. Physical exam reveals a firm, non-tender, fixed 3 cm lymph node in his left supraclavicular fossa. An excisional node biopsy demonstrates large, multinucleated cells with prominent, inclusion-like nucleoli resembling "owl eyes" surrounded by a reactive background of lymphocytes and plasma cells. What marker do these abnormal cells typically express?</div>
+            <ul class="choices">
+                <li data-ans="A">A. CD19 and CD20</li>
+                <li data-ans="B">B. CD15 and CD30</li>
+                <li data-ans="C">C. CD3 and CD4</li>
+                <li data-ans="D">D. CD5 and CD23</li>
+                <li data-ans="E">E. CD11c and CD103</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient presents with Hodgkin Lymphoma, indicated by classic systemic "B symptoms" (fever, night sweats, weight loss) and supraclavicular lymphadenopathy. The pathognomonic biopsy finding is the Reed-Sternberg (RS) cell, described as a large cell with mirror-image multinucleation and prominent "owl-eye" nucleoli. Classic RS cells are of B-cell origin but have lost normal B-cell surface markers (like CD20). Instead, they characteristically express CD15 and CD30.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Classic Reed-Sternberg cells in Hodgkin Lymphoma are typically positive for surface markers CD15 and CD30.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="18">
+            <div class="vignette">A 62-year-old male presents with severe bone pain and fatigue. A bone marrow biopsy shows a sheets-like infiltration of large atypical plasma cells. Laboratory results reveal an elevated serum M-protein (IgG kappa). The clinician wants to assess the patient's prognosis. Which of the following serum markers is the most reliable independent prognostic indicator used in the International Staging System for this condition?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Total serum IgG concentration</li>
+                <li data-ans="B">B. Beta-2 microglobulin level</li>
+                <li data-ans="C">C. Alkaline phosphatase activity</li>
+                <li data-ans="D">D. Serum uric acid concentration</li>
+                <li data-ans="E">E. Erythrocyte sedimentation rate (ESR)</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> In Multiple Myeloma, the International Staging System (ISS) relies heavily on two primary serum markers to stratify disease risk and survival outcomes: serum **Beta-2 microglobulin** and serum albumin. Beta-2 microglobulin is a component of the MHC class I molecule shed by the malignant plasma cells; high serum levels reflect a huge tumor burden and underlying renal impairment, predicting poor survival.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Serum beta-2 microglobulin is a key prognostic marker utilized in the staging of multiple myeloma.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="19">
+            <div class="vignette">A 45-year-old female presents with fever, mild confusion, petechiae on her torso, and severe weakness. Her lab results show a hemoglobin of 8.1 g/dL and a platelet count of 12,000/µL. Coagulation profiles (PT and PTT) are entirely within normal limits. A peripheral blood smear displays numerous schistocytes. Which of the following molecular deficiencies is the primary cause of this presentation?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Genetic defect in the GPIIb/IIIa integrin complex</li>
+                <li data-ans="B">B. Deficiency or inhibition of the ADAMTS13 metalloproteinase</li>
+                <li data-ans="C">C. Absence of the PIGA gene product on cell sheets</li>
+                <li data-ans="D">D. Structural mutation in the factor VIII activation pathway</li>
+                <li data-ans="E">E. Excessive production of tissue factor by endothelial cells</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This classic pentad (fever, microangiopathic hemolytic anemia, thrombocytopenia, renal dysfunction, and neurological signs) indicates Thrombotic Thrombocytopenic Purpura (TTP). TTP is caused by a severe deficiency or autoantibody-mediated inhibition of the **ADAMTS13** metalloproteinase. ADAMTS13 is responsible for cleaving ultra-large von Willebrand factor (vWF) multimers into smaller pieces. Without this enzyme, giant vWF multimers persist, causing platelet microthrombi to form in small vessels, shearing red blood cells into schistocytes and consuming platelets without activating the coagulation cascade (hence normal PT/PTT).</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> TTP is driven by an ADAMTS13 deficiency, leading to uncleaved ultra-large vWF multimers that trigger platelet-rich microthrombi and microangiopathic hemolytic anemia.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="20">
+            <div class="vignette">A 65-year-old male undergoes a routine complete blood count which reveals an absolute lymphocyte count of 45,000/µL. He is asymptomatic, and physical exam shows no lymphadenopathy or hepatosplenomegaly. A peripheral blood smear demonstrates an abundance of mature-appearing small lymphocytes alongside numerous disrupted cells known as "smudge cells." What flow cytometry profile is characteristic of this malignant population?</div>
+            <ul class="choices">
+                <li data-ans="A">A. CD19 positive, CD20 positive, and CD5 positive</li>
+                <li data-ans="B">B. CD19 positive, CD10 positive, and TDT positive</li>
+                <li data-ans="C">C. CD3 positive, CD4 positive, and CD8 positive</li>
+                <li data-ans="D">D. CD15 positive, CD30 positive, and CD45 negative</li>
+                <li data-ans="E">E. CD11c positive, CD25 positive, and Annexin A1 positive</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: A</div>
+                <div class="explanation"><strong>Explanation:</strong> The combination of asymptomatic leukocytosis, mature small lymphocytes, and fragile "smudge cells" in an elderly patient is diagnostic of Chronic Lymphocytic Leukemia (CLL). CLL is a malignancy of mature neoplastic B-cells. Paradoxically, these neoplastic B-cells express **CD5**, a surface marker typically restricted to T-cells, along with standard pan-B-cell markers such as CD19, CD20, and CD23.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Chronic Lymphocytic Leukemia (CLL) is a mature B-cell neoplasm characterized by smudge cells and a co-expression of CD19, CD20, and the T-cell marker CD5.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="21">
+            <div class="vignette">A 29-year-old female presents with frequent nosebleeds and heavy menstrual bleeding. Her platelet count is 240,000/µL, and her PT is normal, but her PTT is mildly prolonged. Bleeding time is extended. Her platelet aggregation tracing shows a flat-line response to ristocetin, which normalizes completely when normal pooled plasma is added. What is the most likely diagnosis?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Bernard-Soulier syndrome</li>
+                <li data-ans="B">B. Glanzmann thrombasthenia</li>
+                <li data-ans="C">C. Von Willebrand Disease (vWD)</li>
+                <li data-ans="D">D. Hemophilia A</li>
+                <li data-ans="E">E. Factor XI deficiency</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: C</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient presents with Von Willebrand Disease (vWD), the most common inherited bleeding disorder. vWF acts as a bridge between platelets and exposed subendothelial collagen (via GpIb) and stabilizes Factor VIII (explaining the prolonged PTT). Ristocetin induces platelet agglutination in vitro by activating vWF-GpIb binding. In vWD, ristocetin agglutination is impaired. Because adding normal plasma introduces functional vWF, it corrects the agglutination defect, differentiating it from Bernard-Soulier syndrome (which lacks the GpIb receptor entirely and does not correct with normal plasma).</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Von Willebrand disease presents with mucosal bleeding, a prolonged bleeding time, a prolonged PTT, and a ristocetin cofactor assay defect that corrects with normal plasma.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="22">
+            <div class="vignette">A 48-year-old male presents with profound fatigue and dyspnea. Labs show a normocytic anemia with a reticulocyte count of 0.1%. Bone marrow aspirate reveals a total absence of erythroid precursors, while myeloid and megakaryocyte lineages are fully intact. A chest CT is ordered to rule out a linked structural pathology. Which mediastinal abnormality is strongly associated with this hematological condition?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Retrosternal thyroid goiter</li>
+                <li data-ans="B">B. Thymoma</li>
+                <li data-ans="C">C. Teratoma</li>
+                <li data-ans="D">D. Bronchogenic cyst</li>
+                <li data-ans="E">E. Neurogenic schwannoma</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient has Pure Red Cell Aplasia (PRCA), a form of marrow failure characterized by a selective cessation of erythropoiesis. PRCA is highly associated with an underlying **thymoma** (tumor of the thymus gland) or other autoimmune mechanisms. Neoplastic thymic T-cells or autoantibodies suppress erythroid progenitor cell lines. Surgical resection of the thymoma often leads to a full resolution of the anemia.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Pure Red Cell Aplasia is characterized by an isolated loss of erythroid precursors and is strongly linked to thymomas.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="23">
+            <div class="vignette">A 55-year-old woman with a history of breast cancer treated with anthracycline-based chemotherapy presents with a 4-day history of fever, bruising, and progressive fatigue. Peripheral blood smear reveals large cells with abundant cytoplasm containing numerous violet-pink needle-like inclusions clustered in bundles within the cytoplasm. The patient is at extreme acute risk for which of the following complications?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Acute gouty nephropathy</li>
+                <li data-ans="B">B. Disseminated Intravascular Coagulation (DIC)</li>
+                <li data-ans="C">C. Hyperviscosity syndrome</li>
+                <li data-ans="D">D. Severe aplastic anemia crisis</li>
+                <li data-ans="E">E. Fulminant hepatic necrosis</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> The presence of bundles of Auer rods ("faggot cells") in blasts is pathognomonic for Acute Promyelocytic Leukemia (APL, AML M3), driven by a t(15;17) translocation. The primary medical emergency in APL is the rapid onset of consumptive **Disseminated Intravascular Coagulation (DIC)**. Malignant promyelocytes contain primary granules rich in tissue factor-like procoagulants. When these cells undergo apoptosis or encounter chemotherapy, they release these granules, triggering catastrophic, widespread fibrinolysis and clotting cascade consumption.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Acute Promyelocytic Leukemia (APL) is a hematological emergency due to its strong association with early, life-threatening DIC caused by procoagulant granule release.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="24">
+            <div class="vignette">A 31-year-old female presents with episodic dark morning urine and right upper quadrant abdominal pain found to be secondary to hepatic vein thrombosis (Budd-Chiari syndrome). Flow cytometry analysis reveals a complete deficiency of CD55 and CD59 glycoproteins on her erythrocyte membranes. What is the fundamental mechanism of red cell destruction in this disorder?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Chronic warm-reactive IgG autoimmune tracking</li>
+                <li data-ans="B">B. Unchecked, complement-mediated intravascular lysis</li>
+                <li data-ans="C">C. Trapping and destruction within the splenic cords</li>
+                <li data-ans="D">D. Intracellular precipitation of free alpha-chains</li>
+                <li data-ans="E">E. Oxidative protein cross-linking by toxic free radicals</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient has Paroxysmal Nocturnal Hemoglobinuria (PNH), an acquired clonal stem cell disorder caused by a mutation in the PIGA gene. This gene is required to produce glycosylphosphatidylinositol (GPI) anchors, which secure complement-regulatory proteins like CD55 (decay-accelerating factor) and CD59 (membrane inhibitor of reactive lysis) to cell membranes. Without these anchors, cells lack protection against the complement system. This leads to **unchecked, complement-mediated intravascular lysis**, typically worsening at night due to mild respiratory acidosis. It also increases the risk of venous thrombosis (e.g., Budd-Chiari syndrome).</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> PNH is caused by an acquired PIGA mutation that deletes CD55/CD59 anchors, predisposing erythrocytes to complement-mediated intravascular destruction and atypical thrombosis.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="25">
+            <div class="vignette">A 9-year-old boy from equatorial Africa presents with a rapidly growing, large mass involving his left mandible. A biopsy reveals a dense sheet of intermediate-sized lymphocytes intermixed with pale, tingible-body macrophages, creating a classic "starry-sky" pattern. Cytogenetic screening will most likely demonstrate which of the following genetic alterations?</div>
+            <ul class="choices">
+                <li data-ans="A">A. t(14;18) translocation leading to BCL2 activation</li>
+                <li data-ans="B">B. t(8;14) translocation causing c-MYC overexpression</li>
+                <li data-ans="C">C. t(11;14) translocation activating Cyclin D1</li>
+                <li data-ans="D">D. Del(13q) chromosome deletion sequence</li>
+                <li data-ans="E">E. t(11;18) translocation forming API2-MALT1</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This presentation description corresponds to endemic Burkitt Lymphoma, a high-grade B-cell neoplasm strongly associated with Epstein-Barr Virus (EBV) in African children, typically presenting in the jaw. The "starry-sky" morphology is caused by highly proliferative tumor sheets (the dark sky) interspersed with light-colored macrophages devouring apoptotic debris (the stars). Burkitt lymphoma is driven by a **t(8;14) translocation**, which moves the **c-MYC** oncogene on chromosome 8 to the highly active immunoglobulin heavy chain (IgH) locus on chromosome 14, causing continuous transcriptional activation of cellular proliferation pathways.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Burkitt Lymphoma is a highly aggressive B-cell tumor characterized by a "starry-sky" histological pattern and driven by a t(8;14) c-MYC translocation.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="26">
+            <div class="vignette">A 74-year-old male presents with fatigue and weight loss. Complete blood count shows a hemoglobin of 8.9 g/dL, absolute neutrophil count of 900/µL, and a platelet count of 88,000/µL. A peripheral blood smear demonstrates hypogranular neutrophils with abnormal bilobed nuclei connected by a thin strand of chromatin (Pelger-Huët anomaly), alongside nucleated RBCs. What is the most likely diagnosis?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Aplastic Anemia</li>
+                <li data-ans="B">B. Myelodysplastic Syndrome (MDS)</li>
+                <li data-ans="C">C. Acute Myelogenous Leukemia (AML)</li>
+                <li data-ans="D">D. Primary Myelofibrosis</li>
+                <li data-ans="E">E. Megaloblastic Anemia crisis</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient presents with Myelodysplastic Syndrome (MDS), a clonal stem cell disorder characterized by cytopenias (pancytopenia or bicytopenia) alongside hypercellular marrow and prominent dysplastic features. The presence of **pseudo-Pelger-Huët anomaly** (neutrophils with bilobed, dumbbell-shaped nuclei) and hypogranular cytoplasm are morphologic hallmarks of dysgranulopoiesis in MDS. MDS carries a significant risk of transforming into Acute Myelogenous Leukemia (AML) if blasts exceed 20%.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Myelodysplastic Syndrome presents in elderly patients with cytopenias and characteristic cytoplastic anomalies, such as the pseudo-Pelger-Huët neutrophil variant.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="27">
+            <div class="vignette">A 58-year-old male undergoes a staging workup for colon cancer. Routine laboratory evaluation demonstrates a normal total white blood cell count, but a notable differential shows an absolute eosinophil count of 1,800/µL (normal < 500). Bone marrow evaluation demonstrates reactive eosinophilic hyperplasia without clonal chromosomal markers. Which cytokine is most likely being overproduced by the tumor cells to drive this paraneoplastic effect?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Interleukin-3 (IL-3)</li>
+                <li data-ans="B">B. Interleukin-5 (IL-5)</li>
+                <li data-ans="C">C. Erythropoietin (EPO)</li>
+                <li data-ans="D">D. Tumor Necrosis Factor-alpha (TNF-a)</li>
+                <li data-ans="E">E. Interferon-gamma (IFN-g)</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> Secondary (reactive) eosinophilia is a well-recognized paraneoplastic phenomenon associated with certain solid tumors (like Hodgkin lymphoma or adenocarcinomas). This process is mediated by tumor-cell secretion of **Interleukin-5 (IL-5)**. IL-5 is the dominant cytokine responsible for the selective lineage maturation, activation, recruitment, and survival of eosinophils within bone marrow compartments and peripheral tissue locations.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Reactive paraneoplastic eosinophilia in malignancies is driven by tumor-secreted Interleukin-5 (IL-5).</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="28">
+            <div class="vignette">A 38-year-old female with a history of systemic lupus erythematosus (SLE) presents with severe fatigue and yellowing of her skin. Her hemoglobin is 7.2 g/dL, and her reticulocyte count is 8.5%. A direct antiglobulin (Coombs) test is strongly positive for IgG at 37°C. What is the classic morphological finding expected on her peripheral blood smear?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Schistocytes</li>
+                <li data-ans="B">B. Spherocytes</li>
+                <li data-ans="C">C. Target cells</li>
+                <li data-ans="D">D. Tear-drop cells</li>
+                <li data-ans="E">E. Burr cells</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient is experiencing Warm Autoimmune Hemolytic Anemia (AIHA), an extravascular hemolytic process driven by IgG autoantibodies that bind red blood cells optimally at core body temperature (37°C), a condition commonly associated with SLE. As these antibody-coated erythrocytes pass through the splenic cords, macrophages bind the Fc portions of the IgG antibodies and pinch off segments of the red cell membrane. The remaining membrane seals up, forcing the cell into a compact shape with a low surface-area-to-volume ratio: a **spherocyte**.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Warm Autoimmune Hemolytic Anemia is mediated by IgG autoantibodies, causing splenic macrophages to partially remove membranes and form spherocytes.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="29">
+            <div class="vignette">A 4-year-old girl presents with lethargy, bone pain, and multiple bruises. Physical exam shows generalized lymphadenopathy and hepatosplenomegaly. Complete blood count shows a WBC of 68,000/µL, with 85% lymphoblasts containing delicate chromatin. Flow cytometry shows the cells are positive for CD10, CD19, and terminal deoxynucleotidyl transferase (TdT). What cytogenetic marker carries the most favorable prognosis in this child's condition?</div>
+            <ul class="choices">
+                <li data-ans="A">A. t(9;22) translocation</li>
+                <li data-ans="B">B. t(12;21) translocation</li>
+                <li data-ans="C">C. t(4;11) translocation</li>
+                <li data-ans="D">D. Hypodiploidy</li>
+                <li data-ans="E">E. t(1;19) translocation</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This clinical and immunophenotypic presentation (TdT, CD19, CD10 positive) represents precursor B-cell Acute Lymphoblastic Leukemia (B-ALL), the most common childhood malignancy. In pediatric B-ALL, the **t(12;21)** translocation fuses the ETV6 and RUNX1 genes. This specific translocation is highly associated with a **favorable prognosis**, yielding high cure rates with standard chemotherapy regimens. In contrast, a t(9;22) translocation (Philadelphia chromosome) in ALL signifies an aggressive course and a poor prognosis.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> The t(12;21) ETV6-RUNX1 fusion translocation is a common, favorable prognostic marker in childhood B-ALL.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="30">
+            <div class="vignette">A 29-year-old male presents with persistent cough and a large anterior mediastinal mass on chest X-ray. A biopsy reveals Nodular Sclerosis Hodgkin Lymphoma. He is started on ABVD combination chemotherapy. Two cycles into treatment, he returns complaining of shortness of breath and a dry cough. Pulmonary function testing demonstrates a restrictive ventilatory defect with a significantly reduced DLCO. Which component of his regimen is responsible?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Doxorubicin (Adriamycin)</li>
+                <li data-ans="B">B. Bleomycin</li>
+                <li data-ans="C">C. Vinblastine</li>
+                <li data-ans="D">D. Dacarbazine</li>
+                <li data-ans="E">E. Prednisone</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> The standard ABVD protocol for Hodgkin lymphoma consists of Adriamycin, Bleomycin, Vinblastine, and Dacarbazine. **Bleomycin** is known for causing dose-dependent **pulmonary toxicity**, which can present as pneumonitis progressing to irreversible pulmonary fibrosis. Bleomycin generates reactive oxygen species that damage alveolar epithelial sheets, leading to fibroblast proliferation. This damage manifests as a restrictive defect with a low diffusion capacity (DLCO). In contrast, doxorubicin (Adriamycin) is known for cardiotoxicity, and vinblastine causes bone marrow suppression and neurotoxicity.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Bleomycin chemotherapy can cause severe pulmonary toxicity and fibrosis, presenting as a restrictive lung defect with decreased DLCO.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="31">
+            <div class="vignette">A 33-year-old male presents with severe fatigue and an enlarged spleen. A peripheral blood film shows unusual lymphocytes with prominent cytoplasmic projections resembling fine hairs extending from the cell membrane. Cytochemical staining is strongly positive for Tartrate-Resistant Acid Phosphatase (TRAP). Which of the following therapies is the preferred first-line agent for this disease?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Cladribine (2-CdA)</li>
+                <li data-ans="B">B. Hydroxyurea</li>
+                <li data-ans="C">C. Ruxolitinib</li>
+                <li data-ans="D">D. Cyclophosphamide</li>
+                <li data-ans="E">E. Thalidomide</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: A</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient has Hairy Cell Leukemia, a rare, indolent B-cell leukemia characterized by splenomegaly, pancytopenia, "hairy" cytoplasmic cell projections, and a positive **TRAP stain**. The preferred first-line treatment is **Cladribine (2-chlorodeoxyadenosine, 2-CdA)**, a purine nucleoside analog. Cladribine resists degradation by adenosine deaminase, accumulating to toxic levels in neoplastic B-cells and inducing apoptosis. This therapy achieves high, durable complete remission rates.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Hairy Cell Leukemia is a TRAP-positive mature B-cell neoplasm that responds excellently to the purine analog cladribine.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="32">
+            <div class="vignette">A 44-year-old male presents with persistent epistaxis, bleeding gums, and a petechial rash. Complete blood count reveals pancytopenia: hemoglobin 6.4 g/dL, WBC 1,200/µL, and platelets 11,000/µL. A bone marrow biopsy reveals a markedly hypocellular marrow space entirely filled with adipose tissue and stroma, without abnormal cell clones or fibrosis. What is the pathogenetic basis of this disease?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Clonal mutation in the PIGA gene anchor system</li>
+                <li data-ans="B">B. Immune-mediated T-cell destruction of hematopoietic stem cells</li>
+                <li data-ans="C">C. Replacement of bone marrow by metastatic fibrosis tissue</li>
+                <li data-ans="D">D. Inherited deletion of multi-lineage colony-stimulating factors</li>
+                <li data-ans="E">E. Nutritional depletion of essential trace metal cofactors</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> Severe pancytopenia paired with a hypocellular bone marrow replaced by fat cells describes **Aplastic Anemia**. The dominant pathogenetic mechanism in acquired idiopathic aplastic anemia is an **autoimmune, T-cell-mediated destruction** of CD34+ hematopoietic stem cells. Environmental triggers (drugs, viral infections) elicit an altered self-immune response where autoreactive CD8+ T-lymphocytes release IFN-gamma and TNF-alpha, triggering apoptosis of marrow stem lines. Treatment often involves immunosuppressive therapy (cyclosporine and antithymocyte globulin).</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Aplastic anemia causes marrow hypocellularity and pancytopenia via autoimmune, T-cell-mediated destruction of multipotent hematopoietic stem cells.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="33">
+            <div class="vignette">A 17-year-old male of Mediterranean descent undergoes testing for mild, lifelong microcytic anemia. His hemoglobin is 11.2 g/dL, MCV is 65 fL, and iron panels are normal. Hemoglobin electrophoresis shows a normal HbA2 level of 2.5% and a normal HbF level. Genetic mapping confirms a deletion of two alpha-globin genes. Which of the following configurations represents the cis-deletion variant of this condition, most common in Asian populations?</div>
+            <ul class="choices">
+                <li data-ans="A">A. -- / aa</li>
+                <li data-ans="B">B. -a / -a</li>
+                <li data-ans="C">C. aa / aa</li>
+                <li data-ans="D">D. -- / --</li>
+                <li data-ans="E">E. -a / aa</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: A</div>
+                <div class="explanation"><strong>Explanation:</strong> Normal human cells possess four functional copies of the alpha-globin gene (two on each chromosome 16). A two-gene deletion results in Alpha-Thalassemia Trait (minor), presenting as asymptomatic microcytosis. There are two structural configurations for a two-gene deletion: **cis** and **trans**. The **cis deletion (--/aa)** involves losing both alpha genes from the *same* chromosome, a mutation prevalent in Southeast Asian populations. This configuration carries an increased risk of hydrops fetalis in offspring if both parents pass on a cis-deleted chromosome. The trans deletion (-a/-a) features one deletion on each chromosome and is more common in populations of African descent.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> The cis-deletion configuration of alpha-thalassemia trait involves losing both alpha genes from the same chromosome (--/aa), a pattern common in Asian populations that increases the risk of hydrops fetalis in offspring.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="34">
+            <div class="vignette">A 46-year-old male with a history of alcohol use disorder presents with a macrocytic anemia (MCV 108 fL). He has no neurological complaints, and his methylmalonic acid (MMA) levels are normal, but his serum homocysteine is elevated. He is started on vitamin supplementation. Which of the following specific cellular pathways is directly impaired by this patient's vitamin deficiency?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Conversion of methylmalonyl-CoA to succinyl-CoA</li>
+                <li data-ans="B">B. De novo synthesis of purines and thymidylate for DNA replication</li>
+                <li data-ans="C">C. Decarboxylation of alpha-keto acids in the citric acid cycle</li>
+                <li data-ans="D">D. Intracellular transport of long-chain fatty acids</li>
+                <li data-ans="E">E. Gamma-carboxylation of glutamic acid factors</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient presents with folate (Vitamin B9) deficiency, suggested by alcoholism, macrocytosis, high homocysteine, and a normal MMA level (which rules out B12 deficiency). Folate is converted to tetrahydrofolate (THF), a critical single-carbon donor required for the **de novo synthesis of purines and thymidylate (dTMP)**, which is essential for DNA synthesis and repair. When folate is scarce, impaired DNA replication delays nuclear maturation in erythroblasts, while cytoplasmic growth proceeds unhindered, leading to megaloblastic macrocytosis.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Folate deficiency causes megaloblastic anemia by disrupting purine and thymidylate synthesis, which halts proper DNA replication.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="35">
+            <div class="vignette">A 60-year-old male with a history of extensive unprovoked deep vein thrombosis is evaluated for a suspected underlying hypercoagulable state. Genetic analysis reveals a point mutation in the factor V gene resulting in a single amino acid substitution (Arg506Gln). What is the physiological consequence of this mutation?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Inability of Factor V to bind to platelets during clot formation</li>
+                <li data-ans="B">B. Resistance of Factor V to cleavage and inactivation by activated Protein C</li>
+                <li data-ans="C">C. Enhanced affinity of Factor V for tissue factor complexes</li>
+                <li data-ans="D">D. Accelerated degradation of Antithrombin III molecules</li>
+                <li data-ans="E">E. Constitutive synthesis of excess prothrombin molecules</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient has **Factor V Leiden**, the most common inherited cause of hypercoagulability in Caucasian populations. The mutation alters the Factor V protein structure at the Arg506 cleavage site, rendering it **resistant to cleavage and inactivation by activated Protein C (APC)**. Protein C normally acts to downregulate the clotting cascade by cleaving active Factors Va and VIIIa. Because mutant Factor V Leiden resists this regulatory breakdown, it remains active in circulation longer, promoting a prothrombotic state.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> The Factor V Leiden mutation alters the cleavage site of Factor V, preventing its inactivation by activated Protein C and increasing the risk of venous thromboembolism.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="36">
+            <div class="vignette">A 56-year-old female presents with early satiety and a heavy sensation in her abdomen. Physical exam reveals massive splenomegaly. Lab work shows a hemoglobin of 9.4 g/dL and a white blood cell count of 4,100/µL. A bone marrow aspirate yields a "dry tap." A subsequent core biopsy demonstrates extensive reticulin fiber deposition and collagen marrow replacement, alongside clusters of atypical, large megakaryocytes. What is the diagnosis?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Chronic Myelogenous Leukemia</li>
+                <li data-ans="B">B. Primary Myelofibrosis</li>
+                <li data-ans="C">C. Acute Myelofibrosis with blast tracking</li>
+                <li data-ans="D">D. Aplastic Anemia</li>
+                <li data-ans="E">E. Gaucher Storage Disease</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> A chronic myeloproliferative neoplasm presenting with an inability to aspirate marrow ("dry tap"), massive splenomegaly (due to extramedullary hematopoiesis), and extensive reticulin/collagen marrow deposition is diagnostic of **Primary Myelofibrosis**. Neoplastic megakaryocytes overproduce fibroblast growth factors, such as Transforming Growth Factor-beta (TGF-b), which drives reactive marrow fibrosis. A peripheral blood film typically shows classic leukoerythroblastosis, including teardrop-shaped red blood cells (dacrocytes).</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Primary Myelofibrosis is a myeloproliferative disorder where atypical megakaryocytes release fibrogenic factors, causing bone marrow fibrosis, a "dry tap," and extramedullary hematopoiesis.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="37">
+            <div class="vignette">A 12-year-old boy presents with a 1-week history of worsening shortness of breath, stridor, and swelling of his face and upper extremities. A chest CT scan reveals a massive anterior mediastinal mass compressing the superior vena cava. Pleural fluid cytology confirms a T-cell lymphoblastic lymphoma. What cellular enzyme marker is classically elevated in this tumor type?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Tartrate-Resistant Acid Phosphatase (TRAP)</li>
+                <li data-ans="B">B. Terminal Deoxynucleotidyl Transferase (TdT)</li>
+                <li data-ans="C">C. Myeloperoxidase (MPO)</li>
+                <li data-ans="D">D. Leukocyte Alkaline Phosphatase (LAP)</li>
+                <li data-ans="E">E. Alpha-naphthyl esterase</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> T-cell Acute Lymphoblastic Leukemia/Lymphoma (T-ALL) typically presents in adolescent males as a rapidly growing anterior mediastinal mass arising from the thymus. This expansion can cause superior vena cava (SVC) syndrome, presenting with facial and upper limb edema. Because the neoplastic cells are immature lymphoblasts, they express **Terminal Deoxynucleotidyl Transferase (TdT)**, a specialized DNA polymerase unique to early lymphoid progenitors during antigen receptor gene rearrangement. Myeloperoxidase (MPO) is a marker for myeloid cells and is negative in ALL.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> T-cell lymphoblastic lymphoma frequently presents as a mediastinal mass in adolescents and is characterized by blasts that express Terminal Deoxynucleotidyl Transferase (TdT).</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="38">
+            <div class="vignette">A 67-year-old male presents with bone pain and fatigue. Labs reveal anemia and renal dysfunction. Bone marrow biopsy shows 45% clonal plasma cells. He is diagnosed with Multiple Myeloma and initiated on therapy with Bortezomib. What is the molecular target and mechanism of action of this agent?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Alkylation of DNA guanine bases to prevent replication strand parsing</li>
+                <li data-ans="B">B. Reversible inhibition of the 26S proteasome core, leading to pro-apoptotic protein accumulation</li>
+                <li data-ans="C">C. Monoclonal antibody binding to surface CD38 receptors</li>
+                <li data-ans="D">D. Competitive inhibition of the structural topoisomerase II enzyme</li>
+                <li data-ans="E">E. Binding to the immunophilin cereblon to degrade target transcription factors</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> **Bortezomib** is a proteasome inhibitor used as a first-line treatment for Multiple Myeloma. It binds and inhibits the **26S proteasome** catalytic site. Plasma cells produce massive amounts of immunoglobulins, making them highly dependent on proteasomes to degrade misfolded toxic proteins. Inhibiting this clearance pathway triggers a build-up of pro-apoptotic proteins and misfolded immunoglobulin chains within the endoplasmic reticulum, driving the malignant plasma cells into apoptosis.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Bortezomib treats multiple myeloma by inhibiting the 26S proteasome, causing a toxic accumulation of misfolded proteins that induces plasma cell apoptosis.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="39">
+            <div class="vignette">A 22-year-old female presents with acute abdominal pain. She reports that her mother experienced similar episodes that resolved spontaneously. Her physical exam is normal, and routine labs are unremarkable. However, a urine sample left standing on the windowsill under light exposure turns a deep burgundy color. This condition is caused by an inherited deficiency in which of the following enzymes?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Ferrochelatase</li>
+                <li data-ans="B">B. Porphobilinogen deaminase</li>
+                <li data-ans="C">C. Uroporphyrinogen decarboxylase</li>
+                <li data-ans="D">D. Delta-aminolevulinic acid synthase</li>
+                <li data-ans="E">E. Biliverdin reductase</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This presentation (neurological deficits, recurrent severe abdominal pain, and urine that darkens to a burgundy color upon light exposure/oxidation) is characteristic of **Acute Intermittent Porphyria (AIP)**. AIP is an autosomal dominant disorder caused by a quantitative deficiency in **porphobilinogen deaminase** (also known as hydroxymethylbilane synthase), an enzyme in the heme synthesis pathway. When triggered by certain drugs, fasting, or alcohol, upstream toxic intermediates (porphobilinogen and delta-aminolevulinic acid) accumulate and cause neurovisceral symptoms. Treatment involves administering glucose or hemin to downregulate the rate-limiting enzyme ALA synthase.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Acute Intermittent Porphyria is caused by a porphobilinogen deaminase deficiency, leading to neurovisceral symptoms and urine that darkens upon oxidation.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="40">
+            <div class="vignette">A 68-year-old female presents with scaling, bleeding, and ulceration of her left nipple, mimicking localized eczema. A biopsy of the skin lesion reveals large, pale cells with clear, abundant cytoplasm infiltrating the epidermis singly and in clusters. The cells have prominent nucleoli and stain positive for PAS. This finding is highly indicative of an underlying malignancy in which of the following locations?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Deep mammary ducts (Ductal Carcinoma)</li>
+                <li data-ans="B">B. Cutaneous melanocytic matrices (Melanoma)</li>
+                <li data-ans="C">C. Epidermal keratinocyte layers (Squamous cell carcinoma)</li>
+                <li data-ans="D">D. Proximal gastric mucosa lining (Signet ring carcinoma)</li>
+                <li data-ans="E">E. Intraductal vascular endothelial cells</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: A</div>
+                <div class="explanation"><strong>Explanation:</strong> This clinical and histological presentation describes **Paget Disease of the Breast**. The presence of intraepidermal malignant cells with clear cytoplasm (Paget cells) infiltrating the nipple skin is almost always indicative of an underlying **ductal carcinoma** (either ductal carcinoma in situ [DCIS] or invasive ductal carcinoma) that has migrated up the lactiferous ducts into the epidermis. Unlike melanoma, Paget cells contain mucin and are positive for Periodic Acid-Schiff (PAS) staining.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Paget disease of the breast presents as a eczematous nipple lesion and represents the intraepidermal extension of an underlying ductal carcinoma.</div>
             </div>
         </div>
     </div>
+
+    <div class="action-container">
+        <button class="btn btn-submit" id="submit-action-btn">Submit Answer</button>
+        <button class="btn btn-next" id="next-action-btn">Next Question</button>
+    </div>
+
+    <div class="results-screen" id="end-block-results">
+        <h2>Block Finished!</h2>
+        <p id="score-text-output" style="font-size: 1.3rem; margin: 20px 0; color: #2b6cb0;"></p>
+        <p>Review the completed layout questions manually or save data files safely.</p>
+    </div>
+
+    <script>
+        let currentQuestionNum = 1;
+        const totalQuestionsCount = 40;
+        let selectedOptionListItem = null;
+        
+        let totalSecondsRemaining = 90 * 60;
+        const clockDisplayElement = document.getElementById('clock-display');
+        
+        const countdownTimerInterval = setInterval(() => {
+            if (totalSecondsRemaining <= 0) {
+                clearInterval(countdownTimerInterval);
+                clockDisplayElement.innerText = "00:00";
+                terminateSessionBlock();
+                return;
+            }
+            totalSecondsRemaining--;
+            let minsCalculated = Math.floor(totalSecondsRemaining / 60);
+            let secsCalculated = totalSecondsRemaining % 60;
+            clockDisplayElement.innerText = 
+                (minsCalculated < 10 ? '0' : '') + minsCalculated + ":" + 
+                (secsCalculated < 10 ? '0' : '') + secsCalculated;
+        }, 1000);
+
+        document.querySelectorAll('.choices li').forEach(optionNode => {
+            optionNode.addEventListener('click', function() {
+                const targetCard = this.closest('.question-card');
+                if (targetCard.querySelector('.meta-section').classList.contains('revealed')) {
+                    return; 
+                }
+                
+                targetCard.querySelectorAll('.choices li').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+                selectedOptionListItem = this;
+            });
+        });
+
+        const submitButtonElement = document.getElementById('submit-action-btn');
+        const nextButtonElement = document.getElementById('next-action-btn');
+        
+        submitButtonElement.addEventListener('click', () => {
+            const currentActiveCardNode = document.querySelector('.question-card[data-qindex="' + currentQuestionNum + '"]');
+            const selectedOptionInCard = currentActiveCardNode.querySelector('.choices li.selected');
+            
+            if (!selectedOptionInCard) {
+                alert('Please select an option before checking validation accuracy parameters.');
+                return;
+            }
+            
+            const dynamicMetaRegion = currentActiveCardNode.querySelector('.meta-section');
+            dynamicMetaRegion.classList.add('revealed');
+            
+            submitButtonElement.style.display = 'none';
+            nextButtonElement.style.display = 'block';
+        });
+
+        nextButtonElement.addEventListener('click', () => {
+            const coreCurrentCardNode = document.querySelector('.question-card[data-qindex="' + currentQuestionNum + '"]');
+            coreCurrentCardNode.classList.remove('active');
+            
+            currentQuestionNum++;
+            
+            if (currentQuestionNum <= totalQuestionsCount) {
+                document.getElementById('tracker-display').innerText = "Question " + currentQuestionNum + " of " + totalQuestionsCount;
+                
+                const nextActiveCardNode = document.querySelector('.question-card[data-qindex="' + currentQuestionNum + '"]');
+                nextActiveCardNode.classList.add('active');
+                
+                nextButtonElement.style.display = 'none';
+                submitButtonElement.style.display = 'block';
+                selectedOptionListItem = null;
+            } else {
+                clearInterval(countdownTimerInterval);
+                terminateSessionBlock();
+            }
+        });
+
+        function terminateSessionBlock() {
+            document.getElementById('qbank-container').style.display = 'none';
+            submitButtonElement.style.display = 'none';
+            nextButtonElement.style.display = 'none';
+            document.querySelector('.qbank-header').style.display = 'none';
+            
+            const finalScoreContainerOutputElement = document.getElementById('end-block-results');
+            finalScoreContainerOutputElement.style.display = 'block';
+            document.getElementById('score-text-output').innerText = "Block completed cleanly inside session guidelines.";
+        }
+    </script>
 
 </body>
 </html>
