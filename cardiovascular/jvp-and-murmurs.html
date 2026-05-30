@@ -293,222 +293,181 @@
     </div>
 
     <script>
-        // Global variables initialized for state engine management
-        let totalTime = 5400; // 90 Minutes basic countdown ceiling
-        let timerInterval;
+        <script type="module">
+// Import Firestore modules explicitly
+import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
-        function startTimer(durationInSeconds) {
-            let timeLeft = durationInSeconds;
-            const clockDisplay = document.getElementById('clock-display');
-            
-            timerInterval = setInterval(() => {
-                totalTime = timeLeft; // sync outer reference
-                const minutes = Math.floor(timeLeft / 60);
-                const seconds = timeLeft % 60;
-                
-                if (clockDisplay) {
-                    clockDisplay.innerText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-                }
+// Global script variables for quiz tracking
+let totalSeconds = 5400; // 90 minutes
+let timerInterval;
+let currentUserId = null;
 
-                if (--timeLeft < 0) {
-                    clearInterval(timerInterval);
-                    alert("Time has expired!");
-                }
-            }, 1000);
+// Grab references exposed by main.js
+const auth = window.firebaseAuth;
+const db = window.firebaseDb;
+
+// Check authentication and setup cloud sync properties
+if (window.firebaseAuthProviders && auth) {
+    window.firebaseAuthProviders.onAuthStateChanged(auth, (user) => {
+        if (user) {
+            currentUserId = user.uid;
+            console.log("Authenticated user detected for cloud syncing:", currentUserId);
+            syncCloudProgressToLocal(user.uid);
+        } else {
+            currentUserId = null;
         }
+    });
+}
 
-        // Initialize clock instantly on script execution load
-        startTimer(totalTime);
+function startTimer(durationInSeconds) {
+    totalSeconds = durationInSeconds;
+    const clockDisplay = document.getElementById('clock-display');
 
-        // Core option picking action logic
-        document.querySelectorAll('.choices li').forEach(choice => {
-            choice.addEventListener('click', function() {
-                // Prevent choice change if answer was already revealed
-                const parentCard = this.closest('.question-card');
-                if (parentCard.querySelector('.meta-section').classList.contains('revealed')) return;
-
-                parentCard.querySelectorAll('.choices li').forEach(li => li.classList.remove('selected'));
-                this.classList.add('selected');
-                
-                // Trigger dynamic quick auto backup save logic natively
-                setTimeout(saveProgress, 100);
-            });
-        });
-
-        function submitAnswer() {
-            const activeCard = document.querySelector('.question-card.active');
-            if (!activeCard) return;
-
-            const selection = activeCard.querySelector('.choices li.selected');
-            if (!selection) {
-                alert("Please select an option before submitting.");
-                return;
-            }
-
-            // Reveal explanation content box meta-section
-            const meta = activeCard.querySelector('.meta-section');
-            if (meta) meta.classList.add('revealed');
-
-            document.getElementById('submit-btn').style.display = 'none';
-            document.getElementById('next-btn').style.display = 'inline-block';
-            
-            saveProgress();
+    timerInterval = setInterval(() => {
+        if (totalSeconds <= 0) {
+            clearInterval(timerInterval);
+            if (clockDisplay) clockDisplay.innerText = "00:00";
+            alert("Time is up!");
+            return;
         }
-
-        function nextQuestion() {
-            const activeCard = document.querySelector('.question-card.active');
-            if (!activeCard) return;
-
-            const currentIndex = parseInt(activeCard.getAttribute('data-qindex'));
-            const cards = document.querySelectorAll('.question-card');
-            
-            if (currentIndex < cards.length) {
-                activeCard.classList.remove('active');
-                const nextCard = cards[currentIndex]; // array matches next index
-                nextCard.classList.add('active');
-
-                // Reset Action UI Buttons
-                document.getElementById('submit-btn').style.display = 'inline-block';
-                document.getElementById('next-btn').style.display = 'none';
-                
-                // Update navigation counter indicator string
-                document.getElementById('tracker-display').innerText = `Question ${currentIndex + 1} of ${cards.length}`;
-                saveProgress();
-            } else {
-                alert("Quiz finished! Great job tracking your metrics.");
-            }
+        totalSeconds--;
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        if (clockDisplay) {
+            clockDisplay.innerText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
         }
+    }, 1000);
+}
 
-        // --- PROGRESS SYSTEM ENGINE WITH CLOUD OVERRIDES AND REDIRECTS ---
+// Global scope attachment so the Pause button in your HTML header can call it
+window.pauseSession = async function() {
+    clearInterval(timerInterval);
+    alert("Session paused. Saving your progress online...");
+    
+    // Explicitly run save progress engine
+    await saveProgress();
+    
+    // Redirect cleanly back to the cardiovascular main dashboard
+    window.location.href = "/cardiovascular";
+}
 
-        function buildPayload() {
-            const activeCard = document.querySelector('.question-card.active');
-            const currentQuestionIndex = activeCard ? parseInt(activeCard.getAttribute('data-qindex')) - 1 : 0;
-            
-            const selections = {};
-            document.querySelectorAll('.question-card').forEach(card => {
-                const qIdx = card.getAttribute('data-qindex');
-                const selectedOption = card.querySelector('.choices li.selected');
-                if (selectedOption) {
-                    selections[qIdx] = selectedOption.getAttribute('data-ans');
-                }
-            });
+window.resumeSession = function() {
+    const saved = localStorage.getItem('mcqProgress');
+    if (saved) {
+        const parsed = JSON.parse(saved);
+        restoreProgress(parsed);
+    }
+}
 
-            return {
-                currentQuestion: currentQuestionIndex,
-                timeRemaining: totalTime,
-                selections: selections,
-                updatedAt: new Date().getTime()
-            };
+async function saveProgress() {
+    const activeCard = document.querySelector('.question-card.active');
+    // If no active question (e.g. quiz finished), fallback to index 0
+    const currentQuestionIndex = activeCard ? Array.from(document.querySelectorAll('.question-card')).indexOf(activeCard) : 0;
+
+    const sessionPayload = {
+        currentQuestion: currentQuestionIndex,
+        timeRemaining: totalSeconds,
+        updatedAt: new Date().toISOString()
+    };
+
+    // Fallback Local Storage Write Execution
+    localStorage.setItem('mcqProgress', JSON.stringify(sessionPayload));
+
+    // Online cloud sync routine
+    if (currentUserId && db) {
+        try {
+            const progressDocRef = doc(db, "users", currentUserId, "progress", "jvp_murmurs_session");
+            await setDoc(progressDocRef, sessionPayload, { merge: true });
+            console.log("Progress successfully written online into Cloud Firestore.");
+        } catch (error) {
+            console.error("Failed to back up data online to cloud network database:", error);
         }
+    }
+}
 
-        async function saveProgress() {
-            const progressData = buildPayload();
-            // Local fallback backup write configuration
-            localStorage.setItem('mcqProgress', JSON.stringify(progressData));
+async function syncCloudProgressToLocal(uid) {
+    if (!db) return;
+    try {
+        const progressDocRef = doc(db, "users", uid, "progress", "jvp_murmurs_session");
+        const docSnap = await getDoc(progressDocRef);
 
-            // Sync via global online reference handler if profile context exists
-            if (window.currentUser && typeof window.saveProgressOnline === 'function') {
-                await window.saveProgressOnline(progressData);
-            }
-        }
+        if (docSnap.exists()) {
+            const cloudData = docSnap.data();
+            const localRaw = localStorage.getItem('mcqProgress');
 
-        // Dedicated Pause handler that pushes to cloud database and handles redirection
-        async function pauseSession() {
-            if (timerInterval) clearInterval(timerInterval);
-            
-            const progressData = buildPayload();
-            let cloudSaved = false;
-
-            if (window.currentUser && typeof window.saveProgressOnline === 'function') {
-                cloudSaved = await window.saveProgressOnline(progressData);
-            } else {
-                localStorage.setItem('mcqProgress', JSON.stringify(progressData));
-            }
-
-            // Route user smoothly to /cardiovascular right after verification alerts
-            if (cloudSaved) {
-                alert("Progress successfully synced online! Redirecting to dashboard...");
-            } else {
-                alert("Saved locally (Login to back up via cloud accounts). Redirecting to dashboard...");
-            }
-            
-            window.location.href = "/cardiovascular";
-        }
-
-        async function checkSavedSession() {
-            const resumeBtn = document.getElementById('resume-btn');
-            if (!resumeBtn) return;
-
-            if (window.currentUser && typeof window.fetchProgressOnline === 'function') {
-                const onlineCheckpoint = await window.fetchProgressOnline();
-                if (onlineCheckpoint) {
-                    resumeBtn.style.display = 'inline-block';
+            if (localRaw) {
+                const localData = JSON.parse(localRaw);
+                // Ensure we don't accidentally overwrite newer local changes with old cloud records
+                if (localData.updatedAt && new Date(localData.updatedAt) > new Date(cloudData.updatedAt)) {
+                    console.log("Local progress backup data is newer than database cloud file. Keeping local copy.");
                     return;
                 }
             }
 
-            if (localStorage.getItem('mcqProgress')) {
-                resumeBtn.style.display = 'inline-block';
-            }
-        }
-
-        async function resumeSession() {
-            let saved = null;
-
-            if (window.currentUser && typeof window.fetchProgressOnline === 'function') {
-                saved = await window.fetchProgressOnline();
-            }
-
-            if (!saved) {
-                const localJSON = localStorage.getItem('mcqProgress');
-                if (localJSON) saved = JSON.parse(localJSON);
-            }
-
-            if (!saved) {
-                alert("No structural checkpoints found to rebuild active context.");
-                return;
-            }
-
-            // Clear previous positioning contexts
-            document.querySelectorAll('.question-card').forEach(card => card.classList.remove('active'));
-
-            const cards = document.querySelectorAll('.question-card');
-            if (cards[saved.currentQuestion]) {
-                cards[saved.currentQuestion].classList.add('active');
-            }
-
-            // Restore selection option points
-            if (saved.selections) {
-                Object.keys(saved.selections).forEach(qIdx => {
-                    const parentCard = document.querySelector(`.question-card[data-qindex="${qIdx}"]`);
-                    if (parentCard) {
-                        const targetLi = parentCard.querySelector(`.choices li[data-ans="${saved.selections[qIdx]}"]`);
-                        if (targetLi) targetLi.classList.add('selected');
-                    }
-                });
-            }
-
-            // Update DOM headers and refresh clock execution timeline parameters
-            document.getElementById('tracker-display').innerText = `Question ${saved.currentQuestion + 1} of ${cards.length}`;
-            
-            if (timerInterval) clearInterval(timerInterval);
-            totalTime = saved.timeRemaining;
-            startTimer(totalTime);
-
-            alert("Session state safely restored from remote cloud checkpoint!");
-        }
-
-        // Listener Hooks managing lifecycle changes across file borders
-        document.addEventListener('authReady', () => {
+            // Sync down and align the local profile cache
+            localStorage.setItem('mcqProgress', JSON.stringify(cloudData));
             checkSavedSession();
-        });
+        }
+    } catch (error) {
+        console.error("Error pulling down updated online cloud parameters:", error);
+    }
+}
 
-        window.addEventListener('DOMContentLoaded', () => {
-            checkSavedSession();
-        });
+function restoreProgress(saved) {
+    document.querySelectorAll('.question-card').forEach(card => {
+        card.classList.remove('active');
+    });
 
-        window.addEventListener('beforeunload', saveProgress);
+    const targetCard = document.querySelectorAll('.question-card')[saved.currentQuestion];
+    if (targetCard) {
+        targetCard.classList.add('active');
+    }
+
+    const tracker = document.getElementById('tracker-display');
+    if (tracker) {
+        tracker.innerText = `Question ${saved.currentQuestion + 1} of ${document.querySelectorAll('.question-card').length}`;
+    }
+
+    const clock = document.getElementById('clock-display');
+    if (clock) {
+        const minutes = Math.floor(saved.timeRemaining / 60);
+        const seconds = saved.timeRemaining % 60;
+        clock.innerText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    if (timerInterval) clearInterval(timerInterval);
+    startTimer(saved.timeRemaining);
+
+    alert("Progress restored.");
+}
+
+function checkSavedSession() {
+    const saved = localStorage.getItem('mcqProgress');
+    if (saved) {
+        const btn = document.getElementById('resume-btn');
+        if (btn) {
+            btn.style.display = 'inline-block';
+        }
+    }
+}
+
+// Event Listeners initialization block
+document.querySelectorAll('.choices li').forEach(choice => {
+    choice.addEventListener('click', () => {
+        // Trigger automated saving instantly when options are tapped
+        setTimeout(saveProgress, 100);
+    });
+});
+
+window.addEventListener('beforeunload', () => {
+    // Keep a snapshot saved as the page gets unmounted or refreshed
+    saveProgress();
+});
+
+// Kick off core background configurations on boot
+startTimer(totalSeconds);
+checkSavedSession();
+</script>
     </script>
 </body>
 </html>
