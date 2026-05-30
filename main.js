@@ -23,14 +23,28 @@ const provider = new GoogleAuthProvider();
 const loginBtn = document.getElementById('google-login-btn');
 const whiteRabbitBtn = document.getElementById('white-rabbit-btn');
 const logoutBtn = document.getElementById('logout-btn');
-const dashboard = document.getElementById('user-dashboard');
-const userPhoto = document.getElementById('user-photo');
+
+// Navbar Left Profile Elements
+const navUserProfile = document.getElementById('nav-user-profile');
+const navUserPhoto = document.getElementById('nav-user-photo');
+const profileDropdown = document.getElementById('profile-dropdown');
 const userName = document.getElementById('user-name');
 const userEmail = document.getElementById('user-email');
 
-const navUserProfile = document.getElementById('nav-user-profile');
-const navUserPhoto = document.getElementById('nav-user-photo');
-const navUserName = document.getElementById('nav-user-name');
+// ========================================================
+// PROFILE DROPDOWN INTERACTION HACK
+// ========================================================
+if (navUserPhoto && profileDropdown) {
+    navUserPhoto.addEventListener('click', (event) => {
+        event.stopPropagation(); // Prevents document click listener from immediately closing it
+        profileDropdown.classList.toggle('show');
+    });
+
+    // Automatically collapse dropdown when user clicks anywhere else on screen
+    document.addEventListener('click', () => {
+        profileDropdown.classList.remove('show');
+    });
+}
 
 // Sign-In Click Event Listener
 if (loginBtn) {
@@ -59,7 +73,9 @@ if (logoutBtn) {
     });
 }
 
-// Session Lifecycle Engine: Toggles view logic instantly across layout
+// ========================================================
+// SESSION LIFECYCLE ENGINE (UI & Access Controller)
+// ========================================================
 onAuthStateChanged(auth, (user) => {
     const currentPath = window.location.pathname;
 
@@ -67,33 +83,41 @@ onAuthStateChanged(auth, (user) => {
         const fallBackPhoto = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/svgs/solid/user.svg';
         const finalPhoto = user.photoURL || fallBackPhoto;
         
-        // 1. Fill Card Data
-        if (userPhoto) userPhoto.src = finalPhoto;
+        // 1. Fill Dropdown Profile Card Data (Moved into the corner navbar block)
         if (userName) userName.textContent = user.displayName || "User";
         if (userEmail) userEmail.textContent = user.email || "";
-
-        // 2. Fill Navigation Header Data (Shows first name only)
         if (navUserPhoto) navUserPhoto.src = finalPhoto;
-        if (navUserName) navUserName.textContent = user.displayName ? user.displayName.split(' ')[0] : "User";
 
-        // 3. UI Adjustment States
-        if (loginBtn) loginBtn.style.display = 'none';            // Hide Google Sign In
-        if (whiteRabbitBtn) whiteRabbitBtn.style.display = 'inline-flex'; // Show White Rabbit Button
-        if (dashboard) dashboard.style.display = 'block';
+        // 2. Hide Google Login Button
+        if (loginBtn) loginBtn.classList.add('hidden');
+
+        // 3. Reveal Left-Corner Profile Element
         if (navUserProfile) navUserProfile.style.display = 'inline-flex';
+
+        // 4. Activate the "Follow the White Rabbit" Button (Unhide and light it up)
+        if (whiteRabbitBtn) {
+            whiteRabbitBtn.classList.remove('disabled-state');
+            whiteRabbitBtn.classList.add('active-state');
+        }
+
     } else {
-        // If logged out and trying to look around inside /blocks or /about, kick them back home!
+        // Route protection: Guard rails against unauthorized sub-page surfing
         if (currentPath.includes('/blocks') || currentPath.includes('/about')) {
             window.location.replace("https://ankitx007x.github.io/");
         }
 
-        // Clear layout state if logged out
-        if (loginBtn) loginBtn.style.display = 'inline-flex';     // Show Google Sign In
-        if (whiteRabbitBtn) whiteRabbitBtn.style.display = 'none';   // Hide White Rabbit Button
-        if (dashboard) dashboard.style.display = 'none';
+        // 1. Return Google Login button back to active display
+        if (loginBtn) loginBtn.classList.remove('hidden');
+
+        // 2. Clear out and conceal navbar profile avatar elements
         if (navUserProfile) navUserProfile.style.display = 'none';
-        
-        if (userPhoto) userPhoto.src = "";
         if (navUserPhoto) navUserPhoto.src = "";
+        if (profileDropdown) profileDropdown.classList.remove('show'); // Ensure dropdown is shut
+        
+        // 3. Make White Rabbit button visually and physically unresponsive
+        if (whiteRabbitBtn) {
+            whiteRabbitBtn.classList.remove('active-state');
+            whiteRabbitBtn.classList.add('disabled-state');
+        }
     }
 });
