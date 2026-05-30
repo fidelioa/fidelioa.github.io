@@ -1,3 +1,20 @@
-<h1>logged in as</h1>
-<h2 id="username></h2>
-<img id="profile">
+<div class="user-dashboard">
+    <img id="user-avatar" src="" alt="Profile Picture" style="width:100px; height:100px; border-radius:50%;" />
+    <h2 id="user-name">Welcome Back!</h2>
+</div>
+
+<script>
+    // Pull the stringified data back out of localStorage
+    const savedData = localStorage.getItem("userProfile");
+
+    if (savedData) {
+        const profile = JSON.parse(savedData);
+
+        // Inject the details directly into your HTML elements
+        document.getElementById("user-name").textContent = `Welcome Back, ${profile.name}!`;
+        document.getElementById("user-avatar").src = profile.profilePic || "./assets/default-avatar.png"; 
+    } else {
+        // Fallback: If no session exists, boot them back to the login frame
+        window.location.href = "./index.html"; 
+    }
+</script>
