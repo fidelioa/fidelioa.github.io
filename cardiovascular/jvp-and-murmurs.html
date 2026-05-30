@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UWorld Cardiology Trainer: Murmurs & JVP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* ========================================================
+            ARTSY RESET & BASE (Impressionist Oil Canvas Vibe)
+           ======================================================== */
+        body, html, 
+        .main-inner, .content-outer, .post-body, .entry-content,
+        #main, #content, .wrapper, .main-content-wrapper {
+            margin: 0 !important;
+            padding: 0 !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            background: #090f1d !important;
+            min-height: 100%;
+        }
+
+        .sidebar-container, #sidebar-wrapper, .main-header, .blog-header, 
+        header, footer {
+            display: none !important;
+        }
+
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Georgia', serif;
+        }
+
+        /* ========================================================
+            VAN GOGH WHEATFIELD CANVAS (Performance Tuned Background)
+           ======================================================== */
+        .art-canvas-container {
+            position: relative;
+            width: 100% !important;
+            min-height: 100vh !important;
+            z-index: 999999 !important;
+            background: 
+                linear-gradient(rgba(9, 15, 29, 0.6), rgba(15, 23, 42, 0.75)),
+                url('https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Vincent_van_Gogh_-_Wheatfield_with_crows_-_Google_Art_Project.jpg/1280px-Vincent_van_Gogh_-_Wheatfield_with_crows_-_Google_Art_Project.jpg') no-repeat center center !important;
+            background-size: cover !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: flex-start !important;
+            overflow-x: hidden !important;
+            padding-bottom: 60px !important;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+        }
+
+        /* Paint Stroke Texture Overlay */
+        .art-canvas-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 2;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* ========================================================
+            NAVIGATION BAR (Preserved Luxury Accent Blur)
+           ======================================================== */
+        .custom-navbar {
+            position: relative;
+            z-index: 20;
+            width: 100%;
+            min-height: 80px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            background: rgba(9, 15, 29, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(234, 179, 8, 0.3);
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .nav-logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            font-style: italic;
+            letter-spacing: 1px;
+            color: #fef08a;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+        .nav-logo:hover { transform: scale(1.02); }
+        .nav-logo i {
+            color: #eab308;
+            font-size: 1.2rem;
+            filter: drop-shadow(0 0 8px rgba(234, 179, 8, 0.6));
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 35px;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #cbd5e1;
+            font-size: 0.95rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            position: relative;
+            padding-bottom: 4px;
+        }
+
+        .nav-links a:hover, .nav-links a.active { color: #fef08a; }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 1px;
+            background: #eab308; transition: width 0.3s ease;
+        }
+        .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+
+        /* ========================================================
+            THE MAIN PALETTE - LIGHTWEIGHT HIGH-SPEED FRAME
+           ======================================================== */
+        .main-wrapper {
+            flex-grow: 1;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            padding: 50px 20px;
+            z-index: 10;
+            max-width: 950px;
+        }
+
+        .art-mainframe {
+            position: relative;
+            width: 100%;
+            background: #0d1527; 
+            border: 2px solid #eab308;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            padding: 40px;
+        }
+
+        /* Decorative Gold Corner Borders */
+        .art-mainframe::before, .art-mainframe::after {
+            content: ''; position: absolute; width: 24px; height: 24px; pointer-events: none; opacity: 0.85;
+        }
+        .art-mainframe::before { top: 20px; left: 20px; border-top: 2px solid #eab308; border-left: 2px solid #eab308; border-top-left-radius: 8px; }
+        .art-mainframe::after { bottom: 20px; right: 20px; border-bottom: 2px solid #eab308; border-right: 2px solid #eab308; border-bottom-right-radius: 8px; }
+
+        .section-header {
+            border-bottom: 1px solid rgba(234, 179, 8, 0.2);
+            padding-bottom: 20px;
+            margin-bottom: 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .section-title h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+        }
+
+        /* Styled Simulator Timer Box */
+        .timer-box {
+            background: rgba(234, 179, 8, 0.1);
+            border: 1px solid rgba(234, 179, 8, 0.4);
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-family: monospace;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #fef08a;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .progress-indicator {
+            font-size: 0.85rem;
+            color: #eab308;
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .vignette-panel {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #cbd5e1;
+            margin-bottom: 35px;
+            text-align: justify;
+        }
+
+        /* ========================================================
+            SYSTEM STYLED QUIZ SELECTION CARDS
+           ======================================================== */
+        .options-panel {
+            margin-bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .option-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-left: 3px solid #6366f1; /* Left thematic asset bar */
+            border-radius: 16px;
+            padding: 18px 22px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            font-size: 1rem;
+            color: #e2e8f0;
+            display: flex;
+            align-items: center;
+        }
+
+        .option-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .option-card.selected {
+            border-left-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.05);
+            border-color: rgba(245, 158, 11, 0.3);
+            color: #ffffff;
+        }
+
+        /* Evaluation Action Highlight Matrices */
+        .option-card.correct-highlight {
+            border-left-color: #10b981 !important;
+            background: rgba(16, 185, 129, 0.08) !important;
+            border-color: rgba(16, 185, 129, 0.4) !important;
+            color: #34d399 !important;
+            font-weight: 600;
+        }
+
+        .option-card.wrong-highlight {
+            border-left-color: #ef4444 !important;
+            background: rgba(239, 68, 68, 0.08) !important;
+            border-color: rgba(239, 68, 68, 0.4) !important;
+            color: #f87171 !important;
+        }
+
+        .radio-dot {
+            height: 18px;
+            width: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            margin-right: 15px;
+            display: inline-block;
+            flex-shrink: 0;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .option-card:hover .radio-dot {
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        .option-card.selected .radio-dot {
+            border-color: #f59e0b;
+        }
+
+        .option-card.selected .radio-dot::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background-color: #f59e0b;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+        }
+
+        .option-card.correct-highlight .radio-dot { border-color: #10b981; }
+        .option-card.correct-highlight .radio-dot::after {
+            content: ''; width: 10px; height: 10px; background-color: #10b981; border-radius: 50%; position: absolute; top: 2px; left: 2px;
+        }
+
+        .option-card.wrong-highlight .radio-dot { border-color: #ef4444; }
+
+        /* ========================================================
+            GOLDEN PALETTE SYSTEM ACTION ACTION BUTTONS
+           ======================================================== */
+        .action-bar {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+
+        .btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            padding: 13px 35px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            border-radius: 50px;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            border: none;
+            cursor: pointer;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            color: #0f172a;
+            background: linear-gradient(90deg, #fcd34d, #f59e0b, #fcd34d);
+            background-size: 200% auto;
+            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.2);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.35);
+            background-position: right center;
+        }
+
+        .btn-success {
+            color: #ffffff;
+            background: linear-gradient(90deg, #34d399, #10b981, #34d399);
+            background-size: 200% auto;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.2);
+        }
+
+        .btn-success:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.35);
+            background-position: right center;
+        }
+
+        .btn:disabled {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.2);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* ========================================================
+            EXPLANATION RATIONALE CONTAINER PANELS
+           ======================================================== */
+        .explanation-panel {
+            margin-top: 40px;
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(234, 179, 8, 0.2);
+            border-left: 4px solid #eab308;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: inset 0 4px 20px rgba(0,0,0,0.3);
+            display: none;
+        }
+
+        .panel-heading {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fef08a;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(234, 179, 8, 0.15);
+            padding-bottom: 8px;
+        }
+
+        .rationale-body {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: #cbd5e1;
+            margin-bottom: 25px;
+            text-align: justify;
+        }
+
+        .distractor-paragraph {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 14px;
+            color: #94a3b8;
+            text-align: justify;
+        }
+        
+        .distractor-paragraph strong {
+            color: #e2e8f0;
+        }
+
+        /* ========================================================
+            SUMMARY RECAP INTERFACE
+           ======================================================== */
+        .summary-panel {
+            text-align: center;
+            display: none;
+            padding: 20px 0;
+        }
+
+        .summary-panel h2 {
+            font-size: 2rem;
+            color: #ffffff;
+            margin-bottom: 15px;
+        }
+
+        .summary-panel p {
+            color: #94a3b8;
+            font-style: italic;
+            font-size: 1.05rem;
+        }
+
+        .score-display {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #eab308;
+            margin: 25px 0 10px 0;
+            filter: drop-shadow(0 0 12px rgba(234, 179, 8, 0.3));
+        }
+
+        #percentage-box {
+            font-size: 1.3rem;
+            color: #fef08a;
+            font-weight: 600;
+            font-style: normal;
+            margin-bottom: 30px;
+        }
+
+        .palette-swatches {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 35px;
+        }
+        .swatch { width: 6px; height: 6px; border-radius: 50%; opacity: 0.4; }
+
+        /* Responsive Settings */
+        @media (max-width: 768px) {
+            .custom-navbar { padding: 15px 30px; }
+            .nav-links { gap: 20px; }
+            .art-mainframe { padding: 30px 20px; }
+            .section-header { flex-direction: column; text-align: center; }
+        }
+
+        @media (max-width: 600px) {
+            .custom-navbar { justify-content: center; flex-direction: column; text-align: center; padding: 20px 15px; }
+            .main-wrapper { padding: 20px 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="art-canvas-container">
+
+        <nav class="custom-navbar">
+            <a href="https://ankitx007x.github.io/" class="nav-logo">
+                <i class="fa-solid fa-palette"></i> The Grand Budapest
+            </a>
+            <ul class="nav-links">
+                <li><a href="https://ankitx007x.github.io/">Home</a></li>
+                <li><a href="./blocks" class="active">Blocks</a></li>
+                <li><a href="./about">About Me</a></li>
+            </ul>
+        </nav>
+
+        <div class="main-wrapper">
+            
+            <div class="art-mainframe" id="quiz-wrapper">
+                
+                <div id="game-view">
+                    <div class="section-header">
+                        <div class="section-title">
+                            <h2 id="header-context-title">Cardiovascular Examination</h2>
+                        </div>
+                        <div class="timer-box" id="time-display">90:00</div>
+                    </div>
+
+                    <div class="progress-indicator" id="progress-text">Question 1 of 40</div>
+                    <div class="vignette-panel" id="vignette-box">Loading clinical vignette profile matrices...</div>
+                    
+                    <div class="options-panel" id="options-box">
+                        </div>
+
+                    <div class="action-bar">
+                        <button class="btn btn-primary" id="action-btn" onclick="submitCurrentAnswer()" disabled>
+                            Submit Answer <i class="fa-solid fa-paper-plane" style="font-size:0.8rem;"></i>
+                        </button>
+                    </div>
+
+                    <div class="explanation-panel" id="explanation-box">
+                        <div class="panel-heading"><i class="fa-solid fa-graduation-cap"></i> Educational Objective & Core Rationale</div>
+                        <div class="rationale-body" id="rationale-box">Core rationale analytical content load.</div>
+                        
+                        <div class="panel-heading" style="margin-top:25px;"><i class="fa-solid fa-circle-nodes"></i> Comprehensive Option Deconstruction</div>
+                        <div id="distractors-box">Deconstruction analytical profiles.</div>
+                    </div>
+                </div>
+
+                <div class="summary-panel" id="summary-view">
+                    <h2>Simulated Examination Completed</h2>
+                    <p>Your performance metrics for the high-yield Murmurs & JVP set:</p>
+                    <div class="score-display" id="final-score">0 / 0</div>
+                    <div id="percentage-box">0% Correct</div>
+                    <button class="btn btn-primary" style="margin-top: 10px;" onclick="window.location.reload()">
+                        <i class="fa-solid fa-rotate-left" style="font-size:0.8rem;"></i> Restart Simulation
+                    </button>
+                </div>
+
+                <div class="palette-swatches">
+                    <div class="swatch" style="background: #ef4444;"></div>
+                    <div class="swatch" style="background: #38bdf8;"></div>
+                    <div class="swatch" style="background: #f59e0b;"></div>
+                    <div class="swatch" style="background: #6366f1;"></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+<script>
+    // Injected high-yield question pool dataset
+    const dataset = [
+        {
+            num: 1,
+            vignette: `A 72-year-old male presents to the outpatient cardiology clinic complaining of progressive exertional chest pain, a sense of tightness in his chest during mild ambulation, and two recent episodes of lightheadedness while walking up a steep incline. Physical examination reveals a harsh, late-peaking crescendo-decrescendo systolic ejection murmur heard best at the right upper sternal border, which radiates significantly into both carotid arteries. The second heart sound (S2) is delayed, soft, and single. Pulsus parvus et tardus is palpable on arterial exam. Inspection of the internal jugular venous pulsations is performed. Which of the following internal jugular venous pressure (JVP) waveform alterations is most characteristically expected in this patient's underlying cardiac state?`,
+            options: [
+                `A) Prominent, towering 'a' wave due to decreased right ventricular compliance`,
+                `B) Giant, fused 'v' wave (Lancisi sign) stemming from chronic volume overload`,
+                `C) Steep, precipitous, and rapid 'y' descent following a brief plateau phase`,
+                `D) Attenuated or completely absent 'x' descent during ventricular ejection`,
+                `E) Large, rhythmic cannon 'a' waves occurring predictably with each cycle`,
+            ],
+            correct: 0,
+            rationale: `This clinical presentation is classic for severe, calcific aortic stenosis (AS), characterized by the classic clinical triad of angina, syncope (or presyncope), and dyspnea. The physical exam confirms this with a late-peaking systolic ejection murmur, radiation to the carotids, and a soft/delayed S2 (parodoxical splitting or single sound). Chronic left ventricular outflow tract obstruction induces severe concentric left ventricular hypertrophy (LVH), drastically lowering left ventricular diastolic compliance. Because the interventricular septum is shared between both chambers, the profound hypertrophy and high filling pressures on the left side anatomically bulge into and compromise the right ventricular (RV) lumen, leading to decreased right ventricular compliance as well. To maintain adequate right ventricular filling across a stiffened tricuspid valve, the right atrium must contract with significantly enhanced force during late diastole. On the JVP tracing, this hyper-dynamic atrial kick manifests as a prominent, towering 'a' wave.`,
+            distractors: [
+                `<strong>Option B is incorrect:</strong> A giant, fused 'v' wave (sometimes referred to as the Lancisi sign or ventricularization of the atrial pressure pulse) is the hallmark finding of severe tricuspid regurgitation. In tricuspid regurgitation, the incompetent valve allows a massive volume of blood to jet backward into the right atrium during ventricular systole, which directly obliterates the normal systolic 'x' descent and builds a massive, early-appearing 'v' wave that peaks during ventricular contraction.`,
+                `<strong>Option C is incorrect:</strong> A steep, rapid, and deep 'y' descent is a classic feature of constrictive pericarditis (Friedreich's sign) or restrictive cardiomyopathy. In these conditions, early diastolic filling is initially rapid and unrestricted, but it is abruptly halted as the expanding right ventricular wall hits a rigid, calcified, or non-compliant pericardium. In fixed valvular outflow tract obstructions like aortic stenosis, early diastolic emptying is normal or slowed, never sharp or precipitous.`,
+                `<strong>Option D is incorrect:</strong> An attenuated or completely absent 'x' descent occurs when tricuspid valve competence is compromised, such as in tricuspid regurgitation or right ventricular infundibular failure. The 'x' descent represents right atrial relaxation combined with the downward pulling of the tricuspid annulus during ventricular systole. In aortic stenosis, atrial relaxation proceeds normally, maintaining a preserved and distinct 'x' descent on the venous waveform.`,
+                `<strong>Option E is incorrect:</strong> Cannon 'a' waves are transient, highly elevated pressure waves that occur exclusively when the right atrium contracts against a completely closed tricuspid valve. This occurs during atrioventricular (AV) dissociation, such as in third-degree heart block or ventricular tachycardia, where the atrium and ventricle contract completely independently of one another. Because these events occur randomly, cannon 'a' waves occur irregularly rather than predictably with every single cycle.`
+            ]
+        },
+        {
+            num: 2,
+            vignette: `A 34-year-old female with a long, documented history of intravenous drug use is admitted to the medical floor for high-grade fevers, rigors, and a productive cough. Physical examination reveals warm, flushed skin and needle track marks across both antecubital fossae. On cardiac auscultation, a high-pitched, blowing holosystolic murmur is heard loudest over the left lower sternal border. Notably, the murmur increases in intensity during deep, quiet inspiration. On bedside evaluation of the neck, prominent, bounding venous pulsations are observed in the jugular bulb. Which of the following specific JVP tracing abnormalities is directly correlated with the pathophysiological mechanism of this murmur?`,
+            options: [
+                `A) A delayed and prominent 'c' wave following the carotid upstroke`,
+                `B) A highly prominent, peaked, and amplified 'v' wave during ventricular systole`,
+                `C) A paradoxical elevation of the absolute JVP height during quiet inspiration`,
+                `D) A slow, sluggish, and prolonged 'y' descent extending into late diastole`,
+                `E) Complete and total absence of the 'a' wave throughout the cardiac cycle`,
+            ],
+            correct: 1,
+            rationale: `This patient presents with acute tricuspid regurgitation (TR) secondary to right-sided infective endocarditis, which is highly prevalent among intravenous drug users (frequently caused by Staphylococcus aureus). The physical exam finding of a holosystolic murmur at the left lower sternal border that increases with inspiration is known as Carvallo's sign. Inspiration decreases intrathoracic pressure, pulling more venous blood into the right atrium and right ventricle, thereby increasing the regurgitant volume and accentuating the murmur. Pathophysiologically, during ventricular systole, the right ventricle contracts against an incompetent tricuspid valve, forcing a substantial portion of the stroke volume backward into the right atrium. Because the right atrium is normally filling passively from the vena cavae during this exact phase, the retrograde regurgitant jet causes an immense, early spike in intra-atrial volume and pressure. On the JVP waveform, this presents as an amplified, peaked, and elevated 'v' wave that merges with and obliterates the normal systolic 'x' descent.`,
+            distractors: [
+                `<strong>Option A is incorrect:</strong> The 'c' wave corresponds to the mechanical closure of the tricuspid valve and its subsequent upward bulging into the right atrium at the onset of ventricular systole. While the 'c' wave may be slightly buried by a large regurgitant jet, it is not delayed, and its alterations are non-specific and completely overshadowed by the massive diagnostic amplification seen in the subsequent 'v' wave.`,
+                `<strong>Option C is incorrect:</strong> A paradoxical rise in JVP during inspiration is known as Kussmaul's sign. Mechanically, inspiration should lower intrathoracic pressure and cause the JVP to drop as blood is rapidly drawn into the right heart. Kussmaul's sign occurs when a rigid pericardium (as in constrictive pericarditis) or a severely failing, restricted right ventricle cannot accommodate this extra venous return, forcing the blood to back up into the neck veins. Isolated acute tricuspid regurgitation does not cause Kussmaul's sign.`,
+                `<strong>Option D is incorrect:</strong> The 'y' descent represents the passive emptying of the right atrium into the right ventricle immediately after the tricuspid valve opens in early diastole. In tricuspid regurgitation, the right atrium holds an abnormally massive volume of blood under highly elevated pressure at the end of systole. Consequently, when the tricuspid valve opens, blood rushes into the ventricle with extreme velocity, resulting in an exceptionally steep, rapid, and sharp 'y' descent rather than a slow or sluggish one.`,
+                `<strong>Option E is incorrect:</strong> The absolute absence of the 'a' wave occurs only when there is a complete loss of coordinated, mechanical right atrial contraction, which is the definition of atrial fibrillation. While chronic tricuspid regurgitation can lead to atrial stretch and subsequent atrial fibrillation, this patient is in acute endocarditis and there is no clinical or electrocardiographic documentation of an arrhythmia, meaning her 'a' wave remains fully intact.`
+            ]
+        },
+        {
+            num: 3,
+            vignette: `A 62-year-old female is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a low-pitched, rumbling mid-diastolic murmur heard best at the apex with the patient in the left lateral decubitus position, preceded by a high-pitched, sharp opening snap. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) A prominent, towering 'a' wave due to adaptive right ventricular hypertrophy and pressure overload`,
+                `B) A completely flattened 'a' wave combined with an isolated, giant systolic 'v' wave`,
+                `C) An exceptionally sharp, rapid 'y' descent that terminates abruptly with an early diastolic knock`,
+                `D) A selective prolongation of the 'c' wave due to delayed transmission of left-sided pressures`,
+                `E) Intermittent, highly erratic cannon 'a' waves occurring predominantly during inspiration`,
+            ],
+            correct: 0,
+            rationale: `This clinical image describes severe rheumatic Mitral Stenosis (MS). The stenosis restricts left ventricular inflow, elevating left atrial pressures and causing retrograde congestion through the pulmonary vasculature. Over time, this chronic pulmonary venous congestion leads to reactive pulmonary arterial hypertension and severe right ventricular pressure overload. The right ventricle responds by undergoing concentric hypertrophy, which severely limits its diastolic compliance. To successfully drive blood into this stiffened, thick-walled right ventricle, the right atrium must contract with extreme force during late diastole. This hyper-forceful atrial kick is directly captured on the JVP tracing as a towering, prominent 'a' wave, indicating elevated right-sided filling pressures secondary to chronic upstream left-sided valvular disease.`,
+            distractors: [
+                `<strong>Option B is incorrect:</strong> A flattened 'a' wave with a giant 'v' wave describes the combined effect of atrial fibrillation and tricuspid regurgitation. While severe mitral stenosis frequently causes left atrial enlargement and subsequent atrial fibrillation, the vignette specifies a classical sinus rhythm profile with an opening snap and a mid-diastolic rumble without defining an irregular rhythm, making an isolated giant 'v' wave incorrect.`,
+                `<strong>Option C is incorrect:</strong> A sharp, rapid 'y' descent terminating in an early diastolic knock is pathognomonic for constrictive pericarditis. In constrictive pericarditis, the rigid pericardial shell limits the total volume of the cardiac silhouette. Early filling occurs rapidly because atrial pressures are high, but it stops abruptly when the expanding wall hits the unyielding pericardium, creating a 'knock'. In mitral stenosis, filling is restricted across the mitral valve, affecting the left heart directly, and the right heart changes are driven by compliance rather than direct external restriction.`,
+                `<strong>Option D is incorrect:</strong> The JVP 'c' wave represents the minor pressure spike caused by the tricuspid valve bulging into the right atrium during early right ventricular contraction. It is completely independent of left-sided valvular mechanics and does not undergo selective prolongation or modification due to mitral valve calcification.`,
+                `<strong>Option E is incorrect:</strong> Cannon 'a' waves are severe, erratic waves produced exclusively during complete atrioventricular (AV) dissociation. This occurs when the right atrium contracts against a fully closed tricuspid valve because the sinus node and the ventricular pacemaker are firing independently. Mitral stenosis creates a fixed mechanical resistance due to compliance changes, which produces a consistent, uniform enlargement of the 'a' wave with every single cardiac cycle, rather than intermittent cannon waves.`
+            ]
+        },
+        {
+            num: 4,
+            vignette: `A 73-year-old male is evaluated in the emergency department for worsening exertional dyspnea, fatigue, and a recent increase in bilateral lower extremity swelling. On physical examination, the clinician notes a sharp, high-pitched early diastolic sound, described as a pericardial knock, heard best along the left sternal border, without an associated classic murmur. A focused bed-side evaluation of the internal jugular venous pressure and waveform dynamics is initiated to evaluate the patient's right-sided cardiophysiology. Based on the underlying mechanism of this condition, which of the following choices best details the expected jugular venous pulse findings?`,
+            options: [
+                `A) A complete loss of the 'x' descent during the middle phase of ventricular ejection`,
+                `B) An isolated, towering 'v' wave that exceeds the height of the normal arterial pulse`,
+                `C) A paradoxical rise in overall JVP during inspiration coupled with an exceptionally sharp, deep 'y' descent`,
+                `D) Bounding, rhythmic cannon 'a' waves that correlate directly with peripheral pulse deficits`,
+                `E) A complete flattening of all waves and descents, creating a straight-line static venous pressure`,
+            ],
+            correct: 2,
+            rationale: `This patient exhibits the classic clinical presentation of constrictive pericarditis, often caused by prior viral pericarditis, tuberculosis, or cardiac surgery. The rigid, fibrotic, and frequently calcified pericardium acts as a non-yielding shell around the entire heart, fixing the maximum total cardiac volume. This produces two distinct hemodynamic phenomena. First, during inspiration, the normal drop in intrathoracic pressure increases venous return to the right heart. However, because the rigid pericardium prevents the right-sided chambers from expanding outward, the incoming blood cannot be accommodated, causing a paradoxical rise in jugular venous pressure during inspiration, known as Kussmaul's sign. Second, when the tricuspid valve opens in early diastole, the high pressure in the right atrium drives blood into the right ventricle with extreme speed. This rapid filling is abruptly halted when the ventricular wall hits the rigid pericardial boundary, resulting in an exceptionally steep, rapid, and deep 'y' descent on the JVP tracing, known as Friedreich's sign.`,
+            distractors: [
+                `<strong>Option A is incorrect:</strong> The 'x' descent, which represents right atrial relaxation and the downward movement of the tricuspid annulus during ventricular systole, is fully preserved or even exaggerated in constrictive pericarditis. The rigid pericardium does not impair systolic downward translation of the cardiac floor, meaning the 'x' descent remains highly prominent.`,
+                `<strong>Option B is incorrect:</strong> A towering, isolated 'v' wave is caused by systolic regurgitation of blood into the right atrium, which is characteristic of tricuspid regurgitation. Constrictive pericarditis is a disease of diastolic filling restriction affecting all four chambers equally; it does not involve an incompetent valvular apparatus that would drive a systolic regurgitant pressure spike.`,
+                `<strong>Option D is incorrect:</strong> Cannon 'a' waves are caused by an electrical dysrhythmia resulting in atrioventricular dissociation. In constrictive pericarditis, the mechanical and structural constraints of the pericardium do not cause independent atrial and ventricular rhythms, meaning there are no regular or irregular cannon waves.`,
+                `<strong>Option E is incorrect:</strong> The JVP tracing in constrictive pericarditis is highly dynamic and exaggerated, featuring prominent 'M' or 'W' wave shapes due to the sharp 'x' and 'y' descents. It is never flat or static, as the rapid pressure shifts within the restricted cardiac chambers are directly transmitted up the venous system.`
+            ]
+        }
+    ];
+
+    let currentIdx = 0;
+    let score = 0;
+    let selectedOptionIdx = null;
+    let totalSeconds = 90 * 60;
+    let timerInterval;
+
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            totalSeconds--;
+            if (totalSeconds <= 0) {
+                clearInterval(timerInterval);
+                finishQuiz();
+                return;
+            }
+            let mins = Math.floor(totalSeconds / 60);
+            let secs = totalSeconds % 60;
+            document.getElementById('time-display').innerText = 
+                `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }, 1000);
+    }
+
+    function renderQuestion() {
+        selectedOptionIdx = null;
+        document.getElementById('explanation-box').style.display = 'none';
+        
+        const qData = dataset[currentIdx];
+        document.getElementById('progress-text').innerText = `Question ${currentIdx + 1} of ${dataset.length}`;
+        document.getElementById('vignette-box').innerText = qData.vignette;
+        
+        const optionsBox = document.getElementById('options-box');
+        optionsBox.innerHTML = '';
+        
+        qData.options.forEach((opt, idx) => {
+            const card = document.createElement('div');
+            card.className = 'option-card';
+            card.setAttribute('onclick', `selectOption(${idx})`);
+            card.id = `opt-${idx}`;
+            
+            const dot = document.createElement('span');
+            dot.className = 'radio-dot';
+            
+            const textSpan = document.createElement('span');
+            textSpan.innerText = opt;
+            
+            card.appendChild(dot);
+            card.appendChild(textSpan);
+            optionsBox.appendChild(card);
+        });
+        
+        const aBtn = document.getElementById('action-btn');
+        aBtn.innerText = "Submit Answer";
+        aBtn.className = "btn btn-primary";
+        aBtn.innerHTML = 'Submit Answer <i class="fa-solid fa-paper-plane" style="font-size:0.8rem;"></i>';
+        aBtn.disabled = true;
+        aBtn.setAttribute("onclick", "submitCurrentAnswer()");
+    }
+
+    function selectOption(idx) {
+        // Halt if question already finalized
+        if (document.getElementById('explanation-box').style.display === 'block') return;
+        
+        if (selectedOptionIdx !== null) {
+            document.getElementById(`opt-${selectedOptionIdx}`).classList.remove('selected');
+        }
+        selectedOptionIdx = idx;
+        document.getElementById(`opt-${idx}`).classList.add('selected');
+        document.getElementById('action-btn').disabled = false;
+    }
+
+    function submitCurrentAnswer() {
+        const qData = dataset[currentIdx];
+        
+        // Loop elements to apply correct/wrong visual layers
+        qData.options.forEach((_, idx) => {
+            const el = document.getElementById(`opt-${idx}`);
+            el.classList.remove('selected');
+            if (idx === qData.correct) {
+                el.classList.add('correct-highlight');
+            } else if (idx === selectedOptionIdx) {
+                el.classList.add('wrong-highlight');
+            }
+        });
+        
+        if (selectedOptionIdx === qData.correct) {
+            score++;
+        }
+        
+        // Populating explanation layout
+        document.getElementById('rationale-box').innerText = qData.rationale;
+        const dBox = document.getElementById('distractors-box');
+        dBox.innerHTML = '';
+        
+        qData.distractors.forEach(dist => {
+            const p = document.createElement('div');
+            p.className = 'distractor-paragraph';
+            p.innerHTML = dist;
+            dBox.appendChild(p);
+        });
+        
+        document.getElementById('explanation-box').style.display = 'block';
+
+        // Mutate actions interface behavior to handle sequencing pipeline
+        const aBtn = document.getElementById('action-btn');
+        if (currentIdx < dataset.length - 1) {
+            aBtn.innerHTML = 'Next Question <i class="fa-solid fa-chevron-right" style="font-size:0.8rem;"></i>';
+            aBtn.className = "btn btn-success";
+            aBtn.setAttribute("onclick", "advanceNext()");
+        } else {
+            aBtn.innerHTML = 'View Final Results <i class="fa-solid fa-square-poll-vertical" style="font-size:0.8rem;"></i>';
+            aBtn.className = "btn btn-success";
+            aBtn.setAttribute("onclick", "finishQuiz()");
+        }
+    }
+
+    function advanceNext() {
+        currentIdx++;
+        renderQuestion();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function finishQuiz() {
+        clearInterval(timerInterval);
+        document.getElementById('game-view').style.display = 'none';
+        document.getElementById('summary-view').style.display = 'block';
+        document.getElementById('final-score').innerText = `${score} / ${dataset.length}`;
+        
+        let pct = Math.round((score / dataset.length) * 100);
+        document.getElementById('percentage-box').innerText = `${pct}% Correct`;
+    }
+
+    // Launch simulation on frame initialization
+    startTimer();
+    renderQuestion();
+</script>
+
+</body>
+</html>
