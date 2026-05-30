@@ -120,9 +120,16 @@ onAuthStateChanged(auth, (user) => {
     } else {
         isUserLoggedIn = false;
         
-        // Route protection: Guard rails against unauthorized sub-page surfing
-        if (currentPath.includes('/blocks') || currentPath.includes('/about')) {
+        // STRICT ROUTE PROTECTION: Only redirect if explicitly trying to browse restricted pages
+        const isBrowsingProtectedPage = currentPath.endsWith('/blocks') || 
+                                        currentPath.endsWith('/blocks/') || 
+                                        currentPath.includes('/blocks/index.html') ||
+                                        currentPath.endsWith('/about') || 
+                                        currentPath.endsWith('/about/');
+                                        
+        if (isBrowsingProtectedPage) {
             window.location.replace("https://ankitx007x.github.io/");
+            return;
         }
 
         // 1. Return Google login back into the active viewport array
