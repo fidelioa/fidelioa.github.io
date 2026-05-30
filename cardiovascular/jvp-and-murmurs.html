@@ -1160,22 +1160,30 @@
 
 
         // ─── Pause & Save → redirect to /cardiovascular ───────────────────────
-        window.pauseSession = async function() {
-            const btn = document.getElementById('pause-btn');
-            if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+window.pauseSession = async function() {
+    const btn = document.getElementById('pause-btn');
+    if (btn) { 
+        btn.disabled = true; 
+        btn.textContent = 'Saving…'; 
+    }
 
-            clearInterval(countdownTimerInterval);
+    // Stop any active countdown timers if running
+    if (typeof countdownTimerInterval !== 'undefined') {
+        clearInterval(countdownTimerInterval);
+    }
 
-            const isOnline = await window._saveProgressOnline();
+    // Saves the progress online to Firebase Firestore for the authenticated user
+    // or falls back to localStorage if offline/not signed in
+    const isOnline = await window._saveProgressOnline();
 
-            if (btn) {
-                btn.textContent = isOnline ? '✓ Saved!' : '✓ Saved (offline)';
-            }
+    if (btn) {
+        btn.textContent = isOnline ? '✓ Saved!' : '✓ Saved (offline)';
+    }
 
-            // Brief visual confirmation before redirect
-            setTimeout(() => {
-                window.location.href = '/cardiovascular';
-            }, 900);
+    // Direct redirection to the cardiovascular index route as requested
+    setTimeout(() => {
+        window.location.href = '/cardiovascular';
+    }, 700);
         }
 
         // Auto-save on each choice selection
