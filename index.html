@@ -8,18 +8,6 @@
     <link rel="icon" type="image/png" href="./assets/favicon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <script>
-        (function () {
-            const currentPath = window.location.pathname;
-            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-
-            // If a logged-out visitor tries accessing subfolders, kick them to root
-            if (!isLoggedIn && (currentPath.includes('/blocks') || currentPath.includes('/about'))) {
-                window.location.replace("https://ankitx007x.github.io/");
-            }
-        })();
-    </script>
-
     <script src="main.js" defer type="module"></script>
     
     <style>
@@ -45,11 +33,6 @@
         * {
             margin: 0; padding: 0; box-sizing: border-box;
             font-family: 'Georgia', serif;
-        }
-
-        /* Hides elements completely if user context state is logged-out */
-        .logged-out .protected-link {
-            display: none !important;
         }
 
         /* ========================================================
@@ -217,7 +200,7 @@
            ======================================================== */
         .explore-btn {
             position: relative;
-            display: inline-flex;
+            display: none; /* Hidden by default until login passes */
             align-items: center;
             justify-content: center;
             text-decoration: none;
@@ -247,6 +230,36 @@
             transition: transform 0.25s ease;
         }
         .explore-btn:hover i { transform: translateX(4px); }
+
+        /* ========================================================
+            GOOGLE SIGN IN BUTTON
+           ======================================================== */
+        .google-btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #ffffff;
+            color: #1f2937;
+            font-family: 'Roboto', sans-serif, 'Georgia';
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: background-color 0.2s, box-shadow 0.2s, transform 0.2s;
+            gap: 12px;
+            z-index: 30;
+        }
+
+        .google-btn:hover {
+            background-color: #f9fafb;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(-1px);
+        }
 
         /* ========================================================
             USER DASHBOARD CARD
@@ -322,7 +335,7 @@
         }
     </style>
 </head>
-<body class="logged-out">
+<body>
 
     <div class="art-canvas-container">
 
@@ -332,8 +345,8 @@
             </a>
             <ul class="nav-links">
                 <li><a href="https://ankitx007x.github.io/" class="active">Home</a></li>
-                <li class="protected-link"><a href="./blocks">Blocks</a></li>
-                <li class="protected-link"><a href="./about">About Me</a></li>
+                <li><a href="./blocks">Blocks</a></li>
+                <li><a href="./about">About Me</a></li>
                 <li id="nav-user-profile" class="nav-profile-item">
                     <img id="nav-user-photo" src="" alt="User Avatar">
                     <span id="nav-user-name"></span>
@@ -349,6 +362,16 @@
                 </p>
 
                 <div class="cta-container">
+                    <button class="google-btn" id="google-login-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 48 48">
+                            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                            <path fill="#4285F4" d="M46.5 24c0-1.63-.15-3.22-.42-4.75H24v9h12.75c-.55 2.96-2.22 5.47-4.75 7.16l7.37 5.71C43.68 36.65 46.5 30.9 46.5 24z"/>
+                            <path fill="#FBBC05" d="M10.54 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.98-6.19z"/>
+                            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.37-5.71c-2.11 1.41-4.8 2.3-8.52 2.3-6.26 0-11.57-4.22-13.46-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                        </svg>
+                        Sign in with Google
+                    </button>
+
                     <div class="user-dashboard-card" id="user-dashboard">
                         <img id="user-photo" class="user-avatar" src="" alt="User Avatar">
                         <h3 id="user-name" class="profile-name"></h3>
@@ -359,9 +382,9 @@
                         </button>
                     </div>
 
-                    <button id="white-rabbit-btn" class="explore-btn">
+                    <a href="./blocks" id="white-rabbit-btn" class="explore-btn">
                         Follow the White Rabbit <i class="fa-solid fa-arrow-right"></i>
-                    </button>
+                    </a>
                 </div>
 
                 <div class="palette-swatches">
