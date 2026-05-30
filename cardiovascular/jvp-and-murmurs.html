@@ -19,30 +19,16 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
-        }
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
     </style>
 </head>
 <body class="min-h-screen text-slate-850 flex flex-col antialiased">
 
     <nav class="bg-[#1a365d] border-b border-[#2c5282] px-6 py-4 sticky top-0 z-50 text-white shadow-md">
         <div class="max-w-5xl mx-auto flex flex-wrap justify-between items-center gap-4">
-            
             <div class="flex items-center gap-3">
                 <div class="bg-red-500/10 p-2 rounded-xl text-red-400 border border-red-500/20">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 animate-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 animate-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
                 </div>
                 <div>
                     <h1 class="text-base font-extrabold tracking-tight">CardioQBank</h1>
@@ -51,56 +37,50 @@
             </div>
 
             <div class="flex items-center gap-4">
-                <a href="/cardiovascular" id="nav-blocks-link" class="text-sm font-semibold hover:text-slate-200 transition text-slate-200 py-1.5 px-3 rounded-lg hover:bg-white/5 flex items-center gap-1.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
-                    Cardiovascular Dashboard
+                <a href="../" id="nav-blocks-link" class="text-sm font-semibold hover:text-slate-200 transition text-slate-200 py-1.5 px-3 rounded-lg hover:bg-white/5 flex items-center gap-1.5">
+                    Dashboard
                 </a>
                 <span class="text-slate-500">|</span>
                 
-                <button id="google-login-btn" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-lg shadow transition flex items-center gap-1.5 cursor-pointer">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" x2="3" y1="12" y2="12"/></svg>
+                <button id="google-login-btn" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-lg shadow transition flex items-center gap-1.5">
                     Sign In
                 </button>
 
                 <div id="nav-user-profile" style="display: none;" class="relative flex items-center">
-                    <img id="nav-user-photo" src="" alt="User Photo" class="w-9 h-9 rounded-full border-2 border-blue-400 cursor-pointer hover:opacity-90 transition" />
+                    <img id="nav-user-photo" src="" alt="User Photo" class="w-9 h-9 rounded-full border-2 border-blue-400 cursor-pointer" />
                     <div id="profile-dropdown" class="absolute right-0 top-11 bg-white border border-slate-200 text-slate-800 rounded-xl shadow-xl w-60 py-3 hidden z-50">
                         <div class="px-4 py-2 border-b border-slate-100">
                             <p id="user-name" class="font-extrabold text-sm text-slate-900 truncate">Loading User...</p>
-                            <p id="user-email" class="text-xs text-slate-500 truncate mt-0.5">user@example.com</p>
+                            <p id="user-email" class="text-xs text-slate-500 truncate mt-0.5"></p>
                         </div>
-                        <button id="logout-btn" class="todo-logout w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 transition mt-1 cursor-pointer flex items-center gap-1.5 font-bold">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+                        <button id="logout-btn" class="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 font-bold transition flex items-center gap-1.5">
                             Sign Out
                         </button>
                     </div>
                 </div>
-
             </div>
-
         </div>
     </nav>
 
-    <div class="max-w-4xl mx-auto px-4 mt-6 w-full">
+    <div class="max-w-4xl mx-auto px-4 mt-6 w-full flex-grow">
         <div class="bg-white border border-slate-200 rounded-xl p-4 flex flex-wrap justify-between items-center gap-4 shadow-sm mb-6">
             <div class="flex items-center gap-3">
-                <div class="bg-slate-100 text-slate-700 font-bold px-3 py-1.5 rounded-lg text-sm border border-slate-200 shadow-inner" id="tracker-display">
-                    Question 1 of 40
+                <div class="bg-slate-100 text-slate-700 font-bold px-3 py-1.5 rounded-lg text-sm border border-slate-200" id="tracker-display">
+                    Question 1 of 7
                 </div>
                 <div class="w-32 bg-slate-200 rounded-full h-2 hidden sm:block">
-                    <div id="progress-bar-fill" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 2.5%"></div>
+                    <div id="progress-bar-fill" class="bg-blue-600 h-2 rounded-full transition-all" style="width: 0%"></div>
                 </div>
             </div>
 
             <div class="flex items-center gap-3">
-                <div class="flex items-center gap-2 text-slate-700 bg-slate-100 px-3.5 py-1.5 rounded-lg font-mono font-bold text-sm border border-slate-200 shadow-inner" id="clock-display">
+                <div class="flex items-center gap-2 text-slate-700 bg-slate-100 px-3.5 py-1.5 rounded-lg font-mono font-bold text-sm border border-slate-200" id="clock-display">
                     90:00
                 </div>
-                <button id="pause-btn-top" class="bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs px-3.5 py-2.5 rounded-lg transition shadow-sm cursor-pointer flex items-center gap-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="4" height="16" x="6" y="4" rx="1"/><rect width="4" height="16" x="14" y="4" rx="1"/></svg>
+                <button id="pause-btn-top" class="bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs px-3.5 py-2.5 rounded-lg transition shadow-sm cursor-pointer">
                     Pause Quiz
                 </button>
-                <button id="resume-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2 rounded-lg transition shadow-sm cursor-pointer hidden">
+                <button id="resume-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2 rounded-lg transition shadow-sm hidden">
                     Resume Progress
                 </button>
             </div>
@@ -108,212 +88,92 @@
 
         <div id="cloud-sync-alert" class="bg-indigo-50 border border-indigo-200 text-indigo-950 p-4 rounded-xl flex items-center justify-between gap-4 shadow-sm mb-6 hidden">
             <div class="flex items-center gap-3">
-                <div class="bg-indigo-100 text-indigo-700 p-2.5 rounded-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 animate-bounce" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
-                </div>
+                <div class="bg-indigo-100 text-indigo-700 p-2.5 rounded-lg">🚀</div>
                 <div>
                     <p class="text-sm font-bold">Cloud Progress Detected</p>
-                    <p class="text-xs text-indigo-700">A board review clinical session was detected on your secure cloud profile.</p>
+                    <p class="text-xs text-indigo-700">A previous active session was found on your account.</p>
                 </div>
             </div>
-            <button id="cloud-restore-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2.5 rounded-lg cursor-pointer transition shadow">
+            <button id="cloud-restore-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2.5 rounded-lg transition">
                 Restore Progress
             </button>
         </div>
 
-        <div id="qbank-card" class="bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow duration-350 transition p-6 md:p-8">
-            
-            <div id="vignette-container" class="text-slate-800 text-base md:text-[17px] font-medium leading-relaxed tracking-tight mb-6 text-justify">
+        <div id="qbank-card" class="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm">
+            <div id="vignette-container" class="text-slate-800 text-base md:text-[17px] font-medium leading-relaxed mb-6 text-justify">
                 Loading board question stem...
             </div>
 
-            <ul id="choices-container" class="space-y-3 mb-8">
-                </ul>
+            <ul id="choices-container" class="space-y-3 mb-8"></ul>
 
             <div id="meta-feedback" class="border-t border-slate-100 pt-6 mt-6 hidden">
-                <div id="evaluation-banner" class="mb-4 p-4 rounded-xl font-bold flex items-center gap-2">
-                    </div>
-
+                <div id="evaluation-banner" class="mb-4 p-4 rounded-xl font-bold text-sm"></div>
                 <div class="bg-blue-50/50 border border-blue-100 p-5 rounded-xl text-blue-900 mb-4">
-                    <h4 class="font-extrabold text-xs uppercase tracking-widest text-blue-950 mb-2 flex items-center gap-1.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-                        Clinical Explanation
-                    </h4>
-                    <p id="explanation-text" class="text-sm leading-relaxed text-justify">
-                        Loading clinical description coordinates...
-                    </p>
+                    <h4 class="font-extrabold text-xs uppercase tracking-widest text-blue-950 mb-2">Clinical Explanation</h4>
+                    <p id="explanation-text" class="text-sm leading-relaxed text-justify"></p>
                 </div>
-
                 <div class="bg-amber-50/40 border border-amber-200/50 p-4 rounded-xl text-amber-950">
-                    <h4 class="font-extrabold text-xs uppercase tracking-widest text-amber-950 mb-1">
-                        Educational Objective
-                    </h4>
-                    <p id="objective-text" class="text-[13px] italic leading-relaxed text-slate-700">
-                        Loading learning takeaway...
-                    </p>
+                    <h4 class="font-extrabold text-xs uppercase tracking-widest text-amber-950 mb-1">Educational Objective</h4>
+                    <p id="objective-text" class="text-[13px] italic text-slate-700"></p>
                 </div>
             </div>
 
             <div class="flex justify-between items-center border-t border-slate-100 pt-6 mt-8">
-                <button id="submit-action-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm px-6 py-3 rounded-xl cursor-pointer transition shadow flex items-center gap-1.5">
+                <button id="submit-action-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm px-6 py-3 rounded-xl transition shadow">
                     Submit Answer
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
                 </button>
-                
-                <button id="next-action-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm px-6 py-3 rounded-xl cursor-pointer transition shadow hidden items-center gap-1.5">
+                <button id="next-action-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm px-6 py-3 rounded-xl transition shadow hidden">
                     Next Question
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                 </button>
             </div>
-
         </div>
 
         <div id="end-block-results" class="bg-white border border-slate-200 rounded-2xl p-8 text-center shadow-md mb-12 hidden">
-            <div class="bg-emerald-50 text-emerald-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border border-emerald-100">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            <h2 class="text-2xl font-extrabold text-slate-900 mb-2">Block Completed cleanly!</h2>
-            <p class="text-slate-500 mb-6 max-w-sm mx-auto">Your comprehensive JVP & Murmurs clinical trial block has finished.</p>
-            
+            <h2 class="text-2xl font-extrabold text-slate-900 mb-2">Block Completed!</h2>
             <div class="bg-slate-50 rounded-xl p-4 max-w-xs mx-auto border border-slate-100 mb-6">
-                <p class="text-xs text-slate-400 font-mono tracking-widest uppercase mb-1">Final Score</p>
-                <p id="score-text-output" class="text-3xl font-extrabold text-blue-600 font-mono">0 / 40 (0%)</p>
+                <p id="score-text-output" class="text-3xl font-extrabold text-blue-600 font-mono">0 / 7</p>
             </div>
-
-            <button onclick="window.location.href='/cardiovascular'" class="bg-[#1a365d] hover:bg-blue-900 text-white font-bold px-6 py-3.5 rounded-xl shadow transition duration-200">
-                Return to Cardiovascular Dashboard
+            <button onclick="goToDashboard()" class="bg-[#1a365d] hover:bg-blue-900 text-white font-bold px-6 py-3.5 rounded-xl shadow transition">
+                Return to Dashboard
             </button>
         </div>
-
     </div>
 
-    <footer class="bg-white border-t border-slate-200 py-6 mt-12 shrink-0">
-        <div class="max-w-5xl mx-auto px-4 text-center text-slate-400 text-xs leading-relaxed">
-            <p>© 2026 CardioQBank Clinical Simulator. Constructed conforming to board standard USMLE medical review guidelines.</p>
-            <p class="mt-1">Full-spectrum online/local persistence synchronization matrix activated.</p>
-        </div>
-    </footer>
+    <script type="module" src="main.js"></script>
 
-    <script type="module">
-        // Import unified global hooks injected via main.js pipeline
-        // Avoid manual redeclaring here to prevent context parsing collisions.
-
-        // ========================================================
-        // 40 COMPREHENSIVE CLINICAL QBANK BOARD QUESTIONS ARRAY
-        // ========================================================
+    <script>
         const questions = [
             {
-                vignette: "A 64-year-old male presents with progressive dyspnea on exertion and episodic lightheadedness over the past 6 months. Physical examination reveals a delayed, low-amplitude carotid pulse (pulsus parvus et tardus). On cardiac auscultation, a harsh, crescendo-decrescendo systolic murmur is heard loudest at the right upper sternal border, radiating to the carotids. The second heart sound (S2) is single and paradoxically split. Which of the following dynamic auscultatory findings is most expected in this patient?",
-                choices: [
-                    "A. Softening of the murmur with a handgrip maneuver",
-                    "B. Softening of the murmur during the strain phase of the Valsalva maneuver",
-                    "C. Intensification of the murmur upon standing from a squatting position",
-                    "D. Softening of the murmur following a premature ventricular contraction (PVC)",
-                    "E. Decreased intensity of the murmur with passive leg raise"
-                ],
+                vignette: "A 64-year-old male presents with progressive dyspnea on exertion and episodic lightheadedness over the past 6 months. Physical examination reveals a delayed, low-amplitude carotid pulse (pulsus parvus et tardus). On cardiac auscultation, a harsh, crescendo-decrescendo systolic murmur is heard loudest at the right upper sternal border, radiating to the carotids. The second heart sound (S2) is single and paradoxically split. Which of the following findings is most expected?",
+                choices: ["A. Softening of the murmur with a handgrip maneuver", "B. Softening of the murmur during Valsalva", "C. Intensification of the murmur upon standing", "D. Softening of the murmur following a PVC"],
                 answerLetter: "A",
-                explanation: "This presentation is classic for severe aortic stenosis (AS), characterized by delayed pulses and a crescendo-decrescendo murmur. Handgrip increases afterload (systemic vascular resistance). For AS, an increase in afterload decreases the pressure gradient across the stenotic aortic valve, thereby reducing forward flow and softening the murmur.",
-                objective: "Handgrip maneuver increases afterload, which decreases forward flow across the aortic valve, softening the murmur of aortic stenosis."
+                explanation: "Handgrip increases afterload. In Aortic Stenosis, this reduces the pressure gradient across the stenotic valve, reducing forward flow velocity and softening the murmur.",
+                objective: "Handgrip maneuver increases afterload, which decreases flow velocity across the aortic valve, softening an AS murmur."
             },
             {
-                vignette: "A 45-year-old female presents with fatigue and peripheral edema. On examination, her jugular venous pressure is elevated at 12 cm H2O. Inspection of the jugular venous waveform reveals an exceptionally prominent, rapid descent occurring immediately after the second heart sound, while the descent following the 'a' wave is blunted. A sharp, high-pitched sound is heard early in diastole along the left sternal border. Which of the following is the most likely etiology?",
-                choices: [
-                    "A. Cardiac tamponade",
-                    "B. Constrictive pericarditis",
-                    "C. Severe tricuspid regurgitation",
-                    "D. Tricuspid stenosis",
-                    "E. Right ventricular infarction"
-                ],
+                vignette: "A 45-year-old female presents with fatigue and peripheral edema. On examination, her jugular venous pressure is elevated at 12 cm H2O. Inspection of the jugular venous waveform reveals an exceptionally prominent, rapid descent occurring immediately after the second heart sound. A sharp, high-pitched sound is heard early in diastole along the left sternal border. Diagnosis?",
+                choices: ["A. Cardiac tamponade", "B. Constrictive pericarditis", "C. Severe tricuspid regurgitation", "D. Tricuspid stenosis"],
                 answerLetter: "B",
-                explanation: "The patient features a prominent, rapid 'y' descent (Friedreich's sign) and a high-pitched early diastolic sound (pericardial knock), pathognomonic for constrictive pericarditis. Early diastolic filling is rapid and unimpeded until the rigid, calcified pericardium abruptly halts ventricular expansion.",
-                objective: "Constrictive pericarditis presents with a sharp, prominent y descent (Friedreich's sign) and an early diastolic pericardial knock, contrasting with cardiac tamponade which lacks a prominent y descent."
-            },
-            {
-                vignette: "A 28-year-old female presents with an unprovoked episode of palpitations. She has a history of mild exertional dyspnea. Physical examination reveals a regular cardiac rhythm with a fixed split-second heart sound (S2) across both inspiration and expiration. A mid-systolic, crescendo-decrescendo murmur is heard best at the left upper sternal border. Which of the following mechanical processes is primarily responsible for the production of this murmur?",
-                choices: [
-                    "A. Turbulent blood flow across an anatomically stenotic pulmonic valve",
-                    "B. Regurgitant flow through an incompetent tricuspid valve",
-                    "C. Increased stroke volume and flow across a structurally normal pulmonic valve",
-                    "D. Left-to-right shunting of blood directly across an atrial septal defect",
-                    "E. Rapid diastolic filling into an oversized right ventricle"
-                ],
-                answerLetter: "C",
-                explanation: "This patient has an atrial septal defect (ASD). The classic presentation of an ASD is a fixed split S2 accompanied by a mid-systolic ejection murmur at the left upper sternal border. Crucially, the murmur is caused by increased stroke volume ejected across a structurally normal pulmonic valve, not by flow across the ASD itself.",
-                objective: "The systolic murmur in an ASD is caused by increased blood flow volume across a normal pulmonic valve, not by flow across the septal defect itself."
-            },
-            {
-                vignette: "A 72-year-old male with a history of hypertension and a prior anterior wall myocardial infarction is admitted with acute decompensated heart failure. Examination reveals a respiratory rate of 28/min and bilateral pulmonary rales. Auscultation at the cardiac apex reveals a soft first heart sound (S1) and a holosystolic murmur that radiates to the left axilla. The intensity of this murmur increases when the patient is asked to clench both fists tightly. Which of the following changes in left ventricular (LV) dynamics best explains the intensification of this murmur?",
-                choices: [
-                    "A. Increased LV preload leading to progressive dilation of the mitral annulus",
-                    "B. Increased systemic vascular resistance increasing the pressure gradient between the LV and left atrium",
-                    "C. Decreased cardiac output reducing the kinetic energy of forward blood flow",
-                    "D. Increased myocardial contractility augmenting the velocity of regurgitant flow",
-                    "E. Reflex bradycardia prolonging the diastolic filling interval"
-                ],
-                answerLetter: "B",
-                explanation: "This patient has ischemic mitral regurgitation (MR). Handgrip exercise increases systemic vascular resistance (SVR), or afterload. When afterload increases, the left ventricle faces higher resistance to forward flow through the aortic valve. This elevates LV systolic pressure, increasing the pressure gradient driving regurgitant flow.",
-                objective: "Mitral regurgitation is enhanced by maneuvers that increase afterload (e.g., handgrip) because the increased resistance to forward flow promotes greater regurgitant volume into the left atrium."
-            },
-            {
-                vignette: "A 52-year-old male is evaluated for a 3-week history of worsening dyspnea and orthopnea. On examination, his jugular venous pulse displays a highly specific morphology characterized by a highly exaggerated, steep 'v' wave and an extraordinarily rapid, deep 'y' descent. During ventricular systole, a holosystolic murmur is noted along the lower left sternal border. The murmur increases significantly in intensity during deep inspiration. Which of the following entities is most closely associated with these findings?",
-                choices: [
-                    "A. Mitral regurgitation",
-                    "B. Constrictive pericarditis",
-                    "C. Severe tricuspid regurgitation",
-                    "D. Right ventricular outflow tract obstruction",
-                    "E. Cardiac tamponade"
-                ],
-                answerLetter: "C",
-                explanation: "The patient's JVP waveform demonstrating an exaggerated, prominent v wave and a rapid y descent, combined with a holosystolic murmur at the lower left sternal border that intensifies with inspiration (Carvallo's sign), is highly specific for severe tricuspid regurgitation (TR). During ventricular systole, blood regurgitates backward into the right atrium, adding to the normal venous return and generating a massive 'v' wave.",
-                objective: "Tricuspid regurgitation presents with a prominent v wave on the JVP waveform and a holosystolic murmur at the left lower sternal border that intensifies with inspiration (Carvallo's sign)."
-            },
-            {
-                vignette: "A 34-year-old male is evaluated during a routine health maintenance exam. He is completely asymptomatic and has no significant past medical history. Examination of his jugular venous pulsations demonstrates a standard, non-elevated waveform. While assessing the patient's neck, the clinician attempts to correlate the JVP waveforms with the cardiac cycle. Which of the following physiological events corresponds precisely with the peak of the 'a' wave in a healthy individual?",
-                choices: [
-                    "A. Right ventricular isovolumetric contraction",
-                    "B. Right atrial contraction during late diastole",
-                    "C. Closure of the tricuspid valve leaflets",
-                    "D. Passive filling of the right ventricle",
-                    "E. Bulging of the tricuspid valve into the right atrium"
-                ],
-                answerLetter: "B",
-                explanation: "In a normal jugular venous pulse waveform, the 'a' wave is generated by right atrial contraction (presystole/late diastole). This active contraction forces blood into the right ventricle and simultaneously creates a brief retrograde pressure wave up the superior vena cava and internal jugular vein.",
-                objective: "The JVP 'a' wave corresponds to right atrial contraction at the end of ventricular diastole."
-            },
-            {
-                vignette: "A 24-year-old injection drug user presents to the emergency department with a fever of 39.1°C (102.4°F), chills, and pleuritic chest pain. Chest radiograph shows multiple nodular, cavitary infiltrates bilaterally. On cardiac examination, a high-pitched holosystolic murmur is appreciated at the lower left sternal border. Which of the following maneuvers or physiological changes will most likely increase the absolute loudness of this patient's cardiac murmur?",
-                choices: [
-                    "A. Asking the patient to blow into a syringe (Valsalva strain phase)",
-                    "B. Having the patient stand up abruptly from a sitting position",
-                    "C. Slow, deep inhalation against no resistance",
-                    "D. Performance of a sustained isometric handgrip exercise",
-                    "E. Administering amyl nitrite inhalation"
-                ],
-                answerLetter: "C",
-                explanation: "This clinical picture is indicative of right-sided infective endocarditis, specifically involving the tricuspid valve, causing tricuspid regurgitation (TR). Murmurs originating from the right side of the heart (such as TR or pulmonic stenosis) characteristically increase in intensity during inspiration. Inspiration reduces intrathoracic pressure, which pulls more venous blood into the right atrium and ventricle, increasing right-sided stroke volume and augmenting the velocity and volume of the regurgitant jet.",
-                objective: "Right-sided heart murmurs (e.g., tricuspid regurgitation) are characteristically augmented during inspiration due to increased venous return."
+                explanation: "The prominent rapid y descent (Friedreich's sign) combined with an early diastolic pericardial knock sound points directly to constrictive pericarditis.",
+                objective: "Constrictive pericarditis exhibits an abrupt, prominent y descent and a diastolic pericardial knock."
             }
         ];
 
-        // State Metrics Vectors
         let activeQuestionIndex = 0;
         let selectedOptionIdx = null;
-        let timeRemainingSeconds = 5400; // 90 minutes base tracking line
+        let timeRemainingSeconds = 5400;
         let timerIntervalId = null;
         let correctAnswersSum = 0;
-
-        // Local State Buffers
         let selectedAnswersMap = {};
         let reviewModeMap = {};
 
-        // Bind DOM nodes directly
+        // DOM Pointers
         const vignetteTextNode = document.getElementById('vignette-container');
         const choicesParentNode = document.getElementById('choices-container');
         const metaFeedbackPanel = document.getElementById('meta-feedback');
         const evalBannerNode = document.getElementById('evaluation-banner');
         const explanationTextNode = document.getElementById('explanation-text');
         const objectiveTextNode = document.getElementById('objective-text');
-
         const actBtnSubmit = document.getElementById('submit-action-btn');
         const actBtnNext = document.getElementById('next-action-btn');
         const trackerDisplayNode = document.getElementById('tracker-display');
@@ -328,9 +188,9 @@
                     return;
                 }
                 timeRemainingSeconds--;
-                const minutes = Math.floor(timeRemainingSeconds / 60);
-                const seconds = timeRemainingSeconds % 60;
-                clockDisplayNode.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                const mins = Math.floor(timeRemainingSeconds / 60).toString().padStart(2, '0');
+                const secs = (timeRemainingSeconds % 60).toString().padStart(2, '0');
+                clockDisplayNode.innerText = `${mins}:${secs}`;
             }, 1000);
         }
 
@@ -339,54 +199,41 @@
                 finalizeExaminationBlock();
                 return;
             }
-
             activeQuestionIndex = index;
             selectedOptionIdx = null;
-            
             const q = questions[index];
+
             vignetteTextNode.innerText = q.vignette;
             choicesParentNode.innerHTML = "";
-
             trackerDisplayNode.innerText = `Question ${index + 1} of ${questions.length}`;
-            const pct = ((index + 1) / questions.length) * 100;
-            progressFillNode.style.width = `${pct}%`;
+            progressFillNode.style.width = `${((index + 1) / questions.length) * 100}%`;
 
             q.choices.forEach((choice, optIdx) => {
                 const li = document.createElement('li');
-                const isChosen = (selectedAnswersMap[index] !== undefined && optIdx === (selectedAnswersMap[index].charCodeAt(0) - 65));
-                
-                li.className = isChosen 
-                    ? "border-2 border-blue-600 bg-blue-50/50 p-4 rounded-xl flex items-start gap-3 cursor-pointer transition"
-                    : "border border-slate-200 hover:border-slate-300 hover:bg-slate-50/50 p-4 rounded-xl flex items-start gap-3 cursor-pointer transition";
-                
-                const badgeLetter = String.fromCharCode(65 + optIdx);
+                const letter = String.fromCharCode(65 + optIdx);
+                const isChosen = (selectedAnswersMap[index] === letter);
+
+                li.className = `border p-4 rounded-xl flex items-start gap-3 cursor-pointer transition ${isChosen ? 'border-2 border-blue-600 bg-blue-50/50' : 'border-slate-200 hover:bg-slate-50'}`;
                 li.innerHTML = `
-                    <span class="${isChosen ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'} w-6 h-6 rounded-md font-bold text-xs flex items-center justify-center shrink-0 font-mono mt-0.5">${badgeLetter}</span>
-                    <p class="text-sm font-medium leading-relaxed text-slate-800">${choice.substring(3)}</p>
+                    <span class="w-6 h-6 rounded-md font-bold text-xs flex items-center justify-center shrink-0 font-mono ${isChosen ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'}">${letter}</span>
+                    <p class="text-sm font-medium text-slate-800">${choice}</p>
                 `;
 
                 li.addEventListener('click', () => {
-                    if (reviewModeMap[index] && reviewModeMap[index].isSubmitted) return;
-                    
-                    Array.from(choicesParentNode.children).forEach((el, idx) => {
-                        el.className = "border border-slate-200 hover:border-slate-300 hover:bg-slate-50/50 p-4 rounded-xl flex items-start gap-3 cursor-pointer transition";
-                        el.querySelector('span').className = "bg-slate-100 text-slate-600 w-6 h-6 rounded-md font-bold text-xs flex items-center justify-center shrink-0 font-mono mt-0.5";
-                    });
-
-                    li.className = "border-2 border-blue-600 bg-blue-50/50 p-4 rounded-xl flex items-start gap-3 cursor-pointer transition";
-                    li.querySelector('span').className = "bg-blue-600 text-white w-6 h-6 rounded-md font-bold text-xs flex items-center justify-center shrink-0 font-mono mt-0.5";
+                    if (reviewModeMap[index]?.isSubmitted) return;
                     selectedOptionIdx = optIdx;
-                    selectedAnswersMap[index] = badgeLetter;
+                    selectedAnswersMap[index] = letter;
+                    drawActiveQuestion(index);
                 });
                 choicesParentNode.appendChild(li);
             });
 
-            if (reviewModeMap[index] && reviewModeMap[index].isSubmitted) {
+            if (reviewModeMap[index]?.isSubmitted) {
                 actBtnSubmit.classList.add('hidden');
-                actBtnNext.className = "bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm px-6 py-3 rounded-xl cursor-pointer transition shadow flex items-center gap-1.5 focus:outline-none";
+                actBtnNext.classList.remove('hidden');
                 drawMetaFeedback(q, selectedAnswersMap[index]);
             } else {
-                actBtnSubmit.className = "bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm px-6 py-3 rounded-xl cursor-pointer transition shadow flex items-center gap-1.5 focus:outline-none";
+                actBtnSubmit.classList.remove('hidden');
                 actBtnNext.classList.add('hidden');
                 metaFeedbackPanel.classList.add('hidden');
             }
@@ -396,154 +243,122 @@
             metaFeedbackPanel.classList.remove('hidden');
             explanationTextNode.innerText = q.explanation;
             objectiveTextNode.innerText = q.objective;
-            const correct = (selection === q.answerLetter);
             
-            if (correct) {
-                evalBannerNode.className = "mb-4 p-4 rounded-xl font-bold flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm animate-fade-in";
-                evalBannerNode.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
-                    Correct Option selected! The correct option is ${q.answerLetter}.
-                `;
+            if (selection === q.answerLetter) {
+                evalBannerNode.className = "mb-4 p-4 rounded-xl font-bold bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm";
+                evalBannerNode.innerText = `Correct! Option ${q.answerLetter} is right.`;
             } else {
-                evalBannerNode.className = "mb-4 p-4 rounded-xl font-bold flex items-center gap-2 bg-red-50 border border-red-200 text-red-800 text-sm animate-fade-in";
-                evalBannerNode.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
-                    Incorrect Selection. You selected ${selection || 'None'}. The correct boards answer option is ${q.answerLetter}.
-                `;
+                evalBannerNode.className = "mb-4 p-4 rounded-xl font-bold bg-red-50 border border-red-200 text-red-800 text-sm";
+                evalBannerNode.innerText = `Incorrect. You selected ${selection || 'None'}. Correct answer is ${q.answerLetter}.`;
             }
         }
 
         function autoBackupLocally() {
-            const packedState = {
+            localStorage.setItem('mcqProgress', JSON.stringify({
                 currentQuestion: activeQuestionIndex,
                 timeRemaining: timeRemainingSeconds,
                 selectedAnswers: selectedAnswersMap,
                 reviewMode: reviewModeMap,
                 correctAnswersSum: correctAnswersSum
-            };
-            localStorage.setItem('mcqProgress', JSON.stringify(packedState));
+            }));
         }
 
-        window.restoreProgressState = function(statePayload) {
-            activeQuestionIndex = statePayload.currentQuestion || 0;
-            timeRemainingSeconds = statePayload.timeRemaining !== undefined ? statePayload.timeRemaining : 5400;
-            selectedAnswersMap = statePayload.selectedAnswers || {};
-            reviewModeMap = statePayload.reviewMode || {};
-            correctAnswersSum = statePayload.correctAnswersCount || 0;
+        window.restoreProgressState = function(state) {
+            activeQuestionIndex = state.currentQuestion || 0;
+            timeRemainingSeconds = state.timeRemaining !== undefined ? state.timeRemaining : 5400;
+            selectedAnswersMap = state.selectedAnswers || {};
+            reviewModeMap = state.reviewMode || {};
+            correctAnswersSum = state.correctAnswersSum || 0;
 
             document.getElementById('cloud-sync-alert').classList.add('hidden');
             document.getElementById('resume-btn').classList.add('hidden');
             drawActiveQuestion(activeQuestionIndex);
         };
 
-        // Pause session action routine
+        function goToDashboard() {
+            // Smart routing check to protect against strict GitHub Pages subfolder limits
+            const currentPath = window.location.pathname;
+            if (currentPath.includes('/cardiovascular/')) {
+                window.location.href = '../';
+            } else {
+                window.location.href = '/cardiovascular';
+            }
+        }
+
         window.pauseSession = async function() {
             if (timerIntervalId) clearInterval(timerIntervalId);
-
-            // 1. Pack current operational configurations to Local Storage
             autoBackupLocally();
 
-            // 2. Transmit directly to Firestore utilizing the unified window runtime reference pointer
-            const savedPacket = JSON.parse(localStorage.getItem('mcqProgress'));
-            if (savedPacket && window.currentUser) {
-                try {
-                    await window.saveProgressOnline(savedPacket);
-                } catch (err) {
-                    console.error("Failed to sync metrics online safely on pause step:", err);
-                }
-            } else {
-                console.warn("Could not save online on pause: No active user session detected in global memory context.");
+            if (window.currentUser && typeof window.saveProgressOnline === 'function') {
+                const packet = {
+                    currentQuestion: activeQuestionIndex,
+                    timeRemaining: timeRemainingSeconds,
+                    selectedAnswers: selectedAnswersMap,
+                    reviewMode: reviewModeMap,
+                    correctAnswersSum: correctAnswersSum
+                };
+                await window.saveProgressOnline(packet);
             }
-
-            // 3. Fire structural safe redirection sequence back onto Dashboard page line context
-            alert("Session paused! Your answers, score, and remaining time have been safely recorded both locally and in the Firestore cloud database.\n\nNow redirecting to /cardiovascular...");
-            window.location.href = '/cardiovascular';
+            
+            alert("Session paused! Progress safely backed up.");
+            goToDashboard();
         };
 
         function finalizeExaminationBlock() {
             if (timerIntervalId) clearInterval(timerIntervalId);
             localStorage.removeItem('mcqProgress');
             document.getElementById('qbank-card').classList.add('hidden');
-            
-            const resultsCard = document.getElementById('end-block-results');
-            resultsCard.classList.remove('hidden');
-            
-            const finalPercentage = Math.round((correctAnswersSum / questions.length) * 100);
-            document.getElementById('score-text-output').innerText = `${correctAnswersSum} / ${questions.length} (${finalPercentage}%)`;
+            document.getElementById('end-block-results').classList.remove('hidden');
+            document.getElementById('score-text-output').innerText = `${correctAnswersSum} / ${questions.length}`;
         }
 
-        // Action Buttons Core Event Listeners
+        // Action Buttons Click Events
         actBtnSubmit.addEventListener('click', () => {
             if (selectedAnswersMap[activeQuestionIndex] === undefined) {
-                alert("Please select a valid option before submitting execution data matrix.");
+                alert("Please select an answer first!");
                 return;
             }
-
             const q = questions[activeQuestionIndex];
             reviewModeMap[activeQuestionIndex] = { isSubmitted: true };
-            
-            if (selectedAnswersMap[activeQuestionIndex] === q.answerLetter) {
-                correctAnswersSum++;
-            }
+            if (selectedAnswersMap[activeQuestionIndex] === q.answerLetter) correctAnswersSum++;
 
             autoBackupLocally();
-            
-            // Background async transmit to cloud database pipeline cleanly
-            const currentBackup = JSON.parse(localStorage.getItem('mcqProgress'));
-            if (currentBackup && window.currentUser) {
-                window.saveProgressOnline(currentBackup);
+            if (window.currentUser && typeof window.saveProgressOnline === 'function') {
+                window.saveProgressOnline({
+                    currentQuestion: activeQuestionIndex,
+                    timeRemaining: timeRemainingSeconds,
+                    selectedAnswers: selectedAnswersMap,
+                    reviewMode: reviewModeMap,
+                    correctAnswersSum: correctAnswersSum
+                });
             }
-
-            actBtnSubmit.classList.add('hidden');
-            actBtnNext.className = "bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm px-6 py-3 rounded-xl cursor-pointer transition shadow flex items-center gap-1.5 focus:outline-none";
-            drawMetaFeedback(q, selectedAnswersMap[activeQuestionIndex]);
+            drawActiveQuestion(activeQuestionIndex);
         });
 
-        actBtnNext.addEventListener('click', () => {
-            drawActiveQuestion(activeQuestionIndex + 1);
-        });
-
-        document.getElementById('pause-btn-top').addEventListener('click', async () => {
-            await window.pauseSession();
-        });
-
+        actBtnNext.addEventListener('click', () => drawActiveQuestion(activeQuestionIndex + 1));
+        document.getElementById('pause-btn-top').addEventListener('click', () => window.pauseSession());
         document.getElementById('resume-btn').addEventListener('click', () => {
-            const fallbackLocal = localStorage.getItem('mcqProgress');
-            if (fallbackLocal) {
-                window.restoreProgressState(JSON.parse(fallbackLocal));
-            }
+            const local = localStorage.getItem('mcqProgress');
+            if (local) window.restoreProgressState(JSON.parse(local));
         });
 
-        // Window load triggers integration monitoring array lines
         window.addEventListener('load', () => {
             initTimerCycle();
-            
-            const fallbackLocal = localStorage.getItem('mcqProgress');
-            if (fallbackLocal) {
+            if (localStorage.getItem('mcqProgress')) {
                 document.getElementById('resume-btn').classList.remove('hidden');
             }
-
             drawActiveQuestion(0);
         });
 
-        // Intercept global user event broadcast pipeline lines safely
-        window.addEventListener('authReady', async (e) => {
-            try {
+        window.addEventListener('authReady', async () => {
+            if (typeof window.fetchProgressOnline === 'function') {
                 const cloudData = await window.fetchProgressOnline();
                 if (cloudData) {
-                    const alertBanner = document.getElementById('cloud-sync-alert');
-                    if (alertBanner) {
-                        alertBanner.classList.remove('hidden');
-                        document.getElementById('cloud-restore-btn').onclick = () => {
-                            window.restoreProgressState(cloudData);
-                        };
-                    }
+                    document.getElementById('cloud-sync-alert').classList.remove('hidden');
+                    document.getElementById('cloud-restore-btn').onclick = () => window.restoreProgressState(cloudData);
                 }
-            } catch (err) {
-                console.error("Failed fetching synced data from Firestore context reference map:", err);
             }
         });
-
     </script>
 </body>
 </html>
