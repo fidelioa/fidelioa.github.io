@@ -56,11 +56,11 @@
         }
 
         /* ========================================================
-            NAVIGATION BAR & DROPDOWN MIGRATION
+            NAVIGATION BAR
            ======================================================== */
         .custom-navbar {
             position: relative;
-            z-index: 100; /* Increased to overlay properly */
+            z-index: 100;
             width: 100%;
             min-height: 80px;
             display: flex;
@@ -73,14 +73,6 @@
             border-bottom: 1px solid rgba(234, 179, 8, 0.2);
             flex-wrap: wrap;
             gap: 20px;
-        }
-
-        /* Container keeping profile dropdown aligned left */
-        .nav-left-section {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            position: relative;
         }
 
         .nav-logo {
@@ -116,10 +108,17 @@
         }
         .nav-links a:hover, .nav-links a.active { color: #fef08a; }
 
-        /* Relocated and redesigned profile item */
+        /* ========================================================
+            TOP-RIGHT NAV PROFILE CORNER DROPDOWN HUB
+           ======================================================== */
+        .nav-profile-wrapper {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+
         .nav-profile-item {
             display: none; /* Managed dynamically by main.js */
-            position: relative;
             align-items: center;
             cursor: pointer;
         }
@@ -133,12 +132,12 @@
         }
         .nav-profile-item img:hover { transform: scale(1.05); }
 
-        /* The clean navigation drop-down menu box */
+        /* Aligned dropdown menu to clear right viewport boundary bounds */
         .profile-dropdown-menu {
-            display: none; /* Controlled by adding/removing 'show' class via main.js */
+            display: none; 
             position: absolute;
-            top: 50px;
-            left: 0;
+            top: 55px;
+            right: 0; /* Changed from left:0 to anchor cleanly inside the corner */
             background: rgba(13, 21, 39, 0.95);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
@@ -263,7 +262,6 @@
             display: inline-flex; 
             align-items: center;
             justify-content: center;
-            text-decoration: none;
             padding: 16px 40px;
             font-size: 1rem;
             font-weight: 600;
@@ -281,7 +279,6 @@
             border: 1px solid #334155;
             cursor: not-allowed;
             box-shadow: none;
-            pointer-events: none; /* blocks clicks organically */
             opacity: 0.6;
         }
 
@@ -292,7 +289,6 @@
             background-size: 200% auto;
             box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3);
             cursor: pointer;
-            pointer-events: auto;
         }
         .explore-btn.active-state:hover {
             transform: translateY(-2px);
@@ -357,29 +353,29 @@
     <div class="art-canvas-container">
 
         <nav class="custom-navbar">
-            <div class="nav-left-section">
-                <a href="https://ankitx007x.github.io/" class="nav-logo">
-                    <i class="fa-solid fa-palette"></i> The Grand Budapest
-                </a>
-                
-                <div id="nav-user-profile" class="nav-profile-item">
-                    <img id="nav-user-photo" src="" alt="User Avatar">
-                    
-                    <div id="profile-dropdown" class="profile-dropdown-menu">
-                        <h3 id="user-name" class="dropdown-name"></h3>
-                        <p id="user-email" class="dropdown-email"></p>
-                        <hr class="dropdown-divider">
-                        <button id="logout-btn" class="logout-btn">
-                            <i class="fa-solid fa-right-from-bracket"></i> Sign Out
-                        </button>
-                    </div>
-                </div>
-            </div>
-
+            <a href="https://ankitx007x.github.io/" class="nav-logo">
+                <i class="fa-solid fa-palette"></i> The Grand Budapest
+            </a>
+            
             <ul class="nav-links">
                 <li><a href="https://ankitx007x.github.io/" class="active">Home</a></li>
                 <li><a href="./blocks">Blocks</a></li>
                 <li><a href="./about">About Me</a></li>
+                
+                <li class="nav-profile-wrapper">
+                    <div id="nav-user-profile" class="nav-profile-item">
+                        <img id="nav-user-photo" src="" alt="User Avatar">
+                        
+                        <div id="profile-dropdown" class="profile-dropdown-menu">
+                            <h3 id="user-name" class="dropdown-name"></h3>
+                            <p id="user-email" class="dropdown-email"></p>
+                            <hr class="dropdown-divider">
+                            <button id="logout-btn" class="logout-btn">
+                                <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+                            </button>
+                        </div>
+                    </div>
+                </li>
             </ul>
         </nav>
 
@@ -401,9 +397,9 @@
                         Sign in with Google
                     </button>
 
-                    <a href="./blocks" id="white-rabbit-btn" class="explore-btn disabled-state">
+                    <button id="white-rabbit-btn" class="explore-btn disabled-state">
                         Follow the White Rabbit <i class="fa-solid fa-arrow-right"></i>
-                    </a>
+                    </button>
                 </div>
 
                 <div class="palette-swatches">
