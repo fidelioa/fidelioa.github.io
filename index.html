@@ -56,11 +56,11 @@
         }
 
         /* ========================================================
-            NAVIGATION BAR
+            NAVIGATION BAR & DROPDOWN MIGRATION
            ======================================================== */
         .custom-navbar {
             position: relative;
-            z-index: 50;
+            z-index: 100; /* Increased to overlay properly */
             width: 100%;
             min-height: 80px;
             display: flex;
@@ -73,6 +73,14 @@
             border-bottom: 1px solid rgba(234, 179, 8, 0.2);
             flex-wrap: wrap;
             gap: 20px;
+        }
+
+        /* Container keeping profile dropdown aligned left */
+        .nav-left-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
         }
 
         .nav-logo {
@@ -106,29 +114,81 @@
             position: relative;
             padding-bottom: 4px;
         }
-
         .nav-links a:hover, .nav-links a.active { color: #fef08a; }
 
+        /* Relocated and redesigned profile item */
         .nav-profile-item {
-            display: none; 
+            display: none; /* Managed dynamically by main.js */
+            position: relative;
             align-items: center;
-            gap: 10px;
-            padding: 4px 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(234, 179, 8, 0.3);
-            border-radius: 30px;
+            cursor: pointer;
         }
         .nav-profile-item img {
-            width: 28px;
-            height: 28px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             object-fit: cover;
-            border: 1px solid #eab308;
+            border: 2px solid #eab308;
+            transition: transform 0.2s ease;
         }
-        .nav-profile-item span {
-            color: #fef08a;
-            font-size: 0.85rem;
+        .nav-profile-item img:hover { transform: scale(1.05); }
+
+        /* The clean navigation drop-down menu box */
+        .profile-dropdown-menu {
+            display: none; /* Controlled by adding/removing 'show' class via main.js */
+            position: absolute;
+            top: 50px;
+            left: 0;
+            background: rgba(13, 21, 39, 0.95);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(234, 179, 8, 0.4);
+            border-radius: 12px;
+            padding: 16px;
+            min-width: 230px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            z-index: 101;
+            text-align: left;
+        }
+        .profile-dropdown-menu.show {
+            display: block;
+        }
+        .dropdown-name {
+            color: #ffffff;
+            font-size: 1rem;
             font-weight: 600;
+            margin-bottom: 2px;
+        }
+        .dropdown-email {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            margin-bottom: 12px;
+            word-break: break-all;
+        }
+        .dropdown-divider {
+            border: 0;
+            border-top: 1px solid rgba(234, 179, 8, 0.2);
+            margin-bottom: 12px;
+        }
+
+        .logout-btn {
+            width: 100%;
+            background: transparent;
+            color: #f87171;
+            border: 1px solid rgba(248, 113, 113, 0.4);
+            padding: 8px 14px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .logout-btn:hover {
+            background: rgba(248, 113, 113, 0.1);
+            border-color: #f87171;
         }
 
         /* ========================================================
@@ -196,11 +256,11 @@
         }
 
         /* ========================================================
-            GOLDEN CTA BUTTON
+            GOLDEN WHITE RABBIT BUTTON (Persistent Center Placement)
            ======================================================== */
         .explore-btn {
             position: relative;
-            display: none; /* Hidden by default until login passes */
+            display: inline-flex; 
             align-items: center;
             justify-content: center;
             text-decoration: none;
@@ -208,28 +268,42 @@
             font-size: 1rem;
             font-weight: 600;
             letter-spacing: 0.5px;
-            color: #0f172a;
-            background: linear-gradient(90deg, #fcd34d, #f59e0b, #fcd34d);
-            background-size: 200% auto;
             border-radius: 50px;
-            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             border: none;
-            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             gap: 10px;
         }
 
-        .explore-btn:hover {
+        /* Style state rules when logged-out / disabled */
+        .explore-btn.disabled-state {
+            color: #475569;
+            background: #1e293b;
+            border: 1px solid #334155;
+            cursor: not-allowed;
+            box-shadow: none;
+            pointer-events: none; /* blocks clicks organically */
+            opacity: 0.6;
+        }
+
+        /* Style state rules when user is active / logged-in */
+        .explore-btn.active-state {
+            color: #0f172a;
+            background: linear-gradient(90deg, #fcd34d, #f59e0b, #fcd34d);
+            background-size: 200% auto;
+            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3);
+            cursor: pointer;
+            pointer-events: auto;
+        }
+        .explore-btn.active-state:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(245, 158, 11, 0.45);
             background-position: right center;
         }
-
         .explore-btn i {
             font-size: 0.85rem;
             transition: transform 0.25s ease;
         }
-        .explore-btn:hover i { transform: translateX(4px); }
+        .explore-btn.active-state:hover i { transform: translateX(4px); }
 
         /* ========================================================
             GOOGLE SIGN IN BUTTON
@@ -254,70 +328,13 @@
             gap: 12px;
             z-index: 30;
         }
-
         .google-btn:hover {
             background-color: #f9fafb;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
             transform: translateY(-1px);
         }
-
-        /* ========================================================
-            USER DASHBOARD CARD
-           ======================================================== */
-        .user-dashboard-card {
-            display: none; 
-            background: rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            padding: 24px;
-            border-radius: 20px;
-            border: 1px solid rgba(234, 179, 8, 0.25);
-            width: 100%;
-            max-width: 340px;
-            text-align: center;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-        }
-
-        .user-avatar {
-            width: 75px;
-            height: 75px;
-            border-radius: 50%;
-            border: 2px solid #eab308;
-            margin-bottom: 12px;
-            object-fit: cover;
-        }
-
-        .profile-name {
-            color: #ffffff;
-            font-size: 1.15rem;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .profile-email {
-            color: #94a3b8;
-            font-size: 0.85rem;
-            margin-bottom: 20px;
-            word-break: break-all;
-        }
-
-        .logout-btn {
-            background: transparent;
-            color: #f87171;
-            border: 1px solid rgba(248, 113, 113, 0.4);
-            padding: 8px 20px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .logout-btn:hover {
-            background: rgba(248, 113, 113, 0.1);
-            border-color: #f87171;
+        .google-btn.hidden {
+            display: none !important;
         }
 
         .palette-swatches {
@@ -340,17 +357,29 @@
     <div class="art-canvas-container">
 
         <nav class="custom-navbar">
-            <a href="https://ankitx007x.github.io/" class="nav-logo">
-                <i class="fa-solid fa-palette"></i> The Grand Budapest
-            </a>
+            <div class="nav-left-section">
+                <a href="https://ankitx007x.github.io/" class="nav-logo">
+                    <i class="fa-solid fa-palette"></i> The Grand Budapest
+                </a>
+                
+                <div id="nav-user-profile" class="nav-profile-item">
+                    <img id="nav-user-photo" src="" alt="User Avatar">
+                    
+                    <div id="profile-dropdown" class="profile-dropdown-menu">
+                        <h3 id="user-name" class="dropdown-name"></h3>
+                        <p id="user-email" class="dropdown-email"></p>
+                        <hr class="dropdown-divider">
+                        <button id="logout-btn" class="logout-btn">
+                            <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <ul class="nav-links">
                 <li><a href="https://ankitx007x.github.io/" class="active">Home</a></li>
                 <li><a href="./blocks">Blocks</a></li>
                 <li><a href="./about">About Me</a></li>
-                <li id="nav-user-profile" class="nav-profile-item">
-                    <img id="nav-user-photo" src="" alt="User Avatar">
-                    <span id="nav-user-name"></span>
-                </li>
             </ul>
         </nav>
 
@@ -372,17 +401,7 @@
                         Sign in with Google
                     </button>
 
-                    <div class="user-dashboard-card" id="user-dashboard">
-                        <img id="user-photo" class="user-avatar" src="" alt="User Avatar">
-                        <h3 id="user-name" class="profile-name"></h3>
-                        <p id="user-email" class="profile-email"></p>
-                        
-                        <button id="logout-btn" class="logout-btn">
-                            <i class="fa-solid fa-right-from-bracket"></i> Sign Out
-                        </button>
-                    </div>
-
-                    <a href="./blocks" id="white-rabbit-btn" class="explore-btn">
+                    <a href="./blocks" id="white-rabbit-btn" class="explore-btn disabled-state">
                         Follow the White Rabbit <i class="fa-solid fa-arrow-right"></i>
                     </a>
                 </div>
