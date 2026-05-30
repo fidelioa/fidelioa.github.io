@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Grand Budapest - System Blocks</title>
     
     <link rel="icon" type="image/png" href="./assets/favicon.png">
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script src="blocks-guard.js" type="module"></script>
+    
     <style>
         /* ========================================================
             ARTSY RESET & BASE (Performance Optimized Canvas)
@@ -34,6 +35,12 @@
             font-family: 'Georgia', serif;
         }
 
+        /* Helper class used by guard script to keep content secure until authentication is verified */
+        .secure-content-hidden {
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+
         /* ========================================================
             STARRY BACKGROUND CANVAS
            ======================================================== */
@@ -41,9 +48,8 @@
             position: relative;
             width: 100% !important;
             min-height: 100vh !important;
-            z-index: 999999 !important;
+            z-index: 1 !important;
             
-            /* Linked to your local starry asset with soft ambient overlay gradients */
             background: 
                 linear-gradient(rgba(9, 15, 29, 0.5), rgba(15, 23, 42, 0.7)),
                 url('./assets/Background.jpg') no-repeat center center !important;
@@ -56,9 +62,9 @@
             overflow-x: hidden !important;
             padding-bottom: 60px !important;
             
-            /* GPU hardware rendering layer upgrade */
             transform: translateZ(0);
             -webkit-transform: translateZ(0);
+            transition: opacity 0.4s ease-in-out;
         }
 
         /* ========================================================
@@ -153,7 +159,6 @@
             padding: 40px;
         }
 
-        /* Decorative Gold Corner Borders */
         .art-mainframe::before, .art-mainframe::after {
             content: ''; position: absolute; width: 24px; height: 24px; pointer-events: none; opacity: 0.85;
         }
@@ -213,9 +218,7 @@
             margin-bottom: 5px;
             transition: all 0.35s ease;
         }
-        .card-icon-wrapper i {
-            font-size: 1.3rem;
-        }
+        .card-icon-wrapper i { font-size: 1.3rem; }
 
         .card-title {
             font-size: 1.25rem;
@@ -244,9 +247,7 @@
         .sys-msk { --sys-color: #10b981; --sys-bg: rgba(16, 185, 129, 0.1); }
         .sys-cns { --sys-color: #6366f1; --sys-bg: rgba(99, 102, 241, 0.1); }
 
-        .system-card {
-            border-left: 3px solid var(--sys-color);
-        }
+        .system-card { border-left: 3px solid var(--sys-color); }
         .system-card .card-icon-wrapper {
             background: var(--sys-bg);
             border: 1px solid rgba(255,255,255,0.05);
@@ -327,7 +328,7 @@
         }
     </style>
 </head>
-<body>
+<body id="blocks-body-content" class="secure-content-hidden">
 
     <div class="art-canvas-container">
 
@@ -343,7 +344,6 @@
         </nav>
 
         <div class="main-wrapper">
-            
             <div class="art-mainframe">
                 <div class="section-header">
                     <div class="section-title">
