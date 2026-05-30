@@ -24,25 +24,41 @@ const loginBtn = document.getElementById('google-login-btn');
 const whiteRabbitBtn = document.getElementById('white-rabbit-btn');
 const logoutBtn = document.getElementById('logout-btn');
 
-// Navbar Left Profile Elements
+// Navbar Profile Elements
 const navUserProfile = document.getElementById('nav-user-profile');
 const navUserPhoto = document.getElementById('nav-user-photo');
 const profileDropdown = document.getElementById('profile-dropdown');
 const userName = document.getElementById('user-name');
 const userEmail = document.getElementById('user-email');
 
+// Track auth status locally to prevent unauthorized redirection clicks
+let isUserLoggedIn = false;
+
 // ========================================================
 // PROFILE DROPDOWN INTERACTION HACK
 // ========================================================
 if (navUserPhoto && profileDropdown) {
     navUserPhoto.addEventListener('click', (event) => {
-        event.stopPropagation(); // Prevents document click listener from immediately closing it
+        event.stopPropagation(); // Prevents document container capture click from shutting it
         profileDropdown.classList.toggle('show');
     });
 
-    // Automatically collapse dropdown when user clicks anywhere else on screen
     document.addEventListener('click', () => {
         profileDropdown.classList.remove('show');
+    });
+}
+
+// ========================================================
+// WHITE RABBIT INTERACTIVE ROUTING FIX
+// ========================================================
+if (whiteRabbitBtn) {
+    whiteRabbitBtn.addEventListener('click', () => {
+        if (isUserLoggedIn) {
+            // Proceed to destination only if Firebase confirmed active session login state
+            window.location.href = "./blocks";
+        } else {
+            console.log("Access Denied: You must follow the auth protocol first.");
+        }
     });
 }
 
@@ -80,10 +96,11 @@ onAuthStateChanged(auth, (user) => {
     const currentPath = window.location.pathname;
 
     if (user) {
+        isUserLoggedIn = true;
         const fallBackPhoto = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/svgs/solid/user.svg';
         const finalPhoto = user.photoURL || fallBackPhoto;
         
-        // 1. Fill Dropdown Profile Card Data (Moved into the corner navbar block)
+        // 1. Populate Dropdown Content Card data
         if (userName) userName.textContent = user.displayName || "User";
         if (userEmail) userEmail.textContent = user.email || "";
         if (navUserPhoto) navUserPhoto.src = finalPhoto;
@@ -91,30 +108,32 @@ onAuthStateChanged(auth, (user) => {
         // 2. Hide Google Login Button
         if (loginBtn) loginBtn.classList.add('hidden');
 
-        // 3. Reveal Left-Corner Profile Element
-        if (navUserProfile) navUserProfile.style.display = 'inline-flex';
+        // 3. Display Top-Right Navbar profile token item 
+        if (navUserProfile) navUserProfile.style.display = 'flex';
 
-        // 4. Activate the "Follow the White Rabbit" Button (Unhide and light it up)
+        // 4. Activate center button interactivity states
         if (whiteRabbitBtn) {
             whiteRabbitBtn.classList.remove('disabled-state');
             whiteRabbitBtn.classList.add('active-state');
         }
 
     } else {
+        isUserLoggedIn = false;
+        
         // Route protection: Guard rails against unauthorized sub-page surfing
         if (currentPath.includes('/blocks') || currentPath.includes('/about')) {
             window.location.replace("https://ankitx007x.github.io/");
         }
 
-        // 1. Return Google Login button back to active display
+        // 1. Return Google login back into the active viewport array
         if (loginBtn) loginBtn.classList.remove('hidden');
 
-        // 2. Clear out and conceal navbar profile avatar elements
+        // 2. Wipe/conceal top navbar item elements safely
         if (navUserProfile) navUserProfile.style.display = 'none';
         if (navUserPhoto) navUserPhoto.src = "";
-        if (profileDropdown) profileDropdown.classList.remove('show'); // Ensure dropdown is shut
+        if (profileDropdown) profileDropdown.classList.remove('show');
         
-        // 3. Make White Rabbit button visually and physically unresponsive
+        // 3. Kill center button active configuration parameters
         if (whiteRabbitBtn) {
             whiteRabbitBtn.classList.remove('active-state');
             whiteRabbitBtn.classList.add('disabled-state');
