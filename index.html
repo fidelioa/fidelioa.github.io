@@ -41,7 +41,7 @@
             position: relative;
             width: 100% !important;
             min-height: 100vh !important;
-            z-index: 1 !important;
+            z-index: 1 !important; /* Fixed stacking order context */
             
             background: 
                 linear-gradient(rgba(9, 15, 29, 0.4), rgba(15, 23, 42, 0.6)),
@@ -61,7 +61,7 @@
            ======================================================== */
         .custom-navbar {
             position: relative;
-            z-index: 50;
+            z-index: 50; /* Above core frame elements */
             width: 100%;
             min-height: 80px;
             display: flex;
@@ -109,15 +109,10 @@
         }
 
         .nav-links a:hover, .nav-links a.active { color: #fef08a; }
-        .nav-links a::after {
-            content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 1px;
-            background: #eab308; transition: width 0.3s ease;
-        }
-        .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
 
         /* Top Bar Mini Profile Component */
         .nav-profile-item {
-            display: none; /* Managed by main.js */
+            display: none; /* Managed dynamically by main.js */
             align-items: center;
             gap: 10px;
             padding: 4px 12px;
@@ -194,7 +189,7 @@
             font-weight: 300;
         }
 
-        /* Container to stack elements cleanly */
+        /* Container to stack call-to-actions cleanly */
         .cta-container {
             position: relative;
             display: flex;
@@ -226,7 +221,6 @@
             border: none;
             cursor: pointer;
             gap: 10px;
-            z-index: 25;
         }
 
         .explore-btn:hover {
@@ -262,7 +256,7 @@
             cursor: pointer;
             transition: background-color 0.2s, box-shadow 0.2s, transform 0.2s;
             gap: 12px;
-            z-index: 30; /* Brings it on top of all visual blocks */
+            z-index: 30; /* Assures explicit interaction surface priority */
         }
 
         .google-btn:hover {
@@ -276,7 +270,6 @@
            ======================================================== */
         .user-dashboard-card {
             display: none; /* Managed by main.js */
-            position: relative;
             background: rgba(255, 255, 255, 0.04);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
@@ -287,7 +280,6 @@
             max-width: 340px;
             text-align: center;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-            z-index: 25;
         }
 
         .user-avatar {
@@ -359,8 +351,9 @@
                 <li><a href="https://ankitx007x.github.io/" class="active">Home</a></li>
                 <li><a href="./blocks">Blocks</a></li>
                 <li><a href="./about">About Me</a></li>
+                <!-- Top Nav Profile Hook -->
                 <li id="nav-user-profile" class="nav-profile-item">
-                    <img id="nav-user-photo" src="" alt="User Avatar">
+                    <img id="nav-user-photo" src="" alt="Avatar">
                     <span id="nav-user-name"></span>
                 </li>
             </ul>
@@ -374,6 +367,7 @@
                 </p>
 
                 <div class="cta-container">
+                    <!-- Google Authentication Action -->
                     <button class="google-btn" id="google-login-btn">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 48 48">
                             <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
@@ -384,8 +378,9 @@
                         Sign in with Google
                     </button>
 
+                    <!-- Target Dashboard Component -->
                     <div class="user-dashboard-card" id="user-dashboard">
-                        <img id="user-photo" class="user-avatar" src="" alt="User Avatar">
+                        <img id="user-photo" class="user-avatar" src="" alt="User Photo">
                         <h3 id="user-name" class="profile-name"></h3>
                         <p id="user-email" class="profile-email"></p>
                         
