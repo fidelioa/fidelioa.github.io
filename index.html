@@ -96,10 +96,13 @@
             transition: transform 0.3s ease;
         }
         .nav-logo:hover { transform: scale(1.02); }
-        .nav-logo i {
-            color: #eab308;
-            font-size: 1.4rem;
-            filter: drop-shadow(0 0 8px rgba(234, 179, 8, 0.6));
+        
+        /* New styling for the custom logo image */
+        .nav-logo img {
+            height: 1.8rem; /* Matches closely with text size while maintaining aspect ratio */
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 0 8px rgba(234, 179, 8, 0.4));
         }
 
         .nav-links {
@@ -249,7 +252,7 @@
 
         <nav class="custom-navbar">
             <a href="https://ankitx007x.github.io/" class="nav-logo">
-                <i class="fa-solid fa-palette"></i> The Grand Budapest
+                <img src="./assets/logo.png" alt="The Grand Budapest Logo"> The Grand Budapest
             </a>
             <ul class="nav-links">
                 <li><a href="https://ankitx007x.github.io/" class="active">Home</a></li>
