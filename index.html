@@ -1,174 +1,289 @@
-<!DOCTYPE HTML>
-<!--
-	Spectral by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
-<html>
-	<head>
-		<title>Spectral by HTML5 UP</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/main.css" />
-		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
-	</head>
-	<body class="landing is-preload">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Grand Budapest - Board Review</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* ========================================================
+            ARTSY RESET & BASE (Impressionist Oil Canvas Vibe)
+           ======================================================== */
+        body, html, 
+        .main-inner, .content-outer, .post-body, .entry-content,
+        #main, #content, .wrapper, .main-content-wrapper {
+            margin: 0 !important;
+            padding: 0 !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            background: #090f1d !important;
+            min-height: 100%;
+        }
 
-		<!-- Page Wrapper -->
-			<div id="page-wrapper">
+        .sidebar-container, #sidebar-wrapper, .main-header, .blog-header, 
+        header, footer {
+            display: none !important;
+        }
 
-				<!-- Header -->
-					<header id="header" class="alt">
-						<h1><a href="index.html">Spectral</a></h1>
-						<nav id="nav">
-							<ul>
-								<li class="special">
-									<a href="#menu" class="menuToggle"><span>Menu</span></a>
-									<div id="menu">
-										<ul>
-											<li><a href="index.html">Home</a></li>
-											<li><a href="generic.html">Generic</a></li>
-											<li><a href="elements.html">Elements</a></li>
-											<li><a href="#">Sign Up</a></li>
-											<li><a href="#">Log In</a></li>
-										</ul>
-									</div>
-								</li>
-							</ul>
-						</nav>
-					</header>
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Georgia', serif;
+        }
 
-				<!-- Banner -->
-					<section id="banner">
-						<div class="inner">
-							<h2>Spectral</h2>
-							<p>Another fine responsive<br />
-							site template freebie<br />
-							crafted by <a href="http://html5up.net">HTML5 UP</a>.</p>
-							<ul class="actions special">
-								<li><a href="#" class="button primary">Activate</a></li>
-							</ul>
-						</div>
-						<a href="#one" class="more scrolly">Learn More</a>
-					</section>
+        /* ========================================================
+            VAN GOGH WHEATFIELD CANVAS (Performance Tuned Background)
+           ======================================================== */
+        .art-canvas-container {
+            position: relative;
+            width: 100% !important;
+            min-height: 100vh !important;
+            z-index: 999999 !important;
+            background: 
+                linear-gradient(rgba(9, 15, 29, 0.5), rgba(15, 23, 42, 0.7)),
+                url('https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Vincent_van_Gogh_-_Wheatfield_with_crows_-_Google_Art_Project.jpg/1280px-Vincent_van_Gogh_-_Wheatfield_with_crows_-_Google_Art_Project.jpg') no-repeat center center !important;
+            background-size: cover !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: flex-start !important;
+            overflow-x: hidden !important;
+            padding-bottom: 60px !important;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+        }
 
-				<!-- One -->
-					<section id="one" class="wrapper style1 special">
-						<div class="inner">
-							<header class="major">
-								<h2>Arcu aliquet vel lobortis ata nisl<br />
-								eget augue amet aliquet nisl cep donec</h2>
-								<p>Aliquam ut ex ut augue consectetur interdum. Donec amet imperdiet eleifend<br />
-								fringilla tincidunt. Nullam dui leo Aenean mi ligula, rhoncus ullamcorper.</p>
-							</header>
-							<ul class="icons major">
-								<li><span class="icon fa-gem major style1"><span class="label">Lorem</span></span></li>
-								<li><span class="icon fa-heart major style2"><span class="label">Ipsum</span></span></li>
-								<li><span class="icon solid fa-code major style3"><span class="label">Dolor</span></span></li>
-							</ul>
-						</div>
-					</section>
+        /* Paint Stroke Texture Overlay */
+        .art-canvas-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 2;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
 
-				<!-- Two -->
-					<section id="two" class="wrapper alt style2">
-						<section class="spotlight">
-							<div class="image"><img src="images/pic01.jpg" alt="" /></div><div class="content">
-								<h2>Magna primis lobortis<br />
-								sed ullamcorper</h2>
-								<p>Aliquam ut ex ut augue consectetur interdum. Donec hendrerit imperdiet. Mauris eleifend fringilla nullam aenean mi ligula.</p>
-							</div>
-						</section>
-						<section class="spotlight">
-							<div class="image"><img src="images/pic02.jpg" alt="" /></div><div class="content">
-								<h2>Tortor dolore feugiat<br />
-								elementum magna</h2>
-								<p>Aliquam ut ex ut augue consectetur interdum. Donec hendrerit imperdiet. Mauris eleifend fringilla nullam aenean mi ligula.</p>
-							</div>
-						</section>
-						<section class="spotlight">
-							<div class="image"><img src="images/pic03.jpg" alt="" /></div><div class="content">
-								<h2>Augue eleifend aliquet<br />
-								sed condimentum</h2>
-								<p>Aliquam ut ex ut augue consectetur interdum. Donec hendrerit imperdiet. Mauris eleifend fringilla nullam aenean mi ligula.</p>
-							</div>
-						</section>
-					</section>
+        /* ========================================================
+            NAVIGATION BAR (Artistic Palette Logo)
+           ======================================================== */
+        .custom-navbar {
+            position: relative;
+            z-index: 20;
+            width: 100%;
+            min-height: 80px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            background: rgba(9, 15, 29, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(234, 179, 8, 0.3);
+            flex-wrap: wrap;
+            gap: 20px;
+        }
 
-				<!-- Three -->
-					<section id="three" class="wrapper style3 special">
-						<div class="inner">
-							<header class="major">
-								<h2>Accumsan mus tortor nunc aliquet</h2>
-								<p>Aliquam ut ex ut augue consectetur interdum. Donec amet imperdiet eleifend<br />
-								fringilla tincidunt. Nullam dui leo Aenean mi ligula, rhoncus ullamcorper.</p>
-							</header>
-							<ul class="features">
-								<li class="icon fa-paper-plane">
-									<h3>Arcu accumsan</h3>
-									<p>Augue consectetur sed interdum imperdiet et ipsum. Mauris lorem tincidunt nullam amet leo Aenean ligula consequat consequat.</p>
-								</li>
-								<li class="icon solid fa-laptop">
-									<h3>Ac Augue Eget</h3>
-									<p>Augue consectetur sed interdum imperdiet et ipsum. Mauris lorem tincidunt nullam amet leo Aenean ligula consequat consequat.</p>
-								</li>
-								<li class="icon solid fa-code">
-									<h3>Mus Scelerisque</h3>
-									<p>Augue consectetur sed interdum imperdiet et ipsum. Mauris lorem tincidunt nullam amet leo Aenean ligula consequat consequat.</p>
-								</li>
-								<li class="icon solid fa-headphones-alt">
-									<h3>Mauris Imperdiet</h3>
-									<p>Augue consectetur sed interdum imperdiet et ipsum. Mauris lorem tincidunt nullam amet leo Aenean ligula consequat consequat.</p>
-								</li>
-								<li class="icon fa-heart">
-									<h3>Aenean Primis</h3>
-									<p>Augue consectetur sed interdum imperdiet et ipsum. Mauris lorem tincidunt nullam amet leo Aenean ligula consequat consequat.</p>
-								</li>
-								<li class="icon fa-flag">
-									<h3>Tortor Ut</h3>
-									<p>Augue consectetur sed interdum imperdiet et ipsum. Mauris lorem tincidunt nullam amet leo Aenean ligula consequat consequat.</p>
-								</li>
-							</ul>
-						</div>
-					</section>
+        .nav-logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            font-style: italic;
+            letter-spacing: 1px;
+            color: #fef08a;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+        .nav-logo:hover { transform: scale(1.02); }
+        .nav-logo i {
+            color: #eab308;
+            font-size: 1.4rem;
+            filter: drop-shadow(0 0 8px rgba(234, 179, 8, 0.6));
+        }
 
-				<!-- CTA -->
-					<section id="cta" class="wrapper style4">
-						<div class="inner">
-							<header>
-								<h2>Arcue ut vel commodo</h2>
-								<p>Aliquam ut ex ut augue consectetur interdum endrerit imperdiet amet eleifend fringilla.</p>
-							</header>
-							<ul class="actions stacked">
-								<li><a href="#" class="button fit primary">Activate</a></li>
-								<li><a href="#" class="button fit">Learn More</a></li>
-							</ul>
-						</div>
-					</section>
+        .nav-links {
+            display: flex;
+            gap: 35px;
+            list-style: none;
+            align-items: center;
+        }
 
-				<!-- Footer -->
-					<footer id="footer">
-						<ul class="icons">
-							<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-							<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-							<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-							<li><a href="#" class="icon brands fa-dribbble"><span class="label">Dribbble</span></a></li>
-							<li><a href="#" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
-						</ul>
-						<ul class="copyright">
-							<li>&copy; Untitled</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
-						</ul>
-					</footer>
+        .nav-links a {
+            text-decoration: none;
+            color: #cbd5e1;
+            font-size: 0.95rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            position: relative;
+            padding-bottom: 4px;
+        }
 
-			</div>
+        .nav-links a:hover, .nav-links a.active { color: #fef08a; }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 1px;
+            background: #eab308; transition: width 0.3s ease;
+        }
+        .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
 
-		<!-- Scripts -->
-			<script src="assets/js/jquery.min.js"></script>
-			<script src="assets/js/jquery.scrollex.min.js"></script>
-			<script src="assets/js/jquery.scrolly.min.js"></script>
-			<script src="assets/js/browser.min.js"></script>
-			<script src="assets/js/breakpoints.min.js"></script>
-			<script src="assets/js/util.js"></script>
-			<script src="assets/js/main.js"></script>
+        /* ========================================================
+            HERO WELCOME CONSOLE
+           ======================================================== */
+        .main-wrapper {
+            flex-grow: 1;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px;
+            z-index: 10;
+            max-width: 900px;
+        }
 
-	</body>
+        .art-mainframe {
+            position: relative;
+            width: 100%;
+            background: #0d1527; 
+            border: 2px solid #eab308;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        /* Decorative Gold Corner Borders */
+        .art-mainframe::before, .art-mainframe::after {
+            content: ''; position: absolute; width: 24px; height: 24px; pointer-events: none; opacity: 0.85;
+        }
+        .art-mainframe::before { top: 20px; left: 20px; border-top: 2px solid #eab308; border-left: 2px solid #eab308; border-top-left-radius: 8px; }
+        .art-mainframe::after { bottom: 20px; right: 20px; border-bottom: 2px solid #eab308; border-right: 2px solid #eab308; border-bottom-right-radius: 8px; }
+
+        .welcome-badge {
+            display: inline-block;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #eab308;
+            background: rgba(234, 179, 8, 0.1);
+            padding: 6px 16px;
+            border-radius: 30px;
+            border: 1px solid rgba(234, 179, 8, 0.2);
+            margin-bottom: 25px;
+        }
+
+        .main-title {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -1px;
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        .main-subtitle {
+            font-size: 1.15rem;
+            color: #94a3b8;
+            line-height: 1.7;
+            max-width: 650px;
+            margin: 0 auto 40px auto;
+            font-weight: 300;
+        }
+
+        /* ========================================================
+            GOLDEN PALETTE CTA BUTTON
+           ======================================================== */
+        .explore-btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            padding: 16px 40px;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: #0f172a;
+            background: linear-gradient(90deg, #fcd34d, #f59e0b, #fcd34d);
+            background-size: 200% auto;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            border: none;
+            cursor: pointer;
+            gap: 10px;
+        }
+
+        .explore-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.45);
+            background-position: right center;
+        }
+
+        .explore-btn i {
+            font-size: 0.85rem;
+            transition: transform 0.25s ease;
+        }
+        .explore-btn:hover i { transform: translateX(4px); }
+
+        /* Decorative Color Palette Dots */
+        .palette-swatches {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 50px;
+        }
+        .swatch { width: 6px; height: 6px; border-radius: 50%; opacity: 0.4; }
+
+        @media (max-width: 768px) {
+            .custom-navbar { padding: 15px 30px; }
+            .main-title { font-size: 2.2rem; }
+            .art-mainframe { padding: 40px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="art-canvas-container">
+
+        <!-- Top Navigation Ribbon Frame -->
+        <nav class="custom-navbar">
+            <a href="https://ankitx007x.github.io/mcqs" class="nav-logo">
+                <i class="fa-solid fa-palette"></i> The Grand Budapest
+            </a>
+            <ul class="nav-links">
+                <li><a href="https://ankitx007x.github.io/mcqs" class="active">Home</a></li>
+                <li><a href="https://ankitx007x.github.io/mcqs/select-quiz">Blocks</a></li>
+                <li><a href="https://ankitx007x.github.io/mcqs/about">About Me</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Display Arena Centered -->
+        <div class="main-wrapper">
+            
+            <!-- Systems Grid Container Frame -->
+            <div class="art-mainframe">
+                <h1 class="main-title">Exquisite Board Mastery</h1>
+                <p class="main-subtitle">
+                    This is your last chance. After this, there is no turning back. You take the blue pill - the story ends, you wake up in your bed and believe whatever you want to believe. You take the red pill - you stay in Wonderland and I show you how deep the rabbit hole goes.
+                </p>
+
+                <a href="https://ankitx007x.github.io/mcqs/select-quiz" class="explore-btn">
+                    Explore Studio Blocks <i class="fa-solid fa-arrow-right"></i>
+                </a>
+
+                <!-- Decorative Canvas Footer Swatches -->
+                <div class="palette-swatches">
+                    <div class="swatch" style="background: #ef4444;"></div>
+                    <div class="swatch" style="background: #38bdf8;"></div>
+                    <div class="swatch" style="background: #f59e0b;"></div>
+                    <div class="swatch" style="background: #6366f1;"></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</body>
 </html>
