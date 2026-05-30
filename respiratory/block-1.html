@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive High-Yield QBank: Respiratory System</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f7f6;
+            user-select: text !important;
+        }
+        
+        .qbank-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #1a365d;
+            color: #fff;
+            padding: 15px 25px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .question-counter {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #90cdf4;
+        }
+        
+        .timer-display {
+            font-size: 1.2rem;
+            font-weight: bold;
+            background-color: #2c5282;
+            padding: 6px 15px;
+            border-radius: 5px;
+            border: 1px solid #4299e1;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .question-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
+            display: none;
+        }
+        
+        .question-card.active {
+            display: block;
+        }
+
+        .vignette {
+            font-weight: 500;
+            margin-bottom: 22px;
+            color: #2d3748;
+            font-size: 1.1rem;
+            text-align: justify;
+        }
+
+        .choices {
+            list-style-type: none;
+            padding-left: 0;
+            margin-bottom: 25px;
+        }
+
+        .choices li {
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            background-color: #f7fafc;
+            border-radius: 6px;
+            border-left: 4px solid #cbd5e0;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .choices li:hover {
+            background-color: #edf2f7;
+            border-left-color: #4299e1;
+        }
+
+        .choices li.selected {
+            background-color: #ebf8ff;
+            border-left-color: #2b6cb0;
+            font-weight: 600;
+        }
+
+        .meta-section {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-top: 2px solid #e2e8f0;
+            display: none;
+        }
+        
+        .meta-section.revealed {
+            display: block;
+        }
+
+        .correct-answer {
+            background-color: #f0fff4;
+            border: 1px solid #c6f6d5;
+            color: #22543d;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding: 10px 14px;
+            border-radius: 5px;
+            font-size: 1.05rem;
+        }
+
+        .explanation {
+            background-color: #ebf8ff;
+            border: 1px solid #bee3f8;
+            color: #2a4365;
+            padding: 18px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 1rem;
+            text-align: justify;
+        }
+
+        .edu-objective {
+            background-color: #fffaf0;
+            border: 1px solid #feebc8;
+            color: #744210;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-style: italic;
+        }
+
+        .action-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-submit {
+            background-color: #3182ce;
+            color: white;
+        }
+
+        .btn-submit:hover {
+            background-color: #2b6cb0;
+        }
+
+        .btn-next {
+            background-color: #38a169;
+            color: white;
+            display: none;
+        }
+
+        .btn-next:hover {
+            background-color: #2f855a;
+        }
+
+        .results-screen {
+            display: none;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        strong {
+            color: #1a202c;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="qbank-header">
+        <div class="question-counter" id="tracker-display">Question 1 of 40</div>
+        <div class="timer-display" id="clock-display">90:00</div>
+    </div>
+
+    <div id="qbank-container">
+        <div class="question-card active" data-qindex="1">
+            <div class="vignette">A 24-year-old female presents with a 3-month history of a dry cough, mild dyspnea, and painful red nodules on her shins. Chest radiography demonstrates prominent bilateral hilar lymphadenopathy. Laboratory testing reveals elevated serum calcium and elevated serum angiotensin-converting enzyme (ACE) levels. Biopsy of a lymph node is most likely to show which of the following histological features?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Necrotizing granulomas with central caseous debris</li>
+                <li data-ans="B">B. Non-caseating granulomas containing multinucleated giant cells</li>
+                <li data-ans="C">C. Sheets of atypical squamous epithelial cells forming keratin pearls</li>
+                <li data-ans="D">D. Intra-alveolar deposits of lipid-rich PAS-positive proteinaceous material</li>
+                <li data-ans="E">E. Extensive interstitial deposition of dense collagen and reticulin fibers</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient presents with systemic sarcoidosis, supported by the triad of respiratory symptoms, erythema nodosum (painful nodules on shins), and bilateral hilar lymphadenopathy. Sarcoidosis is a systemic disease characterized by hypercalcemia (due to 1-alpha-hydroxylase expression by activated macrophages converting vitamin D) and elevated ACE levels. The histopathological hallmark of sarcoidosis is non-caseating (non-necrotizing) granulomas containing epithelioid histiocytes and Langhans multinucleated giant cells, differentiating it from tuberculosis, which features caseating granulomas.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Sarcoidosis is characterized by non-caseating granulomas in affected tissues, classically presenting with bilateral hilar lymphadenopathy, hypercalcemia, and erythema nodosum.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="2">
+            <div class="vignette">A 62-year-old male with a 45 pack-year smoking history presents with a chronic cough, progressive exertional dyspnea, and a barrel chest. Pulmonary function testing shows an FEV1/FVC ratio of 0.52 and a significantly decreased diffusing capacity of the lung for carbon monoxide (DLCO). What is the primary pathogenetic mechanism directly driving the structural alveolar destruction in this patient's disease?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Autoimmune-mediated destruction of Type II pneumocytes</li>
+                <li data-ans="B">B. Excess elastase activity overriding the inhibitory capacity of alpha-1 antitrypsin</li>
+                <li data-ans="C">C. Hyperplasia of bronchial submucosal glands from mechanical stress</li>
+                <li data-ans="D">D. Smooth muscle hypertrophy and eosinophilic infiltration of terminal bronchioles</li>
+                <li data-ans="E">E. Intra-alveolar fluid accumulation inhibiting surfactant functionality</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient has emphysema, a form of Chronic Obstructive Pulmonary Disease (COPD) caused by tobacco smoking. Cigarette smoke recruits neutrophils and macrophages to the alveoli, which release proteases and elastase. Simultaneously, oxidants in smoke inactivate local alpha-1 antitrypsin (an anti-elastase protector). This protease-antiprotease imbalance causes unchecked destruction of the elastic tissue walls of the alveoli, decreasing surface area for gas exchange (manifested as a reduced DLCO) and causing airflow limitation (low FEV1/FVC).</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Centrilobular emphysema in smokers is caused by a protease-antiprotease imbalance, where excess elastase destroys alveolar elastic walls.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="3">
+            <div class="vignette">A 54-year-old female undergoes an elective hysterectomy. On postoperative day 3, she develops sudden-onset pleuritic chest pain and acute dyspnea. Her oxygen saturation drops to 86% on room air. Computed tomography pulmonary angiography confirms a saddle pulmonary embolism. Which of the following changes in arterial blood gas parameters is most expected prior to intervention?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Respiratory acidosis with an elevated PaCO2</li>
+                <li data-ans="B">B. Metabolic acidosis with a normal anion gap</li>
+                <li data-ans="C">C. Respiratory alkalosis with a decreased PaCO2</li>
+                <li data-ans="D">D. Combined respiratory and metabolic acidosis</li>
+                <li data-ans="E">E. Normal pH with an elevated PaO2</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: C</div>
+                <div class="explanation"><strong>Explanation:</strong> An acute pulmonary embolism creates a ventilation-perfusion (V/Q) mismatch (alveoli are ventilated but not perfused due to the clot), leading to hypoxia. Hypoxia triggers the peripheral chemoreceptors to drive hyperventilation. Increased minute ventilation clears carbon dioxide efficiently, resulting in a decreased arterial partial pressure of carbon dioxide (PaCO2) and an elevated blood pH, which is diagnostic of an acute respiratory alkalosis.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Acute pulmonary embolism characteristically induces hyperventilation secondary to hypoxia, resulting in a respiratory alkalosis with hypocapnia (low PaCO2).</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="4">
+            <div class="vignette">A 3-year-old boy is brought to the emergency department with a harsh, barking cough and inspiratory stridor that worsened overnight. He has had a mild fever and rhinorrhea for the past two days. An anteroposterior neck radiograph displays a distinct subglottic narrowing known as the "steeple sign." What is the most likely causative organism?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Respiratory syncytial virus (RSV)</li>
+                <li data-ans="B">B. Parainfluenza virus</li>
+                <li data-ans="C">C. Haemophilus influenzae type b</li>
+                <li data-ans="D">D. Corynebacterium diphtheriae</li>
+                <li data-ans="E">E. Bordetella pertussis</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This child is presenting with laryngotracheobronchitis, commonly known as croup. Croup is characterized by a barking cough, hoarseness, and inspiratory stridor due to upper airway edema. The "steeple sign" on X-ray represents subglottic narrowing. The most common cause of croup is **Parainfluenza virus** (specifically type 1), a member of the Paramyxoviridae family. RSV typically causes bronchiolitis (lower airway disease) in younger infants, whereas Haemophilus influenzae type b causes epiglottitis (severe distress, drooling, "thumbprint sign").</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Croup (laryngotracheobronchitis) presents with a barking cough and inspiratory stridor, is most commonly caused by the Parainfluenza virus, and exhibits subglottic narrowing ("steeple sign") on X-ray.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="5">
+            <div class="vignette">A 34-year-old male with severe asthma experiences a severe exacerbation characterized by wheezing and shortness of breath. He is managed with a medication that selectively inhibits the 5-lipoxygenase enzyme pathway. Which of the following drugs was prescribed to this patient?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Montelukast</li>
+                <li data-ans="B">B. Zileuton</li>
+                <li data-ans="C">C. Zafirlukast</li>
+                <li data-ans="D">D. Albuterol</li>
+                <li data-ans="E">E. Fluticasone</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> The leukotriene pathway is a key contributor to bronchoconstriction, mucosal edema, and inflammatory cell infiltration in asthma. Arachidonic acid is converted into leukotrienes by the enzyme 5-lipoxygenase. **Zileuton** is a targeted pharmaceutical agent that directly inhibits 5-lipoxygenase, preventing the synthesis of leukotrienes (LTB4, LTC4, LTD4, LTE4). Montelukast and zafirlukast, by contrast, act downstream by competitively blocking the leukotriene receptor (CysLT1 receptor).</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Zileuton is an antiasthmatic agent that acts by directly inhibiting the 5-lipoxygenase enzyme, blocking the upstream synthesis of leukotrienes.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="6">
+            <div class="vignette">A 68-year-old male who worked in shipyards and insulation installation for 35 years presents with a 6-month history of progressive dyspnea and weight loss. Chest CT reveals extensive, irregular pleural thickening and a large unilateral pleural effusion. A biopsy confirms a diagnosis of mesothelioma. What histological or immunohistochemical marker is highly specific for confirming this tumor's origin?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Carcinoembryonic antigen (CEA) positivity</li>
+                <li data-ans="B">B. Calretinin and cytokeratin 5/6 positivity with long microvilli</li>
+                <li data-ans="C">C. Chromogranin and synaptophysin dense granules</li>
+                <li data-ans="D">D. Thyroid transcription factor-1 (TTF-1) expression</li>
+                <li data-ans="E">E. Vimentin positivity with absent desmosomal junctions</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient developed mesothelioma following chronic asbestos exposure (shipyard work). Mesothelioma arises from the mesothelial cells of the pleura. Differentiating malignant mesothelioma from pulmonary adenocarcinoma can be challenging. Mesothelioma is characterized immunohistochemically by positivity for **calretinin**, cytokeratin 5/6, and WT1, along with electron microscopy showing characteristically long, slender microvilli. Adenocarcinoma is typically positive for CEA and TTF-1 and lacks long microvilli.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Malignant mesothelioma is an asbestos-linked pleural tumor that characteristically stains positive for calretinin and exhibits long microvilli on electron microscopy.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="7">
+            <div class="vignette">An infant born at 27 weeks gestation develops severe grunting, nasal flaring, and intercostal retractions immediately after birth. He is diagnosed with Neonatal Respiratory Distress Syndrome (NRDS). What is the primary chemical composition of the substance missing in this infant's alveoli, and which cells are responsible for its synthesis?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Sphingomyelin; Type I pneumocytes</li>
+                <li data-ans="B">B. Dipalmitoylphosphatidylcholine; Type II pneumocytes</li>
+                <li data-ans="C">C. Mucin glycoproteins; Goblet cells</li>
+                <li data-ans="D">D. Phosphatidylglycerol; Club cells</li>
+                <li data-ans="E">E. Alpha-surfactant protein; Endothelial cells</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> Premature infants often lack adequate pulmonary surfactant, leading to NRDS. Pulmonary surfactant reduces alveolar surface tension, preventing alveolar collapse during expiration (atelectasis). Surfactant is synthesized and secreted by **Type II pneumocytes** (which also act as stem cells to regenerate alveolar epithelium). The primary active lipid component of surfactant is **dipalmitoylphosphatidylcholine (DPPC)**, also called lecithin. Surfactant production increases significantly after 35 weeks of gestation.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> NRDS is caused by a deficiency of pulmonary surfactant (primarily dipalmitoylphosphatidylcholine), which is synthesized by Type II pneumocytes.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="8">
+            <div class="vignette">A 45-year-old male with a history of intravenous drug use is admitted with severe sepsis. Over the next 24 hours, he develops severe hypoxemic respiratory failure with diffuse bilateral infiltrates on chest X-ray ("white-out" lung). His PaO2/FiO2 ratio is 120 mmHg, and his pulmonary capillary wedge pressure (PCWP) is 12 mmHg (normal < 18). What is the primary underlying pathophysiology of this condition?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Increased left atrial pressure causing retrograde hydrostatic fluid transudation</li>
+                <li data-ans="B">B. Endothelial injury and increased alveolar-capillary permeability leading to protein-rich exudate</li>
+                <li data-ans="C">C. Obstruction of central lymphatic drainage by a mediastinal mass</li>
+                <li data-ans="D">D. Loss of alveolar surfactant due to aspiration of gastric acid</li>
+                <li data-ans="E">E. Chronic fibrotic replacement of the basement membrane scaffold</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient has Acute Respiratory Distress Syndrome (ARDS) secondary to sepsis. ARDS criteria include acute onset, bilateral opacities not fully explained by volume overload, and severe hypoxemia (PaO2/FiO2 ratio ≤ 300 mmHg). The normal PCWP (< 18 mmHg) excludes a cardiogenic cause. The primary pathology is diffuse alveolar damage (DAD) driven by neutrophil activation, which injures the alveolar endothelium and epithelium. This increases capillary permeability, leaking protein-rich fluid into the alveoli and forming hyaline membranes.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> ARDS is characterized by non-cardiogenic pulmonary edema driven by neutrophil-mediated endothelial damage and increased alveolar-capillary permeability.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="9">
+            <div class="vignette">A 48-year-old male presents with a persistent cough, hemoptysis, and recurrent episodes of localized wheezing in his right lower lung field. He is a life-long non-smoker. A bronchoscopy reveals a highly vascular pink mass completely occluding the right lower lobe bronchus. Histological evaluation shows uniform, nests of round cells with regular nuclei displaying a "salt-and-pepper" chromatin pattern. What is the diagnosis?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Squamous cell carcinoma</li>
+                <li data-ans="B">B. Adenocarcinoma</li>
+                <li data-ans="C">C. Large cell carcinoma</li>
+                <li data-ans="D">D. Bronchial carcinoid tumor</li>
+                <li data-ans="E">E. Small cell lung carcinoma</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: D</div>
+                <div class="explanation"><strong>Explanation:</strong> This presentation features a central, vascular intrabronchial mass in a non-smoker. The histology—ordered nests of uniform cells with "salt-and-pepper" nuclear chromatin—is characteristic of a **Bronchial Carcinoid Tumor**. Carcinoid tumors are well-differentiated neuroendocrine malignancies. They have a low mitotic index, can occur in young non-smokers, and can present with hemoptysis or localized airway obstruction. Small cell carcinoma is also neuroendocrine but is highly aggressive, associated with smoking, and displays severe cellular atypia and necrosis.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Bronchial carcinoid tumors are low-grade neuroendocrine malignancies that can occur in non-smokers, presenting centrally as vascular masses with classic "salt-and-pepper" chromatin.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="10">
+            <div class="vignette">A 35-year-old female presents with progressive shortness of breath, lethargy, and atypical chest pain. Physical exam reveals an accentuated second heart sound (loud P2) and a prominent jugular venous pulse wave. Echocardiography excludes left-sided heart disease but shows right ventricular hypertrophy. Right heart catheterization confirms a mean pulmonary artery pressure of 36 mmHg at rest (normal < 20). If this condition is familial, it is most frequently driven by an inactivating mutation in which gene?</div>
+            <ul class="choices">
+                <li data-ans="A">A. CFTR</li>
+                <li data-ans="B">B. BMPR2</li>
+                <li data-ans="C">C. SERPINA1</li>
+                <li data-ans="D">D. ENG</li>
+                <li data-ans="E">E. HFE</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient presents with Pulmonary Arterial Hypertension (PAH), evidenced by an elevated mean pulmonary artery pressure (>20 mmHg), right ventricular hypertrophy, and a loud P2 sound. Heritable (familial) PAH is caused by autosomal dominant inactivating mutations in the **BMPR2 (Bone Morphogenetic Protein Receptor Type 2)** gene. This mutation impairs normal vascular smooth muscle growth regulation, triggering smooth muscle proliferation, endothelial dysfunction, and plexiform lesions that restrict pulmonary blood flow.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Hereditary pulmonary arterial hypertension is driven by inactivating mutations in the BMPR2 gene, which leads to unregulated smooth muscle proliferation within pulmonary vasculature.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="11">
+            <div class="vignette">A 14-year-old boy with cystic fibrosis presents to the clinic for a routine checkup. His parents note a decline in his respiratory function and an increase in productive, foul-smelling sputum. A sputum culture grows a Gram-negative rod that produces a green pigment and a distinct grape-like odor. Which virulence factor produced by this organism works by inactivating elongation factor-2 (EF-2)?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Alpha toxin</li>
+                <li data-ans="B">B. Exotoxin A</li>
+                <li data-ans="C">C. Pyocyanin</li>
+                <li data-ans="D">D. Alginate capsule matrix</li>
+                <li data-ans="E">E. Endotoxin Lipid A</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> Chronic respiratory infections in older cystic fibrosis patients are frequently caused by **Pseudomonas aeruginosa**, a Gram-negative, aerobic rod that produces a green pigment (pyocyanin) and a grape-like odor. A key virulence factor of Pseudomonas is **Exotoxin A**. Exotoxin A ribosylates and inactivates Elongation Factor-2 (EF-2), halting cellular protein synthesis and leading to cell death. This mechanism is identical to the diphtheria toxin produced by Corynebacterium diphtheriae.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Pseudomonas aeruginosa is a common pathogen in cystic fibrosis that produces Exotoxin A, which inhibits protein synthesis by ADP-ribosylation of elongation factor-2 (EF-2).</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="12">
+            <div class="vignette">A 58-year-old male with a history of severe chronic obstructive pulmonary disease (COPD) is admitted for an acute exacerbation. He is given high-flow supplemental oxygen via a non-rebreather mask. Over the next hour, his respiratory rate drops significantly, and he becomes progressively lethargic and confused. What physiologic mechanism explains this acute hypoventilation after oxygen administration?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Activation of central chemoreceptors by high oxygen tension</li>
+                <li data-ans="B">B. Loss of the hypoxic respiratory drive due to blunting of peripheral chemoreceptors</li>
+                <li data-ans="C">C. Decreased dead space ventilation via generalized pulmonary vasodilation</li>
+                <li data-ans="D">D. Leftward shift of the oxygen-hemoglobin dissociation curve</li>
+                <li data-ans="E">E. Direct toxic inhibition of diaphragmatic contraction</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> Patients with severe, chronic COPD often retain carbon dioxide, leading to blunted central chemoreceptors that normally respond to changes in pH and PaCO2. Consequently, their ventilation is primarily driven by hypoxia, sensed by **peripheral chemoreceptors** (in the carotid and aortic bodies). Administering high-flow oxygen resolves the hypoxemia, removing this hypoxic drive. This can lead to acute hypoventilation, worsening hypercapnia, and CO2 narcosis (lethargy and confusion).</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Excess oxygen therapy in severe COPD can induce acute hypercapnia and hypoventilation by blunting the hypoxic respiratory drive sensed by peripheral chemoreceptors.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="13">
+            <div class="vignette">A 55-year-old male presents with a 2-week history of fever, weight loss, night sweats, and a productive cough with foul-smelling sputum. A chest radiograph demonstrates a thick-walled cavity containing an air-fluid level in the posterior segment of the right upper lobe. What is the most likely mechanism leading to this specific presentation?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Reactivation of latent Mycobacterium tuberculosis inside macrophages</li>
+                <li data-ans="B">B. Aspiration of oropharyngeal secretions containing mixed anaerobic bacteria</li>
+                <li data-ans="C">C. Hematogenous seeding of Staphylococcus aureus from endocarditis</li>
+                <li data-ans="D">D. Ischemic necrosis within a primary squamous cell lung tumor</li>
+                <li data-ans="E">E. Hypersensitivity reaction to inhaled mold spores</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> A thick-walled pulmonary cavity with an air-fluid level combined with foul-smelling sputum indicates a **lung abscess**. Lung abscesses are commonly caused by the **aspiration of oropharyngeal secretions** containing anaerobic bacteria (e.g., Peptostreptococcus, Fusobacterium, Bacteroides). This is more frequent in individuals with altered consciousness (e.g., alcohol use, seizure disorders). Because of airway anatomy, aspirated material typically enters the right lung—most commonly the posterior segment of the upper lobe or the superior segment of the lower lobe when supine.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Lung abscesses present with a radiographic air-fluid level and foul-smelling sputum, typically resulting from the aspiration of oral anaerobes into dependent segments of the right lung.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="14">
+            <div class="vignette">A 42-year-old male presents with chronic rhinosinusitis, bloody nasal discharge, and a new-onset cough with hemoptysis. Laboratory testing reveals elevated serum creatinine of 2.2 mg/dL. Urinalysis demonstrates hematuria and red blood cell casts. A serum autoantibody test is strongly positive for c-ANCA (PR3-ANCA). What is the diagnosis?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Goodpasture Syndrome</li>
+                <li data-ans="B">B. Granulomatosis with Polyangiitis (Wegener's)</li>
+                <li data-ans="C">C. Microscopic Polyangiitis</li>
+                <li data-ans="D">D. Churg-Strauss Syndrome (EGPA)</li>
+                <li data-ans="E">E. Anti-GBM Disease</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient presents with the triad of upper respiratory tract involvement (sinusitis, epistaxis), lower respiratory tract disease (cough, hemoptysis), and renal disease (nephritic syndrome with hematuria and RBC casts). The presence of **c-ANCA (antineutrophil cytoplasmic antibodies against proteinase 3)** is highly specific for **Granulomatosis with Polyangiitis** (GPA, formerly Wegener's). Goodpasture syndrome lacks upper respiratory tract involvement and is driven by anti-GBM antibodies, not ANCA. Microscopic polyangiitis is p-ANCA positive and typically spares the upper respiratory tract.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Granulomatosis with Polyangiitis is a necrotizing vasculitis characterized by c-ANCA positivity and a triad of upper respiratory, lower respiratory, and renal disease.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="15">
+            <div class="vignette">A 28-year-old male presents with a history of chronic sinusitis and recurrent pulmonary infections since early childhood. He notes that he and his wife have been unable to conceive a child. Diagnostic workup reveals dextrocardia (heart on the right side). This patient's condition is caused by an inherited structural defect in which of the following cellular components?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Chloride channel regulatory proteins</li>
+                <li data-ans="B">B. Dynein arms within microtubule doublets</li>
+                <li data-ans="C">C. Alveolar basement membrane collagen chains</li>
+                <li data-ans="D">D. NADPH oxidase enzyme subunits</li>
+                <li data-ans="E">E. Integral tight junction claudin loops</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> The combination of chronic sinusitis, bronchiectasis, infertility (due to immotile spermatozoa), and situs inversus/dextrocardia defines Kartagener Syndrome, a subset of **Primary Ciliary Dyskinesia (PCD)**. PCD is an autosomal recessive disorder caused by an inherited structural defect in **dynein arms**, which are essential for ciliary motility. Without functional dynein, mucus clearance is impaired, leading to recurrent sinopulmonary infections. Defective ciliary movement during embryonic development also leads to random organ placement, resulting in situs inversus.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Kartagener syndrome is a primary ciliary dyskinesia caused by a structural defect in ciliary dynein arms, presenting with recurrent sinopulmonary infections, infertility, and situs inversus.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="16">
+            <div class="vignette">A 72-year-old female presents with a 2-day history of high fever, productive cough with rust-colored sputum, and pleuritic chest pain. Physical examination reveals dullness to percussion and increased tactile fremitus over the right lower lung field. What is the most likely causative organism, and what is the primary mechanism of increased tactile fremitus?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Mycoplasma pneumoniae; alveolar hyperinflation creating acoustic echo</li>
+                <li data-ans="B">B. Streptococcus pneumoniae; fluid consolidation replacing air inside the alveoli</li>
+                <li data-ans="C">C. Klebsiella pneumoniae; thick mucoid secretions inside the pleural space</li>
+                <li data-ans="D">D. Legionella pneumophila; interstitial infiltration blunting acoustic vibrations</li>
+                <li data-ans="E">E. Influenza A virus; bronchial smooth muscle spasm and narrowing</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient has lobar pneumonia, suggested by high fever, rust-colored sputum, and signs of pulmonary consolidation. **Streptococcus pneumoniae** (pneumococcus) is the most common cause of community-acquired lobar pneumonia. Sound travels more efficiently through solid or fluid medium than through air. **Alveolar fluid consolidation** with inflammatory cells and exudate enhances the transmission of vocal cords vibrations to the chest wall, resulting in **increased tactile fremitus** and dullness to percussion. Conversely, pleural effusions or pneumothorax separate the lung from the chest wall, decreasing tactile fremitus.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Streptococcus pneumoniae causes lobar pneumonia, which presents with signs of pulmonary consolidation (e.g., increased tactile fremitus and dullness to percussion) due to fluid-filled alveoli.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="17">
+            <div class="vignette">A 60-year-old male with a 50 pack-year smoking history presents with a 10-pound unintentional weight loss and a persistent cough. Laboratory evaluation reveals a serum sodium level of 118 mEq/L (normal 135–145). A chest CT reveals a large, central, hilar mass with mediastinal lymphadenopathy. Which of the following paraneoplastic syndromes matches this presentation, and what is its hormone mediator?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Hypercalcemia of malignancy; Parathyroid hormone-related protein (PTHrP)</li>
+                <li data-ans="B">B. Cushing syndrome; Adrenocorticotropic hormone (ACTH)</li>
+                <li data-ans="C">C. Syndrome of Inappropriate Antidiuretic Hormone (SIADH); Antidiuretic hormone (ADH)</li>
+                <li data-ans="D">D. Lambert-Eaton Myasthenic Syndrome; Autoantibodies to calcium channels</li>
+                <li data-ans="E">E. Polycythemia; Erythropoietin (EPO)</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: C</div>
+                <div class="explanation"><strong>Explanation:</strong> This smoker has a central lung mass paired with severe hyponatremia (118 mEq/L), which is characteristic of Small Cell Lung Carcinoma (SCLC) presenting with **SIADH**. Neoplastic cells in SCLC can ectopically synthesize and secrete **Antidiuretic Hormone (ADH)**. Excess ADH promotes water reabsorption in the renal collecting ducts via aquaporin-2 channels, leading to water retention and dilutional hyponatremia. Squamous cell carcinoma of the lung is instead associated with hypercalcemia via PTHrP release.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Small cell lung carcinoma is an aggressive, centrally located neuroendocrine tumor that can cause SIADH, presenting with dilutional hyponatremia due to ectopic ADH secretion.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="18">
+            <div class="vignette">A 22-year-old male presents with a tall, thin habitus. While watching television, he experiences a sudden, sharp, unilateral right-sided chest pain accompanied by mild shortness of breath. Physical exam reveals decreased breath sounds and hyperresonance to percussion on the right side. Tracheal deviation is absent. What is the primary anatomical cause of this condition?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Rupture of subpleural apical blebs into the pleural space</li>
+                <li data-ans="B">B. Traumatic laceration of the internal mammary artery</li>
+                <li data-ans="C">C. Chronic hyperinflation from a foreign body aspiration</li>
+                <li data-ans="D">D. Transudation of fluid across damaged visceral pleura</li>
+                <li data-ans="E">E. Necrosis of a pulmonary segment from a silent embolism</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: A</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient presents with a primary spontaneous pneumothorax, typically seen in tall, thin young men. It is caused by the **rupture of subpleural apical blebs** or bullae. When a bleb ruptures, air enters the pleural space, destroying the negative intrapleural pressure and causing the lung to collapse. This results in unilateral chest pain, decreased breath sounds, and hyperresonance. The absence of tracheal deviation or severe hemodynamic collapse excludes a tension pneumothorax.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Primary spontaneous pneumothorax classically occurs in tall, thin young adults due to the rupture of subpleural apical blebs, presenting with sudden chest pain and hyperresonance on the affected side.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="19">
+            <div class="vignette">A 40-year-old male with severe allergic asthma is managed with an adjunctive monoclonal antibody therapy that specifically binds to free IgE in the serum, preventing it from interacting with the high-affinity FcεRI receptors on mast cells and basophils. Which of the following agents is described?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Mepolizumab</li>
+                <li data-ans="B">B. Omalizumab</li>
+                <li data-ans="C">C. Dupilumab</li>
+                <li data-ans="D">D. Benralizumab</li>
+                <li data-ans="E">E. Reslizumab</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> **Omalizumab** is a recombinant DNA-derived humanized IgG1 monoclonal antibody that selectively binds to human **immunoglobulin E (IgE)**. By binding to circulating IgE, it prevents IgE from docking onto mast cells and basophils. This downregulates the allergic cascade, decreasing the release of inflammatory mediators like histamine and leukotrienes, which reduces asthma exacerbations. Mepolizumab and reslizumab target IL-5, whereas dupilumab targets the IL-4 receptor alpha subunit.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Omalizumab is a monoclonal antibody that targets free IgE in the serum, preventing mast cell degranulation and reducing inflammation in severe allergic asthma.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="20">
+            <div class="vignette">A 52-year-old aerospace worker presents with progressive exertional dyspnea and a dry cough. A chest radiograph demonstrates nodular opacities in the upper lobes of the lungs along with prominent hilar lymphadenopathy. A lung biopsy reveals non-caseating granulomas. This clinical presentation closely mimics sarcoidosis but is due to occupational dust exposure. Which element is responsible?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Silicon dioxide</li>
+                <li data-ans="B">B. Beryllium</li>
+                <li data-ans="C">C. Iron oxide</li>
+                <li data-ans="D">D. Coal dust</li>
+                <li data-ans="E">E. Asbestos fibers</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> **Berylliosis** is an occupational lung disease caused by the inhalation of beryllium dust or fumes, commonly seen in the aerospace, manufacturing, and electronics industries. It induces a cell-mediated (Type IV) hypersensitivity response, resulting in **non-caseating granulomas** and interstitial fibrosis. Its presentation can be difficult to distinguish from sarcoidosis, as both feature non-caseating granulomas and upper lobe nodules, making occupational history essential for differentiation. Silicosis and coal workers' pneumoconiosis do not typically present with classic granulomas.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Berylliosis is an occupational pneumoconiosis linked to the aerospace industry that mimics sarcoidosis by forming non-caseating granulomas in the lungs.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="21">
+            <div class="vignette">A 30-year-old male presents to the clinic with an acute asthma exacerbation. The clinician administers an inhaled medication that blocks muscarinic acetylcholine receptors, preventing vagally mediated bronchoconstriction and reducing mucus hypersecretion. Which of the following drugs acts via this mechanism?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Albuterol</li>
+                <li data-ans="B">B. Ipratropium</li>
+                <li data-ans="C">C. Salmeterol</li>
+                <li data-ans="D">D. Theophylline</li>
+                <li data-ans="E">E. Cromolyn sodium</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> Parasympathetic stimulation via the vagus nerve releases acetylcholine, which binds to M3 muscarinic receptors on bronchial smooth muscle, causing bronchoconstriction and increased mucus production. **Ipratropium** (and tiotropium) are short-acting **muscarinic antagonists (SAMAs)** that competitively block these receptors, promoting bronchodilation. Albuterol and salmeterol are beta-2 adrenergic agonists that stimulate cAMP production to relax smooth muscle.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Ipratropium and tiotropium are anticholinergic medications that induce bronchodilation by blocking M3 muscarinic receptors.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="22">
+            <div class="vignette">A 67-year-old male with a history of severe chronic plaque psoriasis presents with progressive exertional dyspnea and a nonproductive cough. Pulmonary function testing demonstrates an FEV1/FVC ratio of 0.84, a total lung capacity (TLC) of 62% of predicted values, and a reduced DLCO. A high-resolution chest CT scan reveals subpleural reticular opacities and honeycombing predominantly in the lower lung zones. What is the category of this lung disease?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Obstructive lung disease</li>
+                <li data-ans="B">B. Restrictive lung disease</li>
+                <li data-ans="C">C. Primary vascular defect</li>
+                <li data-ans="D">D. Central hypoventilation disorder</li>
+                <li data-ans="E">E. Normal lung variant</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This clinical picture (subpleural reticular opacities, lower zone honeycombing) indicates Idiopathic Pulmonary Fibrosis (IPF), a form of interstitial lung disease. On pulmonary function testing, IPF presents with a classic **restrictive pattern**: a normal or elevated FEV1/FVC ratio (typically >0.70–0.80) due to proportional decreases in both forced expiratory volume and vital capacity, along with reduced Total Lung Capacity (TLC < 80%) and impaired gas exchange (low DLCO). Obstructive patterns show a reduced FEV1/FVC ratio (<0.70).</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Restrictive lung diseases, such as idiopathic pulmonary fibrosis, present with reduced total lung capacity (TLC) and a normal or elevated FEV1/FVC ratio.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="23">
+            <div class="vignette">A 4-week-old female infant is brought to the pediatrician due to failure to thrive, foul-smelling greasy stools, and recurrent respiratory wheezing. A sweat chloride test is performed and reveals a concentration of 75 mEq/L (normal < 40). What is the molecular target and primary function abnormal in this patient's condition?</div>
+            <ul class="choices">
+                <li data-ans="A">A. An ATP-gated chloride channel that normally secretes chloride into epithelial lumens</li>
+                <li data-ans="B">B. A voltage-gated sodium channel that reabsorbs water in external glands</li>
+                <li data-ans="C">C. A hydrogen-potassium ATPase pump regulating luminal acidity</li>
+                <li data-ans="D">D. A calcium-activated potassium channel located on type II pneumocytes</li>
+                <li data-ans="E">E. A passive urea transporter in the renal medulla matrix</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: A</div>
+                <div class="explanation"><strong>Explanation:</strong> This infant has **Cystic Fibrosis (CF)**, suggested by failure to thrive, steatorrhea (from pancreatic exocrine insufficiency), recurrent respiratory issues, and an elevated sweat chloride test. CF is caused by mutations in the **CFTR** gene, which encodes an **ATP-gated chloride channel**. In respiratory and GI tracts, a defective CFTR channel impairs luminal chloride secretion and increases sodium and water reabsorption, creating thick, dehydrated mucus that plugs ducts and airways. In sweat glands, it normally reabsorbs luminal chloride, which explains why its failure results in high sweat chloride levels.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Cystic fibrosis is driven by mutations in the CFTR gene, which encodes an ATP-gated chloride channel responsible for maintaining proper epithelial surface hydration.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="24">
+            <div class="vignette">A 33-year-old male presents with a 3-week history of a low-grade fever, weight loss, and a productive cough. Sputum microscopy with an acid-fast stain (Ziehl-Neelsen) demonstrates bright red, rod-shaped bacteria. Which cell type is primarily responsible for isolating these pathogens within lung granulomas via the secretion of interferon-gamma?</div>
+            <ul class="choices">
+                <li data-ans="A">A. B lymphocytes</li>
+                <li data-ans="B">B. CD4+ Th1 T lymphocytes</li>
+                <li data-ans="C">C. Neutrophils</li>
+                <li data-ans="D">D. Eosinophils</li>
+                <li data-ans="E">E. Mast cells</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> The identification of acid-fast bacilli confirms an infection with **Mycobacterium tuberculosis**. Controlling a tuberculosis infection relies on a cell-mediated immune response. Macrophages engulf the bacteria and present antigens to naive T cells, prompting them to differentiate into **CD4+ Th1 T lymphocytes**. These Th1 cells secrete **interferon-gamma (IFN-g)**, which activates macrophages, enhancing their bactericidal capacity and stimulating them to form caseating granulomas that wall off the pathogen.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Immune containment of Mycobacterium tuberculosis relies on CD4+ Th1 cells secreting interferon-gamma to activate macrophages and form granulomas.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="25">
+            <div class="vignette">A 65-year-old male with a significant smoking history presents with a cough and a 15-pound weight loss. A chest radiograph demonstrates a 4 cm peripheral lung nodule. Biopsy of the lesion confirms a diagnosis of lung adenocarcinoma. What is the most common driver mutation found in non-smokers who develop this specific histological subtype of lung cancer?</div>
+            <ul class="choices">
+                <li data-ans="A">A. KRAS mutation</li>
+                <li data-ans="B">B. EGFR mutation</li>
+                <li data-ans="C">C. MYC amplification</li>
+                <li data-ans="D">D. TP53 deletion</li>
+                <li data-ans="E">E. RET fusion sequence</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> Adenocarcinoma is the most common type of lung cancer overall and is the most frequent variant seen in non-smokers, typically presenting as a peripheral mass. In smokers, adenocarcinoma is often associated with KRAS mutations. However, in **non-smokers** (especially Asian females), lung adenocarcinomas are frequently driven by mutations in the **EGFR (Epidermal Growth Factor Receptor)** gene or EML4-ALK translocations. This distinction is clinically significant because EGFR-mutant tumors can be targeted with tyrosine kinase inhibitors like erlotinib or osimertinib.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Lung adenocarcinoma in non-smokers is frequently driven by EGFR mutations, which can be managed with targeted tyrosine kinase inhibitors.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="26">
+            <div class="vignette">A 55-year-old male presents with daytime somnolence, a morning headache, and loud snoring that disrupts his partner's sleep. His BMI is 38 kg/m2. Polysomnography confirms a diagnosis of Obstructive Sleep Apnea (OSA). If left untreated, chronic nocturnal hypoxemia and hypercapnia can lead to structural remodeling of the pulmonary vasculature. Which of the following long-term complications is most directly driven by this mechanism?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Left ventricular hypertrophy and mitral stenosis</li>
+                <li data-ans="B">B. Pulmonary hypertension and cor pulmonale</li>
+                <li data-ans="C">C. Dilated cardiomyopathy and aortic aneurysm</li>
+                <li data-ans="D">D. Constrictive pericarditis</li>
+                <li data-ans="E">E. Idiopathic pulmonary fibrosis</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> Obstructive sleep apnea (OSA) involves recurrent collapse of the pharyngeal airway during sleep, causing episodic hypoxia and hypercapnia. The pulmonary vasculature responds to alveolar hypoxia with **hypoxic pulmonary vasoconstriction** to redirect blood to better-ventilated lung zones. Chronic, widespread nocturnal vasoconstriction drives smooth muscle hypertrophy and vascular remodeling, resulting in **pulmonary hypertension**. This increased afterload on the right ventricle can lead to right ventricular hypertrophy and right-sided heart failure (**cor pulmonale**).</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Chronic nocturnal hypoxia in obstructive sleep apnea triggers hypoxic pulmonary vasoconstriction, which can lead to pulmonary hypertension and cor pulmonale.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="27">
+            <div class="vignette">A 35-year-old male presents with a history of recurrent episodes of asthma, chronic rhinosinusitis with nasal polyps, and a recent history of foot drop due to mononeuritis multiplex. Laboratory evaluation demonstrates a striking peripheral blood eosinophilia (25% of total WBC count). A serum autoantibody test is positive for p-ANCA (MPO-ANCA). What is the most likely diagnosis?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Granulomatosis with Polyangiitis (Wegener's)</li>
+                <li data-ans="B">B. Eosinophilic Granulomatosis with Polyangiitis (Churg-Strauss)</li>
+                <li data-ans="C">C. Microscopic Polyangiitis</li>
+                <li data-ans="D">D. Polyarteritis Nodosa</li>
+                <li data-ans="E">E. Loeffler Syndrome</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This presentation—severe asthma, rhinosinusitis with nasal polyps, peripheral neuropathy (mononeuritis multiplex), and marked eosinophilia—is diagnostic of **Eosinophilic Granulomatosis with Polyangiitis (EGPA)**, formerly known as Churg-Strauss Syndrome. EGPA is a necrotizing small-vessel vasculitis. It is characteristically associated with **p-ANCA (anti-myeloperoxidase)** antibodies. Granulomatosis with Polyangiitis (Wegener's) shares respiratory and renal features but is linked to c-ANCA and lacks prominent asthma and eosinophilia.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Eosinophilic Granulomatosis with Polyangiitis (Churg-Strauss) is a p-ANCA-positive small-vessel vasculitis presenting with severe asthma, nasal polyps, and peripheral eosinophilia.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="28">
+            <div class="vignette">A 23-year-old female presents to the university clinic with a dry cough, low-grade fever, sore throat, and a patchy interstitial infiltrate on chest radiograph that looks far worse than her mild clinical presentation. A sample of the patient's blood is placed in an ice bath, resulting in visible clumping of the red blood cells. What is the causative organism, and what is the target antigen of these antibodies?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Streptococcus pneumoniae; capsular polysaccharide</li>
+                <li data-ans="B">B. Mycoplasma pneumoniae; I-antigen on erythrocyte membranes</li>
+                <li data-ans="C">C. Influenza A virus; sialic acid core structures</li>
+                <li data-ans="D">D. Chlamydophila pneumoniae; outer membrane lipopolysaccharide</li>
+                <li data-ans="E">E. Legionella pneumophila; major outer membrane protein</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient has "atypical" or "walking" pneumonia, typically caused by **Mycoplasma pneumoniae** in young adults, characterized by a mismatch between mild clinical symptoms and more extensive chest X-ray findings. Mycoplasma pneumoniae lacks a cell wall. Its infection can induce the production of **cold agglutinins**—IgM autoantibodies that bind to the **I-antigen** on red blood cell membranes at low temperatures, causing erythrocytes to clump when cooled (e.g., in an ice bath). This can cause mild, transient hemolytic anemia.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Mycoplasma pneumoniae causes atypical pneumonia and can induce IgM cold agglutinins that target the I-antigen on red blood cells, causing reversible agglutination at low temperatures.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="29">
+            <div class="vignette">A 50-year-old male with a history of severe environmental allergies and occupational dust exposure presents with a chronic productive cough that has lasted for 4 months out of the year for the past two consecutive years. Histological examination of a bronchial biopsy reveals an expansion of the mucus-secreting glands. The Reid index is calculated to be 0.62. What is the definition of the Reid index, and what is its normal value?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Ratio of bronchial wall thickness to total lung diameter; normal is < 0.10</li>
+                <li data-ans="B">B. Ratio of submucosal mucous gland thickness to total bronchial wall thickness (excluding cartilage); normal is < 0.40</li>
+                <li data-ans="C">C. Ratio of alveolar duct diameter to terminal bronchiole lumen; normal is < 0.25</li>
+                <li data-ans="D">D. Ratio of smooth muscle area to mucosal folded layers; normal is < 0.50</li>
+                <li data-ans="E">E. Ratio of goblet cell count to ciliated cell count; normal is < 0.30</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> Chronic bronchitis is defined clinically as a productive cough lasting at least 3 months per year for 2 consecutive years. The histopathologic hallmark of chronic bronchitis is hypertrophy of the submucosal mucous glands in the large airways. This hypertrophy is quantified using the **Reid Index**, which is the **ratio of the thickness of the submucosal gland layer to the total thickness of the bronchial wall** (measured from the basement membrane to the inner perichondrium of the cartilage). A normal Reid index is **< 0.40**; an elevated index (like 0.62) indicates chronic bronchitis.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Chronic bronchitis involves hypertrophy of bronchial submucosal mucous glands, quantified by a Reid index > 0.40.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="30">
+            <div class="vignette">A 38-year-old female presents to the emergency department with an acute asthma exacerbation. She is treated with an intravenous injection of aminophylline. Aminophylline is a salt of theophylline, a methylxanthine drug. What is the primary molecular mechanism of action of this agent in achieving bronchodilation?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Stabilization of mast cell membranes to prevent histamine release</li>
+                <li data-ans="B">B. Direct activation of adenylate cyclase enzymes</li>
+                <li data-ans="C">C. Inhibition of phosphodiesterase (PDE), increasing intracellular cAMP levels</li>
+                <li data-ans="D">D. Antagonism of leukotriene C4 receptors</li>
+                <li data-ans="E">E. Activation of the Na+/K+ ATPase pump in smooth muscle</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: C</div>
+                <div class="explanation"><strong>Explanation:</strong> **Theophylline** (and aminophylline) are methylxanthines used as bronchodilators. They act primarily by **inhibiting the phosphodiesterase (PDE)** enzyme. PDE normally breaks down cyclic adenosine monophosphate (cAMP) inside smooth muscle cells. By blocking PDE, theophylline increases intracellular cAMP levels, which activates protein kinase A and relaxes bronchial smooth muscle. Theophylline also acts as an adenosine receptor antagonist, contributing to bronchodilation. It has a narrow therapeutic index and can cause cardiotoxicity and seizures at high doses.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Theophylline induces bronchodilation by inhibiting phosphodiesterase (PDE), which increases intracellular cAMP levels in bronchial smooth muscle.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="31">
+            <div class="vignette">A 25-year-old male undergoes an arterial blood gas analysis during an exercise test at sea level. The results are as follows: pH 7.40, PaO2 100 mmHg, PaCO2 40 mmHg. His hemoglobin concentration is normal, but his total arterial oxygen content is found to be significantly reduced due to an accidental occupational exposure. Carbon monoxide poisoning is suspected. Which of the following parameters remains entirely normal in isolated carbon monoxide poisoning?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Oxygen saturation of hemoglobin (SaO2)</li>
+                <li data-ans="B">B. Total blood oxygen content</li>
+                <li data-ans="C">C. Partial pressure of oxygen dissolved in arterial plasma (PaO2)</li>
+                <li data-ans="D">D. P50 value of the oxygen-hemoglobin curve</li>
+                <li data-ans="E">E. Skin coloration balance</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: C</div>
+                <div class="explanation"><strong>Explanation:</strong> Carbon monoxide (CO) binds to hemoglobin with an affinity over 200 times greater than oxygen, forming carboxyhemoglobin. CO reduces the oxygen-binding capacity of hemoglobin (low SaO2) and decreases total blood oxygen content. It also causes a leftward shift in the oxygen-hemoglobin dissociation curve, impairing oxygen delivery to tissues. Crucially, CO **does not affect the amount of oxygen dissolved in the plasma**. Because the **partial pressure of arterial oxygen (PaO2)** reflects only dissolved oxygen, it remains entirely normal in CO poisoning, which can mask the severity of the condition on standard ABG panels.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Carbon monoxide poisoning reduces hemoglobin oxygen saturation and total oxygen content but leaves the partial pressure of dissolved arterial oxygen (PaO2) unchanged.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="32">
+            <div class="vignette">A 35-year-old male with a history of chronic sinusitis and severe asthma presents with a deep cough. A chest CT scan reveals abnormal, permanent dilation of the subsegmental bronchi in both lower lobes. Sputum culture reveals Aspergillus fumigatus hyphae. Eosinophil counts and total serum IgE levels are significantly elevated. What is the diagnosis?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Invasive Pulmonary Aspergillosis</li>
+                <li data-ans="B">B. Aspergilloma (Fungus Ball)</li>
+                <li data-ans="C">C. Allergic Bronchopulmonary Aspergillosis (ABPA)</li>
+                <li data-ans="D">D. Idiopathic Bronchiectasis</li>
+                <li data-ans="E">E. Extrinsic Allergic Alveolitis</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: C</div>
+                <div class="explanation"><strong>Explanation:</strong> This presentation—asthma, elevated IgE, peripheral eosinophilia, and bronchiectasis (permanent bronchial dilation) with a positive Aspergillus culture—indicates **Allergic Bronchopulmonary Aspergillosis (ABPA)**. ABPA is a hypersensitivity reaction (Type I and Type III) to Aspergillus fumigatus colonizing the bronchial tree, typically occurring in patients with asthma or cystic fibrosis. It is distinct from an aspergilloma (which grows in a pre-existing cavity without a systemic immune reaction) and invasive aspergillosis (which occurs in severely immunocompromised patients and features tissue invasion).</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Allergic Bronchopulmonary Aspergillosis (ABPA) is a hypersensitivity response to Aspergillus colonizing the airways, presenting with worsening asthma, elevated IgE, eosinophilia, and bronchiectasis.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="33">
+            <div class="vignette">A 40-year-old male presents with progressive shortness of breath. He is a non-smoker with a family history of early-onset liver disease. Pulmonary function testing demonstrates a panacinar emphysematous pattern, with tissue destruction predominant in the lower lung fields. What genetic deficiency is responsible for this condition, and on which chromosome is the gene located?</div>
+            <ul class="choices">
+                <li data-ans="A">A. CFTR deficiency; Chromosome 7</li>
+                <li data-ans="B">B. Alpha-1 Antitrypsin deficiency; Chromosome 14</li>
+                <li data-ans="C">C. BMPR2 deficiency; Chromosome 2</li>
+                <li data-ans="D">D. Dynein arm deficiency; Chromosome 11</li>
+                <li data-ans="E">E. Surfactant Protein B deficiency; Chromosome 2</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> Early-onset panacinar emphysema affecting the lower lung fields in a non-smoker, particularly with a family history of liver disease, indicates **Alpha-1 Antitrypsin (AAT) Deficiency**. AAT is an antiprotease encoded by the SERPINA1 gene on **Chromosome 14**. A deficiency allows neutrophil elastase to destroy alveolar walls unchecked. Misfolded AAT proteins can also accumulate in the endoplasmic reticulum of hepatocytes, leading to liver cirrhosis. Tobacco smoking accelerates lung damage in affected individuals.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Alpha-1 antitrypsin deficiency is caused by mutations on chromosome 14, leading to panacinar emphysema predominantly in the lower lobes and potential liver cirrhosis.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="34">
+            <div class="vignette">A 63-year-old male presents with a persistent cough and hemoptysis. He has a 40 pack-year smoking history. Laboratory results reveal an elevated serum calcium level of 12.8 mg/dL with a suppressed parathyroid hormone (PTH) level. A chest radiograph reveals a large central hilar mass. Biopsy of this mass is most likely to show which of the following histological patterns?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Glandular structures producing intracellular mucin</li>
+                <li data-ans="B">B. Keratin pearls and intercellular bridges</li>
+                <li data-ans="C">C. Small round blue cells with hyperchromatic nuclei</li>
+                <li data-ans="D">D. Sheet-like proliferation of large polymorphic cells without differentiation</li>
+                <li data-ans="E">E. Spindle-shaped cells forming vascular slits</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient's profile—a central hilar lung mass in a smoker combined with hypercalcemia—indicates **Squamous Cell Carcinoma of the lung**. The hypercalcemia is driven by tumor secretion of **Parathyroid Hormone-related Protein (PTHrP)**, which mimics PTH to increase bone resorption and renal calcium reabsorption, while suppressing endogenous PTH. The histopathologic hallmarks of squamous cell carcinoma are **keratin pearls** (concentric layers of squamous cells containing keratin) and **intercellular bridges** (desmosomes). Adenocarcinomas typically present as peripheral masses and form glands or produce mucin.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Squamous cell carcinoma of the lung is a central, smoking-associated tumor that can secrete PTHrP, causing hypercalcemia, and is characterized histologically by keratin pearls and intercellular bridges.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="35">
+            <div class="vignette">A 32-year-old female presents to the clinic with an acute asthma flare-up. The physician prescribes a short-acting inhaler that binds to G-protein coupled beta-2 adrenergic receptors on bronchial smooth muscle. What is the immediate intracellular signaling cascade activated by this receptor binding?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Activation of phospholipase C, increasing intracellular IP3 and calcium</li>
+                <li data-ans="B">B. Activation of adenylate cyclase, increasing cAMP and activating protein kinase A</li>
+                <li data-ans="C">C. Inhibition of guanylate cyclase, reducing cGMP synthesis</li>
+                <li data-ans="D">D. Direct opening of ligand-gated potassium channels</li>
+                <li data-ans="E">E. Inactivation of tyrosine kinase phosphorylation pathways</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> Beta-2 adrenergic agonists (e.g., albuterol) bind to Gs-protein-coupled beta-2 receptors on bronchial smooth muscle cells. This activation stimulates **adenylate cyclase**, which converts ATP into **cyclic adenosine monophosphate (cAMP)**. Elevated intracellular cAMP activates **protein kinase A (PKA)**. PKA phosphorylates and inactivates myosin light chain kinase (MLCK) while promoting calcium efflux, which relaxes the smooth muscle and induces bronchodilation.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Beta-2 agonists induce bronchodilation by activating a Gs-protein-coupled pathway that increases cAMP and activates protein kinase A, relaxing bronchial smooth muscle.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="36">
+            <div class="vignette">A 45-year-old male farmer presents with an acute onset of fever, chills, dry cough, and dyspnea 6 hours after clearing a moldy hay barn. A chest radiograph demonstrates diffuse, patchy interstitial infiltrates. A lung biopsy reveals poorly formed non-caseating granulomas and mononuclear cell infiltrates in the alveolar walls. What is the diagnosis?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Idiopathic Pulmonary Fibrosis</li>
+                <li data-ans="B">B. Hypersensitivity Pneumonitis (Farmer's Lung)</li>
+                <li data-ans="C">C. Sarcoidosis</li>
+                <li data-ans="D">D. Pulmonary Histoplasmosis</li>
+                <li data-ans="E">E. Silicosis</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This presentation—acute respiratory symptoms developing hours after exposure to an organic antigen (moldy hay) combined with interstitial infiltrates and poorly formed granulomas—indicates **Hypersensitivity Pneumonitis** (specifically, Farmer's Lung, triggered by thermophilic actinomycetes). It is an immunologically mediated inflammatory lung disease affecting the alveoli and respiratory bronchioles (combining Type III and Type IV hypersensitivity reactions). Avoidance of the antigen resolves acute episodes, but chronic exposure can lead to irreversible restrictive lung fibrosis.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Hypersensitivity pneumonitis is an immune-mediated reaction to inhaled organic antigens (e.g., moldy hay), characterized by interstitial inflammation and poorly formed granulomas.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="37">
+            <div class="vignette">A 58-year-old female presents to the physician with a history of chronic progressive shortness of breath. She has never smoked but has lived in an old mining town with high stone dust exposure. A chest radiograph demonstrates multiple nodular opacities scattered throughout the upper lobes of her lungs, along with calcification of the rim of her hilar lymph nodes ("eggshell calcification"). This patient is at an increased risk for developing which of the following infections?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Invasive Aspergillosis</li>
+                <li data-ans="B">B. Pulmonary Tuberculosis</li>
+                <li data-ans="C">C. Pneumocystis jirovecii pneumonia</li>
+                <li data-ans="D">D. Pseudomonas aeruginosa bronchitis</li>
+                <li data-ans="E">E. Mycoplasma pneumoniae atypical infection</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> Upper lobe nodular opacities combined with **"eggshell calcification"** of the hilar lymph nodes indicate **Silicosis**, a pneumoconiosis caused by inhaling crystalline silica dust (found in rock mining, sandblasting, and quarry work). Silica particles are ingested by alveolar macrophages, but their physical structure disrupts phagolysosomes, causing macrophage lysis and releasing fibrogenic cytokines that drive nodular fibrosis. This impairment of alveolar macrophages significantly increases susceptibility to **Pulmonary Tuberculosis** (silicotuberculosis), as macrophages are essential for controlling mycobacterial infections.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Silicosis presents with upper lobe nodules and "eggshell" hilar lymph node calcifications, and it increases the risk of tuberculosis due to silica-induced macrophage impairment.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="38">
+            <div class="vignette">A 29-year-old female presents to the clinic with a history of recurrent episodes of cough and wheezing. She notes that her symptoms are often worse during the spring season and during exercise. The clinician performs a spirometry test. Which of the following parameters would change the most following the administration of an inhaled short-acting beta-2 agonist, confirming the diagnosis?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Total Lung Capacity (TLC) increases by 5%</li>
+                <li data-ans="B">B. Forced Expiratory Volume in 1 second (FEV1) increases by 12% or more</li>
+                <li data-ans="C">C. Residual Volume (RV) decreases by 50%</li>
+                <li data-ans="D">D. Diffusing capacity for carbon monoxide (DLCO) increases by 25%</li>
+                <li data-ans="E">E. Functional Residual Capacity (FRC) remains completely unchanged</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient has asthma, a chronic inflammatory airway disease characterized by **reversible airway obstruction**. Reversibility is confirmed during spirometry when the **Forced Expiratory Volume in 1 second (FEV1)** improves by **12% or more** (and at least 200 mL) following the administration of a short-acting bronchodilator (such as albuterol). This distinguishes asthma from COPD, where the airflow limitation is largely irreversible.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Asthma is characterized by reversible airway obstruction, confirmed by an improvement in FEV1 of ≥12% after bronchodilator administration.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="39">
+            <div class="vignette">A 4-year-old girl is brought to the emergency department after a sudden choking episode while eating peanuts. She is now stable but has mild expiratory wheezing on the right side. A chest radiograph taken during expiration shows a shift of the mediastinum toward the left side. What is the most likely location of the foreign body, and what explains the mediastinal shift?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Left main bronchus; collapse of the left lung drawing the mediastinum over</li>
+                <li data-ans="B">B. Right main bronchus; air trapping in the right lung pushing the mediastinum to the left</li>
+                <li data-ans="C">C. Trachea; uniform hyperinflation of both lung fields</li>
+                <li data-ans="D">D. Right upper lobe bronchus; localized atelectasis drawing the heart over</li>
+                <li data-ans="E">E. Esophagus; compression of the posterior tracheal wall structures</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> Foreign bodies are more likely to lodge in the **right main bronchus** because it is wider, shorter, and more vertically oriented than the left main bronchus. A foreign body can create a "ball-valve" effect, allowing air to enter during inspiration (when airways expand) but blocking its exit during expiration. This results in **air trapping and hyperinflation of the affected right lung**. During expiration, the increased pressure in the right lung pushes the flexible mediastinum toward the contralateral (left) side.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Aspirated foreign bodies typically enter the right main bronchus and can cause a ball-valve effect, resulting in air trapping and a mediastinal shift away from the affected lung during expiration.</div>
+            </div>
+        </div>
+
+        <div class="question-card" data-qindex="40">
+            <div class="vignette">A 71-year-old male presents with a persistent cough and left-sided chest pain. He has a 45 pack-year smoking history. A chest radiograph demonstrates a large peripheral lung mass. A biopsy of the mass reveals a sheet-like proliferation of large, polygonal cells with prominent nucleoli and abundant cytoplasm. There is no evidence of keratin pearls, intercellular bridges, or glandular/mucin differentiation. What is the diagnosis?</div>
+            <ul class="choices">
+                <li data-ans="A">A. Small cell lung carcinoma</li>
+                <li data-ans="B">B. Large cell carcinoma</li>
+                <li data-ans="C">C. Squamous cell carcinoma</li>
+                <li data-ans="D">D. Adenocarcinoma minor</li>
+                <li data-ans="E">E. Carcinoid tumor tumor</li>
+            </ul>
+            <div class="meta-section">
+                <div class="correct-answer">Correct Answer: B</div>
+                <div class="explanation"><strong>Explanation:</strong> This patient's biopsy describes **Large Cell Carcinoma** of the lung. Large cell carcinoma is an undifferentiated malignant epithelial tumor that lacks the architectural and cytological features of other lung cancers (it forms no glands, lacks mucin, and shows no squamous features like keratin pearls or desmosomes). It is composed of sheets of large, atypical cells with prominent nucleoli. It is strongly associated with smoking, typically presents as a peripheral mass, and is known for early metastasis and an aggressive clinical course.</div>
+                <div class="edu-objective"><strong>Educational Objective:</strong> Large cell carcinoma of the lung is an undifferentiated neuroendocrine-negative epithelial malignancy strongly linked to smoking that lacks squamous or glandular differentiation.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="action-container">
+        <button class="btn btn-submit" id="submit-action-btn">Submit Answer</button>
+        <button class="btn btn-next" id="next-action-btn">Next Question</button>
+    </div>
+
+    <div class="results-screen" id="end-block-results">
+        <h2>Block Finished!</h2>
+        <p id="score-text-output" style="font-size: 1.3rem; margin: 20px 0; color: #2b6cb0;"></p>
+        <p>Review the completed layout questions manually or save data files safely.</p>
+    </div>
+
+    <script>
+        let currentQuestionNum = 1;
+        const totalQuestionsCount = 40;
+        let selectedOptionListItem = null;
+        
+        let totalSecondsRemaining = 90 * 60;
+        const clockDisplayElement = document.getElementById('clock-display');
+        
+        const countdownTimerInterval = setInterval(() => {
+            if (totalSecondsRemaining <= 0) {
+                clearInterval(countdownTimerInterval);
+                clockDisplayElement.innerText = "00:00";
+                terminateSessionBlock();
+                return;
+            }
+            totalSecondsRemaining--;
+            let minsCalculated = Math.floor(totalSecondsRemaining / 60);
+            let secsCalculated = totalSecondsRemaining % 60;
+            clockDisplayElement.innerText = 
+                (minsCalculated < 10 ? '0' : '') + minsCalculated + ":" + 
+                (secsCalculated < 10 ? '0' : '') + secsCalculated;
+        }, 1000);
+
+        document.querySelectorAll('.choices li').forEach(optionNode => {
+            optionNode.addEventListener('click', function() {
+                const targetCard = this.closest('.question-card');
+                if (targetCard.querySelector('.meta-section').classList.contains('revealed')) {
+                    return; 
+                }
+                
+                targetCard.querySelectorAll('.choices li').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+                selectedOptionListItem = this;
+            });
+        });
+
+        const submitButtonElement = document.getElementById('submit-action-btn');
+        const nextButtonElement = document.getElementById('next-action-btn');
+        
+        submitButtonElement.addEventListener('click', () => {
+            const currentActiveCardNode = document.querySelector('.question-card[data-qindex="' + currentQuestionNum + '"]');
+            const selectedOptionInCard = currentActiveCardNode.querySelector('.choices li.selected');
+            
+            if (!selectedOptionInCard) {
+                alert('Please select an option before checking validation accuracy parameters.');
+                return;
+            }
+            
+            const dynamicMetaRegion = currentActiveCardNode.querySelector('.meta-section');
+            dynamicMetaRegion.classList.add('revealed');
+            
+            submitButtonElement.style.display = 'none';
+            nextButtonElement.style.display = 'block';
+        });
+
+        nextButtonElement.addEventListener('click', () => {
+            const coreCurrentCardNode = document.querySelector('.question-card[data-qindex="' + currentQuestionNum + '"]');
+            coreCurrentCardNode.classList.remove('active');
+            
+            currentQuestionNum++;
+            
+            if (currentQuestionNum <= totalQuestionsCount) {
+                document.getElementById('tracker-display').innerText = "Question " + currentQuestionNum + " of " + totalQuestionsCount;
+                
+                const nextActiveCardNode = document.querySelector('.question-card[data-qindex="' + currentQuestionNum + '"]');
+                nextActiveCardNode.classList.add('active');
+                
+                nextButtonElement.style.display = 'none';
+                submitButtonElement.style.display = 'block';
+                selectedOptionListItem = null;
+            } else {
+                clearInterval(countdownTimerInterval);
+                terminateSessionBlock();
+            }
+        });
+
+        function terminateSessionBlock() {
+            document.getElementById('qbank-container').style.display = 'none';
+            submitButtonElement.style.display = 'none';
+            nextButtonElement.style.display = 'none';
+            document.querySelector('.qbank-header').style.display = 'none';
+            
+            const finalScoreContainerOutputElement = document.getElementById('end-block-results');
+            finalScoreContainerOutputElement.style.display = 'block';
+            document.getElementById('score-text-output').innerText = "Block completed cleanly inside session guidelines.";
+        }
+    </script>
+
+</body>
+</html>
