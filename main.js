@@ -1,8 +1,7 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-analytics.js";
-import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
-// Import the Firebase Realtime Database module
-import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 // Your verified web app's Firebase configuration
 const firebaseConfig = {
@@ -11,15 +10,14 @@ const firebaseConfig = {
     projectId: "the-grand-budapest",
     storageBucket: "the-grand-budapest.firebasestorage.app",
     messagingSenderId: "656352616063",
-    appId: "1:656352616063:web:4f807b5f16b2cb059d694a",
-    measurementId: "G-87X1RHHV3F"
+    appId: "1:656352616063:web:4f807b5f16b2cb059d694a"
 };
 
 // Initialize Firebase Core & Services
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
-const database = getDatabase(app); // Initialize Database
+const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
 // Target DOM Elements
@@ -38,87 +36,56 @@ const userEmail = document.getElementById('user-email');
 // Track user object globally across modular scopes
 window.currentUser = null;
 
-// Global Online Cloud Persistence Interface
-window.saveProgressOnline = async function(progressData) {
+// Global Online Cloud Persistence Interface (Writing to Firestore)
+window.saveProgressOnline = async function(packet) {
     if (!window.currentUser) {
-        console.warn("User session missing. Saving locally instead.");
+        console.warn("User session missing. Cannot backup online.");
         return false;
     }
-    const userId = window.currentUser.uid;
     try {
-        await set(ref(database, 'users/' + userId + '/qbankProgress'), progressData);
-        console.log("Progress securely written to the cloud database.");
+        const userProgressRef = doc(db, "users_progress", window.currentUser.uid);
+        await setDoc(userProgressRef, {
+            currentQuestion: packet.currentQuestion,
+            timeRemaining: packet.timeRemaining,
+            selectedAnswers: packet.selectedAnswers || {},
+            reviewMode: packet.reviewMode || {},
+            correctAnswersCount: packet.correctAnswersSum || 0,
+            userId: window.currentUser.uid,
+            email: window.currentUser.email || "",
+            quizType: "jvp_and_murmurs",
+            updatedAt: new Date().toISOString()
+        });
+        console.log("Progress securely written to Firestore for UID:", window.currentUser.uid);
         return true;
     } catch (error) {
-        console.error("Firebase Database Write Error:", error);
+        console.error("Firestore Database Write Error:", error);
         return false;
     }
 };
 
+// Global Online Cloud Retrieval Interface
 window.fetchProgressOnline = async function() {
     if (!window.currentUser) return null;
-    const userId = window.currentUser.uid;
     try {
-        const snapshot = await get(ref(database, 'users/' + userId + '/qbankProgress'));
-        if (snapshot.exists()) {
-            return snapshot.val();
+        const userProgressRef = doc(db, "users_progress", window.currentUser.uid);
+        const docSnap = await getDoc(userProgressRef);
+        if (docSnap.exists()) {
+            return docSnap.data();
         }
         return null;
     } catch (error) {
-        console.error("Firebase Database Read Error:", error);
+        console.error("Firestore Database Fetch Error:", error);
         return null;
     }
 };
 
-// ========================================================
-// DROPDOWN TOGGLE ARCHITECTURE (Always active on boot)
-// ========================================================
-if (navUserPhoto && profileDropdown) {
-    navUserPhoto.addEventListener('click', (event) => {
-        event.preventDefault();
-        event.stopPropagation(); // Prevents document click script from immediately firing execution closure
-        profileDropdown.classList.toggle('show');
-    });
-
-    // Close the dropdown box if clicking anywhere else on screen
-    document.addEventListener('click', () => {
-        profileDropdown.classList.remove('show');
-    });
-}
-
-// Sign-In Click Event Listener
-if (loginBtn) {
-    loginBtn.addEventListener('click', () => {
-        signInWithPopup(auth, provider)
-            .then((result) => {
-                console.log("Successfully Authenticated:", result.user);
-            })
-            .catch((error) => {
-                console.error("Authentication Error:", error.message);
-            });
-    });
-}
-
-// Sign-Out Click Event Listener
-if (logoutBtn) {
-    logoutBtn.addEventListener('click', () => {
-        signOut(auth).then(() => {
-            console.log("Successfully signed out.");
-        }).catch((error) => {
-            console.error("Sign-out Error:", error);
-        });
-    });
-}
-
-// Global Auth State Observer Pipeline
+// Authentication State Observers
 onAuthStateChanged(auth, (user) => {
     const currentPath = window.location.pathname;
 
     if (user) {
         window.currentUser = user;
-        
-        // Dispatch custom global notification event letting other scripts know user is ready
-        document.dispatchEvent(new CustomEvent('authReady', { detail: user }));
+        window.dispatchEvent(new CustomEvent('authReady', { detail: user }));
 
         if (loginBtn) loginBtn.classList.add('hidden');
         if (navUserProfile) navUserProfile.style.display = 'flex';
@@ -159,3 +126,27 @@ onAuthStateChanged(auth, (user) => {
         }
     }
 });
+
+// Dropdown Navigation System Events
+if (navUserPhoto && profileDropdown) {
+    navUserPhoto.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        profileDropdown.classList.toggle('hidden');
+    });
+    document.addEventListener('click', () => {
+        profileDropdown.classList.add('hidden');
+    });
+}
+
+// Global Auth Controls Integration Hooks
+if (loginBtn) {
+    loginBtn.addEventListener('click', () => {
+        signInWithPopup(auth, provider).catch(err => console.error(err));
+    });
+}
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+        signOut(auth).then(() => window.location.reload());
+    });
+}
