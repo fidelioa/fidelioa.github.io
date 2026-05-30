@@ -3,7 +3,7 @@ import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// Your verified web app's Firebase configuration
+// Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyBq2uEulFacFnzk86agcRhuQD1UNlZ_UTE",
     authDomain: "the-grand-budapest.firebaseapp.com",
@@ -13,33 +13,29 @@ const firebaseConfig = {
     appId: "1:656352616063:web:4f807b5f16b2cb059d694a"
 };
 
-// Initialize Firebase Core & Services
+// Initialize Services
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
-// Target DOM Elements
-const loginBtn = document.getElementById('google-login-btn');
-const whiteRabbitBtn = document.getElementById('white-rabbit-btn');
-const logoutBtn = document.getElementById('logout-btn');
-const navBlocksLink = document.getElementById('nav-blocks-link');
+// Global User Track Object
+window.currentUser = null;
 
-// Navbar Profile Elements
+// UI Elements (Safely checked)
+const loginBtn = document.getElementById('google-login-btn');
+const logoutBtn = document.getElementById('logout-btn');
 const navUserProfile = document.getElementById('nav-user-profile');
 const navUserPhoto = document.getElementById('nav-user-photo');
 const profileDropdown = document.getElementById('profile-dropdown');
 const userName = document.getElementById('user-name');
 const userEmail = document.getElementById('user-email');
 
-// Track user object globally across modular scopes
-window.currentUser = null;
-
-// Global Online Cloud Persistence Interface (Writing to Firestore)
+// Global Online Cloud Save Pipeline
 window.saveProgressOnline = async function(packet) {
     if (!window.currentUser) {
-        console.warn("User session missing. Cannot backup online.");
+        console.warn("No authenticated user found. Cannot save online.");
         return false;
     }
     try {
@@ -55,15 +51,15 @@ window.saveProgressOnline = async function(packet) {
             quizType: "jvp_and_murmurs",
             updatedAt: new Date().toISOString()
         });
-        console.log("Progress securely written to Firestore for UID:", window.currentUser.uid);
+        console.log("Progress successfully saved to Firestore.");
         return true;
     } catch (error) {
-        console.error("Firestore Database Write Error:", error);
+        console.error("Firestore Save Error:", error);
         return false;
     }
 };
 
-// Global Online Cloud Retrieval Interface
+// Global Online Cloud Fetch Pipeline
 window.fetchProgressOnline = async function() {
     if (!window.currentUser) return null;
     try {
@@ -74,56 +70,29 @@ window.fetchProgressOnline = async function() {
         }
         return null;
     } catch (error) {
-        console.error("Firestore Database Fetch Error:", error);
+        console.error("Firestore Fetch Error:", error);
         return null;
     }
 };
 
-// Authentication State Observers
+// Auth State Observer
 onAuthStateChanged(auth, (user) => {
-    const currentPath = window.location.pathname;
-
     if (user) {
         window.currentUser = user;
-        window.dispatchEvent(new CustomEvent('authReady', { detail: user }));
-
+        
+        // Update Navbar Profile UI Elements
         if (loginBtn) loginBtn.classList.add('hidden');
         if (navUserProfile) navUserProfile.style.display = 'flex';
         if (navUserPhoto) navUserPhoto.src = user.photoURL || "";
         if (userName) userName.innerText = user.displayName || "User";
         if (userEmail) userEmail.innerText = user.email || "";
 
-        if (whiteRabbitBtn) {
-            whiteRabbitBtn.classList.remove('disabled-state');
-            whiteRabbitBtn.classList.add('active-state');
-        }
-
-        if (navBlocksLink) {
-            navBlocksLink.classList.remove('disabled-link');
-            navBlocksLink.classList.add('active-link');
-        }
-
+        // Dispatch custom event to notify jvp-and-murmurs page that auth is verified
+        window.dispatchEvent(new CustomEvent('authReady', { detail: user }));
     } else {
         window.currentUser = null;
-        
-        if (currentPath.includes('/blocks') || currentPath.includes('/about')) {
-            window.location.replace("https://ankitx007x.github.io/");
-        }
-
         if (loginBtn) loginBtn.classList.remove('hidden');
         if (navUserProfile) navUserProfile.style.display = 'none';
-        if (navUserPhoto) navUserPhoto.src = "";
-        if (profileDropdown) profileDropdown.classList.remove('show');
-        
-        if (whiteRabbitBtn) {
-            whiteRabbitBtn.classList.remove('active-state');
-            whiteRabbitBtn.classList.add('disabled-state');
-        }
-
-        if (navBlocksLink) {
-            navBlocksLink.classList.remove('active-link');
-            navBlocksLink.classList.add('disabled-link');
-        }
     }
 });
 
@@ -139,7 +108,7 @@ if (navUserPhoto && profileDropdown) {
     });
 }
 
-// Global Auth Controls Integration Hooks
+// Auth Event Hooks
 if (loginBtn) {
     loginBtn.addEventListener('click', () => {
         signInWithPopup(auth, provider).catch(err => console.error(err));
