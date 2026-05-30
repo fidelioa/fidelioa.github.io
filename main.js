@@ -18,13 +18,11 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
-const db = firebase.firestore();
 
 // Target DOM Elements
 const loginBtn = document.getElementById('google-login-btn');
 const whiteRabbitBtn = document.getElementById('white-rabbit-btn');
 const logoutBtn = document.getElementById('logout-btn');
-const navBlocksLink = document.getElementById('nav-blocks-link');
 
 // Navbar Profile Elements
 const navUserProfile = document.getElementById('nav-user-profile');
@@ -33,19 +31,34 @@ const profileDropdown = document.getElementById('profile-dropdown');
 const userName = document.getElementById('user-name');
 const userEmail = document.getElementById('user-email');
 
+// Track auth status locally to prevent unauthorized redirection clicks
+let isUserLoggedIn = false;
+
 // ========================================================
-// DROPDOWN TOGGLE ARCHITECTURE (Always active on boot)
+// PROFILE DROPDOWN INTERACTION HACK
 // ========================================================
 if (navUserPhoto && profileDropdown) {
     navUserPhoto.addEventListener('click', (event) => {
-        event.preventDefault();
-        event.stopPropagation(); // Prevents document click script from immediately firing execution closure
+        event.stopPropagation(); // Prevents document container capture click from shutting it
         profileDropdown.classList.toggle('show');
     });
 
-    // Close the dropdown box if clicking anywhere else on screen
     document.addEventListener('click', () => {
         profileDropdown.classList.remove('show');
+    });
+}
+
+// ========================================================
+// WHITE RABBIT INTERACTIVE ROUTING FIX
+// ========================================================
+if (whiteRabbitBtn) {
+    whiteRabbitBtn.addEventListener('click', () => {
+        if (isUserLoggedIn) {
+            // Proceed to destination only if Firebase confirmed active session login state
+            window.location.href = "./blocks";
+        } else {
+            console.log("Access Denied: You must follow the auth protocol first.");
+        }
     });
 }
 
@@ -77,16 +90,17 @@ if (logoutBtn) {
 }
 
 // ========================================================
-// SESSION LIFECYCLE ENGINE (UI Controller)
+// SESSION LIFECYCLE ENGINE (UI & Access Controller)
 // ========================================================
 onAuthStateChanged(auth, (user) => {
     const currentPath = window.location.pathname;
 
     if (user) {
+        isUserLoggedIn = true;
         const fallBackPhoto = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/svgs/solid/user.svg';
         const finalPhoto = user.photoURL || fallBackPhoto;
         
-        // 1. Fill profile drop down card details
+        // 1. Populate Dropdown Content Card data
         if (userName) userName.textContent = user.displayName || "User";
         if (userEmail) userEmail.textContent = user.email || "";
         if (navUserPhoto) navUserPhoto.src = finalPhoto;
@@ -94,7 +108,7 @@ onAuthStateChanged(auth, (user) => {
         // 2. Hide Google Login Button
         if (loginBtn) loginBtn.classList.add('hidden');
 
-        // 3. Make Profile picture avatar visible inside navigation bar line item
+        // 3. Display Top-Right Navbar profile token item 
         if (navUserProfile) navUserProfile.style.display = 'flex';
 
         // 4. Activate center button interactivity states
@@ -103,36 +117,26 @@ onAuthStateChanged(auth, (user) => {
             whiteRabbitBtn.classList.add('active-state');
         }
 
-        // 5. UNLOCK NAVIGATION BLOCKS LINK (Removes blocker pointer filters)
-        if (navBlocksLink) {
-            navBlocksLink.classList.remove('disabled-link');
-            navBlocksLink.classList.add('active-link');
-        }
-
     } else {
-        // Route protection: Kicks unauthorized guests home if they try direct routing URLs
+        isUserLoggedIn = false;
+        
+        // Route protection: Guard rails against unauthorized sub-page surfing
         if (currentPath.includes('/blocks') || currentPath.includes('/about')) {
             window.location.replace("https://ankitx007x.github.io/");
         }
 
-        // 1. Return Google login button to layout view array
+        // 1. Return Google login back into the active viewport array
         if (loginBtn) loginBtn.classList.remove('hidden');
 
-        // 2. Clear layout profile details and pull image view node parameters away
+        // 2. Wipe/conceal top navbar item elements safely
         if (navUserProfile) navUserProfile.style.display = 'none';
         if (navUserPhoto) navUserPhoto.src = "";
         if (profileDropdown) profileDropdown.classList.remove('show');
         
-        // 3. Deactivate white rabbit click events via CSS block rules
+        // 3. Kill center button active configuration parameters
         if (whiteRabbitBtn) {
             whiteRabbitBtn.classList.remove('active-state');
             whiteRabbitBtn.classList.add('disabled-state');
-        }
-
-        // 4. LOCK DOWN BLOCKS NAV LINK (Blocks pointer executions)
-        if (navBlocksLink) {
-            navBlocksLink.classList.remove('active-link');
-            navBlocksLink.classList.add('disabled-link');
         }
     }
 });
