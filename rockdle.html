@@ -1,225 +1,305 @@
-<script>
-    const START_WORD = "GOOD";
-    const TARGET_WORD = "HELL";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctordle - Medical Guessing Game</title>
+    <style>
+        :root {
+            --primary: #0284c7;
+            --primary-hover: #0369a1;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --border: #cbd5e1;
+            --success: #22c55e;
+            --error: #ef4444;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-top: 0;
+        }
+
+        .tracker {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .box {
+            width: 32px;
+            height: 32px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .box.correct { background-color: var(--success); color: white; border-color: var(--success); }
+        .box.wrong { background-color: var(--error); color: white; border-color: var(--error); }
+
+        .clues-section {
+            background: #f1f5f9;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            min-height: 120px;
+        }
+
+        .clue-item {
+            margin: 8px 0;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed var(--border);
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        .clue-item:last-child { border-bottom: none; }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            box-sizing: border-box;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+        }
+        input[type="text"]:focus { border-color: var(--primary); }
+
+        .dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid var(--border);
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 10;
+            display: none;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+
+        .dropdown div {
+            padding: 10px 12px;
+            cursor: pointer;
+        }
+        .dropdown div:hover { background-color: #f1f5f9; }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover { background-color: var(--primary-hover); }
+        button:disabled { background-color: var(--border); cursor: not-allowed; }
+
+        .result {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 8px;
+            display: none;
+        }
+        .result.win { background-color: #dcfce7; color: #166534; }
+        .result.loss { background-color: #fee2e2; color: #991b1b; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <h1>Doctordle</h1>
     
-    // Core 4-letter word list optimized for paths leading from GOOD to HELL
-    const WORD_LIST = ["GOOD","GOAD","GOLD","HOLD","HOOD","WOOD","FOOD","BOLD","FOLD","MOLD","TOLD", "HEAD", "HEAL", "HEAR", "HEAT", "HELL", "HELM", "HELP", "HEMP", "HERE", "HERO", "HOLE", "HALL", "SELL", "TELL", "WELL", "FELL", "BELL", "CELL"];
-    const SOLVER_DICTIONARY = new Set(WORD_LIST);
+    <!-- Guess Trackers -->
+    <div class="tracker" id="tracker">
+        <div class="box" id="b1">1</div>
+        <div class="box" id="b2">2</div>
+        <div class="box" id="b3">3</div>
+        <div class="box" id="b4">4</div>
+        <div class="box" id="b5">5</div>
+        <div class="box" id="b6">6</div>
+        <div class="box" id="b7">7</div>
+    </div>
 
-    let history = [START_WORD];
+    <!-- Clues Display -->
+    <div class="clues-section">
+        <h3>Patient Clues:</h3>
+        <div id="clues-list"></div>
+    </div>
 
-    const ladderEl = document.getElementById('ladder');
-    const inputEl = document.getElementById('guess-input');
-    const submitBtn = document.getElementById('submit-btn');
-    const undoBtn = document.getElementById('undo-btn');
-    const giveUpBtn = document.getElementById('giveup-btn');
-    const messageEl = document.getElementById('message-box');
-    const gameControls = document.getElementById('game-controls');
-    const winScreen = document.getElementById('win-screen');
-    const winStats = document.getElementById('win-stats');
-    const winTitle = document.getElementById('win-title');
+    <!-- Search Dropdown Selection -->
+    <div class="search-container" id="controls-container">
+        <input type="text" id="diagnosis-input" placeholder="Search diagnosis..." autocomplete="off">
+        <div class="dropdown" id="dropdown-list"></div>
+    </div>
+    
+    <button id="submit-btn" disabled>Submit Guess</button>
+    <div class="result" id="result-message"></div>
+</div>
 
+<script>
+    // Game Configuration Data
+    const targetDisease = "Appendicitis";
+    const gameClues = [
+        "Initial symptom: Vague, dull pain localized around the umbilicus (belly button).",
+        "Associated symptoms: Low-grade fever, nausea, vomiting, and loss of appetite.",
+        "Pain progression: Over several hours, the pain shifts cleanly to the Right Lower Quadrant (RLQ).",
+        "Physical Exam Sign 1: Exquisite tenderness at McBurney's point upon palpation.",
+        "Physical Exam Sign 2: Positive Rovsing's sign (pressing the LLQ causes pain in the RLQ).",
+        "Laboratory findings: Leukocytosis (elevated White Blood Cell count) with a left shift.",
+        "Definitive Imaging: Ultrasound or CT scan reveals a blind-ending, non-compressible pouch measuring greater than 6mm."
+    ];
+
+    const dictionary = [
+        "Appendicitis", "Acute Cholecystitis", "Pancreatitis", "Diverticulitis", 
+        "Gastroenteritis", "Crohn's Disease", "Ulcerative Colitis", "Peptic Ulcer Disease",
+        "Ectopic Pregnancy", "Ovarian Torsion", "Kidney Stones", "Urinary Tract Infection",
+        "Pneumonia", "Pulmonary Embolism", "Myocardial Infarction", "Aortic Dissection",
+        "Streptococcal Pharyngitis", "Mononucleosis", "Meningitis", "Sepsis"
+    ].sort();
+
+    let currentAttempt = 1;
+    const maxAttempts = 7;
+
+    const input = document.getElementById("diagnosis-input");
+    const dropdown = document.getElementById("dropdown-list");
+    const submitBtn = document.getElementById("submit-btn");
+    const cluesList = document.getElementById("clues-list");
+    const resultMessage = document.getElementById("result-message");
+
+    // Initialize Game
     function initGame() {
-        history = [START_WORD];
-        renderLadder();
-        inputEl.value = '';
-        showMessage('', '');
-        gameControls.style.display = 'block';
-        winScreen.style.display = 'none';
-        enableUI(true);
-        updateUndoButtonState();
+        revealNextClue(0);
     }
 
-    function renderLadder() {
-        ladderEl.innerHTML = '';
-        history.forEach((word, index) => {
-            let type = '';
-            let displayWord = word;
-            
-            if (index === 0) {
-                type = 'start';
-            } else if (word.startsWith('*')) { 
-                type = 'ai-path'; 
-                displayWord = word.replace('*', ''); 
-            } else if (word === TARGET_WORD) {
-                type = 'end';
-            }
-            
-            const stepDiv = document.createElement('div');
-            stepDiv.className = `ladder-step ${type}`;
-            
-            const wordSpan = document.createElement('span');
-            wordSpan.className = 'step-word';
-            wordSpan.textContent = displayWord;
-
-            const countSpan = document.createElement('span');
-            countSpan.className = 'step-count';
-            countSpan.textContent = index === 0 ? 'START' : `Step ${index}`;
-
-            stepDiv.appendChild(wordSpan);
-            stepDiv.appendChild(countSpan);
-            ladderEl.appendChild(stepDiv);
-        });
-        ladderEl.scrollTop = ladderEl.scrollHeight;
+    function revealNextClue(index) {
+        const div = document.createElement("div");
+        div.className = "clue-item";
+        div.innerHTML = `<strong>Clue ${index + 1}:</strong> ${gameClues[index]}`;
+        cluesList.appendChild(div);
     }
 
-    function checkOneLetterDiff(word1, word2) {
-        if (word1.length !== word2.length) return false;
-        let diff = 0;
-        for (let i = 0; i < word1.length; i++) {
-            if (word1[i] !== word2[i]) diff++;
-        }
-        return diff === 1;
-    }
-
-    function enableUI(enabled) {
-        inputEl.disabled = !enabled;
-        submitBtn.disabled = !enabled;
-        giveUpBtn.disabled = !enabled;
-        undoBtn.disabled = !enabled ? true : (history.length <= 1);
-        if(enabled) inputEl.focus();
-    }
-
-    function updateUndoButtonState() {
-        undoBtn.disabled = (history.length <= 1);
-    }
-
-    async function isValidEnglishWord(word) {
-        if (SOLVER_DICTIONARY.has(word)) return true;
-        try {
-            const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word.toLowerCase()}`);
-            return response.ok;
-        } catch (error) {
-            return true; 
-        }
-    }
-
-    // BFS Shortest path calculator
-    function findShortestPath(start, target) {
-        let queue = [[start, [start]]];
-        let visited = new Set([start]);
-
-        while (queue.length > 0) {
-            let [current, path] = queue.shift();
-
-            if (current === target) return path;
-
-            for (let word of SOLVER_DICTIONARY) {
-                if (!visited.has(word) && checkOneLetterDiff(current, word)) {
-                    visited.add(word);
-                    queue.push([word, [...path, word]]);
-                }
-            }
-        }
-        return null;
-    }
-
-    async function handleGuess() {
-        const guess = inputEl.value.trim().toUpperCase();
-        const currentWord = history[history.length - 1];
-
-        showMessage('', '');
-
-        if (guess.length !== 4) {
-            showMessage("Word must be exactly 4 letters long.", "error");
-            return;
-        }
-        if (history.includes(guess)) {
-            showMessage("You already used that word!", "error");
-            return;
-        }
-        if (!checkOneLetterDiff(currentWord, guess)) {
-            showMessage(`"${guess}" must change exactly ONE letter from "${currentWord}".`, "error");
+    // Dropdown Filtering Logic
+    input.addEventListener("input", () => {
+        const val = input.value.toLowerCase();
+        dropdown.innerHTML = "";
+        if (!val) {
+            dropdown.style.display = "none";
+            submitBtn.disabled = true;
             return;
         }
 
-        showMessage("Checking word...", "info");
-        enableUI(false);
-
-        const isValid = await isValidEnglishWord(guess);
-
-        if (!isValid) {
-            showMessage(`"${guess}" is not a recognized English word.`, "error");
-            enableUI(true);
-            return;
-        }
-
-        showMessage('', '');
-        history.push(guess);
-        renderLadder();
-        inputEl.value = '';
-        enableUI(true);
-        updateUndoButtonState();
-
-        if (guess === TARGET_WORD) {
-            endGame(true);
-        }
-    }
-
-    function handleUndo() {
-        if (history.length > 1) {
-            history.pop();
-            renderLadder();
-            showMessage('Last step removed.', 'info');
-            updateUndoButtonState();
-            inputEl.focus();
-        }
-    }
-
-    function handleGiveUp() {
-        // Clean the current word in case there's an artificial character
-        let currentWord = history[history.length - 1];
-        if (currentWord.startsWith('*')) currentWord = currentWord.replace('*', '');
-
-        const missingPath = findShortestPath(currentWord, TARGET_WORD);
-
-        if (missingPath && missingPath.length > 1) {
-            for(let i = 1; i < missingPath.length; i++) {
-                history.push("*" + missingPath[i]);
-            }
+        const matches = dictionary.filter(d => d.toLowerCase().includes(val));
+        if (matches.length > 0) {
+            dropdown.style.display = "block";
+            matches.forEach(match => {
+                const item = document.createElement("div");
+                item.textContent = match;
+                item.addEventListener("click", () => {
+                    input.value = match;
+                    dropdown.style.display = "none";
+                    submitBtn.disabled = false;
+                });
+                dropdown.appendChild(item);
+            });
         } else {
-            const directPath = findShortestPath(START_WORD, TARGET_WORD);
-            if (directPath) {
-                history = [START_WORD];
-                for(let i = 1; i < directPath.length; i++) {
-                    history.push("*" + directPath[i]);
-                }
+            dropdown.style.display = "none";
+            submitBtn.disabled = true;
+        }
+    });
+
+    // Close dropdown on outside click
+    document.addEventListener("click", (e) => {
+        if (e.target !== input && e.target !== dropdown) {
+            dropdown.style.display = "none";
+        }
+    });
+
+    // Submit Action Logic
+    submitBtn.addEventListener("click", () => {
+        const userGuess = input.value.trim();
+        const currentBox = document.getElementById(`b${currentAttempt}`);
+
+        if (userGuess.toLowerCase() === targetDisease.toLowerCase()) {
+            // Handle Win Conditions
+            currentBox.className = "box correct";
+            endGame(true);
+        } else {
+            // Handle Wrong Guess Logic
+            currentBox.className = "box wrong";
+            if (currentAttempt < maxAttempts) {
+                revealNextClue(currentAttempt);
+                currentAttempt++;
+                input.value = "";
+                submitBtn.disabled = true;
+            } else {
+                endGame(false);
             }
         }
-        renderLadder();
-        endGame(false);
-    }
-
-    function showMessage(text, type) {
-        messageEl.textContent = text;
-        messageEl.className = `message ${type}`;
-    }
+    });
 
     function endGame(isWin) {
-        gameControls.style.display = 'none';
-        winScreen.style.display = 'block';
+        input.disabled = true;
+        submitBtn.disabled = true;
+        document.getElementById("controls-container").style.display = "none";
+        submitBtn.style.display = "none";
+        
         if (isWin) {
-            winTitle.textContent = "🎉 Success! You Did It!";
-            winTitle.className = "success";
-            winStats.textContent = `You completed the ladder in ${history.length - 1} steps.`;
+            resultMessage.textContent = `Correct! You diagnosed ${targetDisease} on attempt ${currentAttempt}/${maxAttempts}.`;
+            resultMessage.className = "result win";
         } else {
-            winTitle.textContent = "🏳️ Given Up";
-            winTitle.className = "info";
-            winStats.textContent = `The AI autofilled the shortest path to the finish line.`;
+            resultMessage.textContent = `Case Closed. The correct diagnosis was ${targetDisease}.`;
+            resultMessage.className = "result loss";
         }
+        resultMessage.style.display = "block";
     }
-
-    // Explicitly assigning resetGame to the window scope so inline HTML onclick works cleanly
-    window.resetGame = function() {
-        initGame();
-    }
-
-    submitBtn.addEventListener('click', handleGuess);
-    undoBtn.addEventListener('click', handleUndo);
-    giveUpBtn.addEventListener('click', handleGiveUp);
-    inputEl.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter' && !inputEl.disabled) handleGuess();
-    });
 
     initGame();
 </script>
+
+</body>
+</html>
