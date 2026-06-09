@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Ladder Game</title>
+    <title>Word Ladder Game - Unlimited Mode</title>
     <style>
         :root {
             --bg-color: #121213;
@@ -51,10 +51,18 @@
             letter-spacing: 1px;
         }
 
+        .score-tracker {
+            font-size: 14px;
+            color: #c9b458;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
         .instructions {
             font-size: 14px;
             color: #b0b0b0;
             line-height: 1.4;
+            margin: 5px 0 0 0;
         }
 
         .target-display {
@@ -193,7 +201,8 @@
 <div class="game-container">
     <header>
         <h1>WORD LADDER</h1>
-        <p class="instructions">Change exactly <strong>one letter</strong> at a time to reach the target word. Every step must be a valid English word.</p>
+        <div class="score-tracker" id="score-display">Puzzles Solved: 0</div>
+        <p class="instructions">Change exactly <strong>one letter</strong> at a time to reach the target word.</p>
     </header>
 
     <div class="target-display">
@@ -220,32 +229,58 @@
     <div class="win-screen" id="win-screen">
         <h2 id="win-title" class="success">🎉 Success! You Did It!</h2>
         <p id="win-stats"></p>
-        <button onclick="resetGame()" style="background-color: var(--accent-color); width: 100%;">Play Again</button>
+        <button id="next-btn" style="background-color: var(--accent-color); width: 100%;">Next Level ➡️</button>
     </div>
 </div>
 
 <script>
-    const START_WORD = "WALL";
-    const TARGET_WORD = "POOP";
-    
-    // Core 4-letter word list optimized for paths leading to POOP
-    const WORD_LIST = ["WALL","BALL","CALL","FALL","HALL","MALL","PALL","TALL","WILL","WELL","POLL","POOL","POOP","LOOP","HOOP","COOP","SOOP","PONY","POUR","POUT","POTS","POPS","PLOP","PROP","DROP","CROP","SHOP","CHOP","STOP","STEP"];
+    // A pool of clean, highly connected 4-letter puzzle paths
+    const PUZZLE_POOL = [
+        { start: "WALL", target: "POOP" },
+        { start: "COLD", target: "WARM" },
+        { start: "FIRE", target: "HEAT" },
+        { start: "BLUE", target: "PINK" },
+        { start: "MORE", target: "LESS" },
+        { start: "GOOD", target: "BEST" },
+        { start: "WAVE", target: "SURF" },
+        { start: "FISH", target: "BIRD" },
+        { start: "LION", target: "BEAR" }
+    ];
+
+    // Broad foundational solver graph to protect fast BFS fallback calculations on pool transitions
+    const WORD_LIST = ["WALL","BALL","CALL","FALL","HALL","MALL","PALL","TALL","WILL","WELL","POLL","POOL","POOP","LOOP","HOOP","COOP","SOOP","PONY","POUR","POUT","POTS","POPS","PLOP","PROP","DROP","CROP","SHOP","CHOP","STOP","STEP","COLD","CORD","WORD","WORM","WARM","BOLD","FOLD","HOLD","MOLD","SOLE","SALE","WALE","WANE","WAVE","WASH","COAL","COAT","BOAT","BOOT","FOOT","FOOD","GOOD","GOLD","GIRD","BIRD","BIND","FIND","FINE","PINE","PINK","PICK","PACK","PORK","POKE","WOKE","ROKE","ROCK","RACK","BACK","LACK","MARK","LARK","BARK","DARK","DIRT","DIRE","FIRE","HIRE","HARE","HATE","HEAT","HEAD","BEAD","BEAR","TEAR","GEAR","DEAR","DEAL","MEAL","MORE","LORE","CORE","CARE","CASE","CAST","LAST","LESS","LASS","PASS","PAST","POST","PEST","BEST","BOAT","COAT","CHAT","THAT","THIS","FISH","DISH","DISH","WISH","WINK","WINE","LINE","LION","LIMN","LIMB","LAMB","LAME","LAME","FAME","FARE","FORE","SURE","SURF"];
     const SOLVER_DICTIONARY = new Set(WORD_LIST);
 
-    let history = [START_WORD];
+    let currentPuzzleIndex = 0;
+    let puzzlesSolved = 0;
+    let history = [];
+    let START_WORD = "";
+    let TARGET_WORD = "";
 
     const ladderEl = document.getElementById('ladder');
     const inputEl = document.getElementById('guess-input');
+    const startDisplay = document.getElementById('start-display');
+    const targetDisplay = document.getElementById('target-display');
+    const scoreDisplay = document.getElementById('score-display');
     const submitBtn = document.getElementById('submit-btn');
     const undoBtn = document.getElementById('undo-btn');
     const giveUpBtn = document.getElementById('giveup-btn');
+    const nextBtn = document.getElementById('next-btn');
     const messageEl = document.getElementById('message-box');
     const gameControls = document.getElementById('game-controls');
     const winScreen = document.getElementById('win-screen');
     const winStats = document.getElementById('win-stats');
     const winTitle = document.getElementById('win-title');
 
-    function initGame() {
+    function loadPuzzle(index) {
+        const puzzle = PUZZLE_POOL[index];
+        START_WORD = puzzle.start;
+        TARGET_WORD = puzzle.target;
+        
+        startDisplay.textContent = START_WORD;
+        targetDisplay.textContent = TARGET_WORD;
+        scoreDisplay.textContent = `Puzzles Solved: ${puzzlesSolved}`;
+        
         history = [START_WORD];
         renderLadder();
         inputEl.value = '';
@@ -313,7 +348,6 @@
         }
     }
 
-    // BFS Shortest path calculator
     function findShortestPath(start, target) {
         let queue = [[start, [start]]];
         let visited = new Set([start]);
@@ -335,7 +369,7 @@
 
     async function handleGuess() {
         const guess = inputEl.value.trim().toUpperCase();
-        const currentWord = history[history.length - 1];
+        const currentWord = history[history.length - 1].replace('*', '');
 
         showMessage('', '');
 
@@ -343,7 +377,7 @@
             showMessage("Word must be exactly 4 letters long.", "error");
             return;
         }
-        if (history.includes(guess)) {
+        if (history.map(w => w.replace('*', '')).includes(guess)) {
             showMessage("You already used that word!", "error");
             return;
         }
@@ -386,7 +420,7 @@
     }
 
     function handleGiveUp() {
-        const currentWord = history[history.length - 1];
+        const currentWord = history[history.length - 1].replace('*', '');
         const missingPath = findShortestPath(currentWord, TARGET_WORD);
 
         if (missingPath && missingPath.length > 1) {
@@ -397,43 +431,45 @@
             endGame(false);
         } else {
             const directPath = findShortestPath(START_WORD, TARGET_WORD);
-            history = [...directPath];
-            renderLadder();
+            if (directPath) {
+                history = [...directPath];
+                renderLadder();
+            }
             endGame(false);
         }
-    }
-
-    function showMessage(text, type) {
-        messageEl.textContent = text;
-        messageEl.className = `message ${type}`;
     }
 
     function endGame(isWin) {
         gameControls.style.display = 'none';
         winScreen.style.display = 'block';
         if (isWin) {
+            puzzlesSolved++;
             winTitle.textContent = "🎉 Success! You Did It!";
             winTitle.className = "success";
             winStats.textContent = `You completed the ladder in ${history.length - 1} steps.`;
         } else {
             winTitle.textContent = "🏳️ Given Up";
             winTitle.className = "info";
-            winStats.textContent = `Oopsie Doopsie :(`;
+            winStats.textContent = `The AI autofilled the shortest path. Better luck next level!`;
         }
+        scoreDisplay.textContent = `Puzzles Solved: ${puzzlesSolved}`;
     }
 
-    function resetGame() {
-        initGame();
+    function advanceLevel() {
+        currentPuzzleIndex = (currentPuzzleIndex + 1) % PUZZLE_POOL.length;
+        loadPuzzle(currentPuzzleIndex);
     }
 
     submitBtn.addEventListener('click', handleGuess);
     undoBtn.addEventListener('click', handleUndo);
     giveUpBtn.addEventListener('click', handleGiveUp);
+    nextBtn.addEventListener('click', advanceLevel);
     inputEl.addEventListener('keypress', (e) => {
         if (e.key === 'Enter' && !inputEl.disabled) handleGuess();
     });
 
-    initGame();
+    // Start initialization
+    loadPuzzle(currentPuzzleIndex);
 </script>
 
 </body>
