@@ -1,235 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Ladder Game</title>
-    <style>
-        :root {
-            --bg-color: #121213;
-            --card-bg: #1a1a1c;
-            --text-color: #ffffff;
-            --accent-color: #538d4e;
-            --border-color: #3a3a3c;
-            --error-color: #b52c2c;
-            --action-color: #3a76a0;
-            --giveup-color: #787c7e;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        .game-container {
-            max-width: 450px;
-            width: 100%;
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-            box-sizing: border-box;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
-        }
-
-        h1 {
-            margin: 0 0 10px 0;
-            font-size: 28px;
-            letter-spacing: 1px;
-        }
-
-        .instructions {
-            font-size: 14px;
-            color: #b0b0b0;
-            line-height: 1.4;
-        }
-
-        .target-display {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            margin: 20px 0;
-            font-weight: bold;
-            font-size: 18px;
-        }
-
-        .target-word {
-            background-color: var(--border-color);
-            padding: 6px 12px;
-            border-radius: 4px;
-            letter-spacing: 2px;
-        }
-
-        .ladder-container {
-            max-height: 300px;
-            overflow-y: auto;
-            margin-bottom: 20px;
-            padding-right: 5px;
-        }
-
-        .ladder-step {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background-color: #222224;
-            padding: 10px 15px;
-            margin-bottom: 8px;
-            border-radius: 6px;
-            border-left: 4px solid var(--accent-color);
-            animation: fadeIn 0.3s ease;
-        }
-
-        .ladder-step.start { border-left-color: #3a76a0; }
-        .ladder-step.end { border-left-color: var(--accent-color); background-color: rgba(83, 141, 78, 0.2); }
-        .ladder-step.ai-path { border-left-color: #c9b458; background-color: rgba(201, 180, 88, 0.1); }
-
-        .step-word {
-            font-family: monospace;
-            font-size: 20px;
-            font-weight: bold;
-            letter-spacing: 3px;
-        }
-
-        .step-count {
-            font-size: 12px;
-            color: #888;
-        }
-
-        .input-area {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 12px;
-            font-size: 18px;
-            text-transform: uppercase;
-            text-align: center;
-            background-color: #222224;
-            border: 2px solid var(--border-color);
-            color: white;
-            border-radius: 6px;
-            box-sizing: border-box;
-            letter-spacing: 4px;
-        }
-
-        input[type="text"]:focus {
-            outline: none;
-            border-color: var(--accent-color);
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 10px;
-        }
-
-        button {
-            padding: 12px;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        button:disabled {
-            background-color: #2a2a2c !important;
-            color: #555 !important;
-            cursor: not-allowed;
-        }
-
-        #submit-btn { background-color: var(--accent-color); flex: 2; font-size: 16px; }
-        #submit-btn:hover { background-color: #43733f; }
-
-        #undo-btn { background-color: var(--action-color); flex: 1; }
-        #undo-btn:hover { background-color: #2b5877; }
-
-        #giveup-btn { background-color: var(--giveup-color); flex: 1; }
-        #giveup-btn:hover { background-color: #56595a; }
-
-        .message {
-            text-align: center;
-            min-height: 20px;
-            font-size: 14px;
-            margin-top: 10px;
-            font-weight: bold;
-        }
-
-        .error { color: var(--error-color); }
-        .success { color: var(--accent-color); }
-        .info { color: var(--action-color); }
-
-        .win-screen {
-            text-align: center;
-            display: none;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
-</head>
-<body>
-
-<div class="game-container">
-    <header>
-        <h1>WORD LADDER</h1>
-        <p class="instructions">Change exactly <strong>one letter</strong> at a time to reach the target word. Every step must be a valid English word.</p>
-    </header>
-
-    <div class="target-display">
-        <span class="target-word" id="start-display">GOOD</span>
-        <span>➡️</span>
-        <span class="target-word" id="target-display">HELL</span>
-    </div>
-
-    <div class="ladder-container" id="ladder">
-    </div>
-
-    <div id="game-controls">
-        <div class="input-area">
-            <input type="text" id="guess-input" maxlength="4" placeholder="ENTER 4-LETTER WORD" autocomplete="off">
-            <div class="btn-group">
-                <button id="undo-btn" title="Remove last word">Undo</button>
-                <button id="submit-btn">Submit</button>
-                <button id="giveup-btn" title="Reveal shortest path">Give Up</button>
-            </div>
-        </div>
-        <div class="message" id="message-box"></div>
-    </div>
-
-    <div class="win-screen" id="win-screen">
-        <h2 id="win-title" class="success">🎉 Success! You Did It!</h2>
-        <p id="win-stats"></p>
-        <button onclick="resetGame()" style="background-color: var(--accent-color); width: 100%;">Play Again</button>
-    </div>
-</div>
-
 <script>
     const START_WORD = "GOOD";
     const TARGET_WORD = "HELL";
     
     // Core 4-letter word list optimized for paths leading from GOOD to HELL
-    const WORD_LIST = ["GOOD","GOAD","GOLD","HOLD","HOOD","WOOD","FOOD","BOLD","FOLD","MOLD","TOLD", "HEAD", "HEAL", "HEAR", "HEAT", "HELL", "HELM", "HELP", "HEMP", "HERE", "HERO", "HOLE", "HALL", "HEAL", "SELL", "TELL", "WELL", "FELL", "BELL", "CELL"];
+    const WORD_LIST = ["GOOD","GOAD","GOLD","HOLD","HOOD","WOOD","FOOD","BOLD","FOLD","MOLD","TOLD", "HEAD", "HEAL", "HEAR", "HEAT", "HELL", "HELM", "HELP", "HEMP", "HERE", "HERO", "HOLE", "HALL", "SELL", "TELL", "WELL", "FELL", "BELL", "CELL"];
     const SOLVER_DICTIONARY = new Set(WORD_LIST);
 
     let history = [START_WORD];
@@ -260,16 +34,23 @@
         ladderEl.innerHTML = '';
         history.forEach((word, index) => {
             let type = '';
-            if (index === 0) type = 'start';
-            else if (word === TARGET_WORD) type = 'end';
-            else if (word.startsWith('*')) { type = 'ai-path'; word = word.replace('*', ''); }
+            let displayWord = word;
+            
+            if (index === 0) {
+                type = 'start';
+            } else if (word.startsWith('*')) { 
+                type = 'ai-path'; 
+                displayWord = word.replace('*', ''); 
+            } else if (word === TARGET_WORD) {
+                type = 'end';
+            }
             
             const stepDiv = document.createElement('div');
             stepDiv.className = `ladder-step ${type}`;
             
             const wordSpan = document.createElement('span');
             wordSpan.className = 'step-word';
-            wordSpan.textContent = word;
+            wordSpan.textContent = displayWord;
 
             const countSpan = document.createElement('span');
             countSpan.className = 'step-count';
@@ -386,21 +167,27 @@
     }
 
     function handleGiveUp() {
-        const currentWord = history[history.length - 1];
+        // Clean the current word in case there's an artificial character
+        let currentWord = history[history.length - 1];
+        if (currentWord.startsWith('*')) currentWord = currentWord.replace('*', '');
+
         const missingPath = findShortestPath(currentWord, TARGET_WORD);
 
         if (missingPath && missingPath.length > 1) {
             for(let i = 1; i < missingPath.length; i++) {
                 history.push("*" + missingPath[i]);
             }
-            renderLadder();
-            endGame(false);
         } else {
             const directPath = findShortestPath(START_WORD, TARGET_WORD);
-            history = [...directPath];
-            renderLadder();
-            endGame(false);
+            if (directPath) {
+                history = [START_WORD];
+                for(let i = 1; i < directPath.length; i++) {
+                    history.push("*" + directPath[i]);
+                }
+            }
         }
+        renderLadder();
+        endGame(false);
     }
 
     function showMessage(text, type) {
@@ -422,7 +209,8 @@
         }
     }
 
-    function resetGame() {
+    // Explicitly assigning resetGame to the window scope so inline HTML onclick works cleanly
+    window.resetGame = function() {
         initGame();
     }
 
@@ -435,6 +223,3 @@
 
     initGame();
 </script>
-
-</body>
-</html>
