@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Ladder Game</title>
+    <style>
+        :root {
+            --bg-color: #121213;
+            --card-bg: #1a1a1c;
+            --text-color: #ffffff;
+            --accent-color: #538d4e;
+            --border-color: #3a3a3c;
+            --error-color: #b52c2c;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .game-container {
+            max-width: 450px;
+            width: 100%;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            box-sizing: border-box;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        h1 {
+            margin: 0 0 10px 0;
+            font-size: 28px;
+            letter-spacing: 1px;
+        }
+
+        .instructions {
+            font-size: 14px;
+            color: #b0b0b0;
+            line-height: 1.4;
+        }
+
+        .target-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin: 20px 0;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .target-word {
+            background-color: var(--border-color);
+            padding: 6px 12px;
+            border-radius: 4px;
+            letter-spacing: 2px;
+        }
+
+        .ladder-container {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding-right: 5px;
+        }
+
+        .ladder-step {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #222224;
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            border-left: 4px solid var(--accent-color);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .ladder-step.start { border-left-color: #3a76a0; }
+        .ladder-step.end { border-left-color: var(--accent-color); background-color: rgba(83, 141, 78, 0.2); }
+
+        .step-word {
+            font-family: monospace;
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 3px;
+        }
+
+        .step-count {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .input-area {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 18px;
+            text-transform: uppercase;
+            text-align: center;
+            background-color: #222224;
+            border: 2px solid var(--border-color);
+            color: white;
+            border-radius: 6px;
+            box-sizing: border-box;
+            letter-spacing: 4px;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background-color: #43733f;
+        }
+
+        .message {
+            text-align: center;
+            min-height: 20px;
+            font-size: 14px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .error { color: var(--error-color); }
+        .success { color: var(--accent-color); }
+
+        .win-screen {
+            text-align: center;
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <header>
+        <h1>WORD LADDER</h1>
+        <p class="instructions">Change exactly <strong>one letter</strong> at a time to transform the starting word into the target word. Every step must be a valid English word.</p>
+    </header>
+
+    <div class="target-display">
+        <span class="target-word" id="start-display">WALL</span>
+        <span>➡️</span>
+        <span class="target-word" id="target-display">ROCK</span>
+    </div>
+
+    <div class="ladder-container" id="ladder">
+        <!-- Steps will be generated here -->
+    </div>
+
+    <div id="game-controls">
+        <div class="input-area">
+            <input type="text" id="guess-input" maxlength="4" placeholder="ENTER 4-LETTER WORD" autocomplete="off">
+            <button id="submit-btn">Submit Guess</button>
+        </div>
+        <div class="message" id="message-box"></div>
+    </div>
+
+    <div class="win-screen" id="win-screen">
+        <h2 class="success">🎉 Success! You Did It!</h2>
+        <p id="win-stats"></p>
+        <button onclick="resetGame()">Play Again</button>
+    </div>
+</div>
+
+<script>
+    // Configuration
+    const START_WORD = "WALL";
+    const TARGET_WORD = "ROCK";
+    
+    // A compact built-in dictionary of common 4-letter words to handle validation offline
+    // You can expand this array with more valid 4-letter transitional words if needed
+    const VALID_WORDS = new Set([
+        "WALL", "BALL", "CALL", "FALL", "HALL", "MALL", "PALL", "TALL", "WALK", "WALS", "WELT",
+        "WACK", "RACK", "PACK", "SACK", "TACK", "BACK", "JACK", "LACK", "MACK", "DOCK", "LOCK",
+        "MOCK", "POCK", "SOCK", "TOCK", "COCK", "BOCK", "ROCK", "ROPE", "ROSE", "ROTE", "ROUE",
+        "RICE", "RACE", "RICE", "RICH", "RICK", "WOKS", "WOKE", "WALE", "WANE", "WAVE", "WASH",
+        "WARM", "WARD", "WARE", "WARK", "WORT", "WORK", "PORK", "CORK", "BARK", "LARK", "MARK",
+        "RANK", "BANK", "SANK", "TANK", "LINK", "PINK", "SINK", "WINK", "WISH", "DISH", "FISH"
+    ]);
+
+    let history = [START_WORD];
+
+    const ladderEl = document.getElementById('ladder');
+    const inputEl = document.getElementById('guess-input');
+    const submitBtn = document.getElementById('submit-btn');
+    const messageEl = document.getElementById('message-box');
+    const gameControls = document.getElementById('game-controls');
+    const winScreen = document.getElementById('win-screen');
+    const winStats = document.getElementById('win-stats');
+
+    function initGame() {
+        history = [START_WORD];
+        ladderEl.innerHTML = '';
+        inputEl.value = '';
+        messageEl.textContent = '';
+        gameControls.style.display = 'block';
+        winScreen.style.display = 'none';
+        
+        addStepToUi(START_WORD, 0, 'start');
+        inputEl.focus();
+    }
+
+    function addStepToUi(word, stepNum, type = '') {
+        const stepDiv = document.createElement('div');
+        stepDiv.className = `ladder-step ${type}`;
+        
+        const wordSpan = document.createElement('span');
+        wordSpan.className = 'step-word';
+        wordSpan.textContent = word;
+
+        const countSpan = document.createElement('span');
+        countSpan.className = 'step-count';
+        countSpan.textContent = type === 'start' ? 'START' : `Step ${stepNum}`;
+
+        stepDiv.appendChild(wordSpan);
+        stepDiv.appendChild(countSpan);
+        ladderEl.appendChild(stepDiv);
+        
+        // Auto scroll to bottom
+        ladderEl.scrollTop = ladderEl.scrollHeight;
+    }
+
+    function checkOneLetterDiff(word1, word2) {
+        if (word1.length !== word2.length) return false;
+        let diff = 0;
+        for (let i = 0; i < word1.length; i++) {
+            if (word1[i] !== word2[i]) diff++;
+        }
+        return diff === 1;
+    }
+
+    function handleGuess() {
+        const guess = inputEl.value.trim().toUpperCase();
+        const currentWord = history[history.length - 1];
+
+        // Clear previous messages
+        messageEl.textContent = '';
+        messageEl.className = 'message';
+
+        if (guess.length !== 4) {
+            showMessage("Word must be exactly 4 letters long.", "error");
+            return;
+        }
+
+        if (history.includes(guess)) {
+            showMessage("You already used that word!", "error");
+            return;
+        }
+
+        // Basic check against our internal client dictionary
+        if (!VALID_WORDS.has(guess) && guess !== TARGET_WORD) {
+            // Note: If you want to allow all standard english words, you can fetch an API 
+            // but this internal list covers paths like WALL -> WALK -> WACK -> RACK -> ROCK
+            showMessage("Not a recognized word in this puzzle's dictionary.", "error");
+            return;
+        }
+
+        if (!checkOneLetterDiff(currentWord, guess)) {
+            showMessage(`"${guess}" must change exactly ONE letter from "${currentWord}".`, "error");
+            return;
+        }
+
+        // Valid step
+        history.push(guess);
+        const isEnd = (guess === TARGET_WORD);
+        addStepToUi(guess, history.length - 1, isEnd ? 'end' : '');
+        inputEl.value = '';
+        inputEl.focus();
+
+        if (isEnd) {
+            endGame();
+        }
+    }
+
+    function showMessage(text, type) {
+        messageEl.textContent = text;
+        messageEl.className = `message ${type}`;
+    }
+
+    function endGame() {
+        gameControls.style.display = 'none';
+        winScreen.style.display = 'block';
+        winStats.textContent = `You completed the ladder in ${history.length - 1} steps!`;
+    }
+
+    function resetGame() {
+        initGame();
+    }
+
+    // Event Listeners
+    submitBtn.addEventListener('click', handleGuess);
+    inputEl.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleGuess();
+    });
+
+    // Start on load
+    initGame();
+</script>
+
+</body>
+          </html>
