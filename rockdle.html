@@ -199,7 +199,7 @@
     <div class="target-display">
         <span class="target-word" id="start-display">WALL</span>
         <span>➡️</span>
-        <span class="target-word" id="target-display">ROCK</span>
+        <span class="target-word" id="target-display">POOP</span>
     </div>
 
     <div class="ladder-container" id="ladder">
@@ -226,10 +226,10 @@
 
 <script>
     const START_WORD = "WALL";
-    const TARGET_WORD = "ROCK";
+    const TARGET_WORD = "POOP";
     
-    // Core 4-letter word list optimized for clean solver transitions
-    const WORD_LIST = ["WALL","WALK","WACK","RACK","ROCK","PACK","SACK","TACK","BACK","JACK","LACK","MACK","DOCK","LOCK","MOCK","POCK","SOCK","TOCK","COCK","BORK","PORK","CORK","BARK","LARK","MARK","WOKE","WALE","WANE","WAVE","WASH","WARM","WARD","WARE","WORT","WORK","BALL","CALL","FALL","HALL","MALL","PALL","TALL","WILT","WELT","ROPE","ROSE","ROTE","RICE","RACE","RICH","RICK","WISH","DISH","FISH"];
+    // Core 4-letter word list optimized for paths leading to POOP
+    const WORD_LIST = ["WALL","BALL","CALL","FALL","HALL","MALL","PALL","TALL","WILL","WELL","POLL","POOL","POOP","LOOP","HOOP","COOP","SOOP","PONY","POUR","POUT","POTS","POPS","PLOP","PROP","DROP","CROP","SHOP","CHOP","STOP","STEP"];
     const SOLVER_DICTIONARY = new Set(WORD_LIST);
 
     let history = [START_WORD];
@@ -313,7 +313,7 @@
         }
     }
 
-    // Shortest path calculator using Breadth-First Search (BFS)
+    // BFS Shortest path calculator
     function findShortestPath(start, target) {
         let queue = [[start, [start]]];
         let visited = new Set([start]);
@@ -330,7 +330,7 @@
                 }
             }
         }
-        return null; // No path found in standard set
+        return null;
     }
 
     async function handleGuess() {
@@ -390,14 +390,12 @@
         const missingPath = findShortestPath(currentWord, TARGET_WORD);
 
         if (missingPath && missingPath.length > 1) {
-            // Append remaining fast-tracked steps. Tagged with '*' for distinct styling
             for(let i = 1; i < missingPath.length; i++) {
                 history.push("*" + missingPath[i]);
             }
             renderLadder();
             endGame(false);
         } else {
-            // Fallback strategy if custom paths made it too obscure for local BFS
             const directPath = findShortestPath(START_WORD, TARGET_WORD);
             history = [...directPath];
             renderLadder();
@@ -420,7 +418,7 @@
         } else {
             winTitle.textContent = "🏳️ Given Up";
             winTitle.className = "info";
-            winStats.textContent = `Oopsie Doopsie :(`;
+            winStats.textContent = `The AI autofilled the shortest path to the finish line.`;
         }
     }
 
