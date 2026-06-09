@@ -148,6 +148,12 @@
             background-color: #43733f;
         }
 
+        button:disabled {
+            background-color: #3a3a3c;
+            color: #777;
+            cursor: not-allowed;
+        }
+
         .message {
             text-align: center;
             min-height: 20px;
@@ -158,6 +164,7 @@
 
         .error { color: var(--error-color); }
         .success { color: var(--accent-color); }
+        .info { color: #3a76a0; }
 
         .win-screen {
             text-align: center;
@@ -185,8 +192,7 @@
     </div>
 
     <div class="ladder-container" id="ladder">
-        <!-- Steps will be generated here -->
-    </div>
+        </div>
 
     <div id="game-controls">
         <div class="input-area">
@@ -204,21 +210,9 @@
 </div>
 
 <script>
-    // Configuration
     const START_WORD = "WALL";
     const TARGET_WORD = "ROCK";
     
-    // A compact built-in dictionary of common 4-letter words to handle validation offline
-    // You can expand this array with more valid 4-letter transitional words if needed
-    const VALID_WORDS = new Set([
-        "WALL", "BALL", "CALL", "FALL", "HALL", "MALL", "PALL", "TALL", "WALK", "WALS", "WELT",
-        "WACK", "RACK", "PACK", "SACK", "TACK", "BACK", "JACK", "LACK", "MACK", "DOCK", "LOCK",
-        "MOCK", "POCK", "SOCK", "TOCK", "COCK", "BOCK", "ROCK", "ROPE", "ROSE", "ROTE", "ROUE",
-        "RICE", "RACE", "RICE", "RICH", "RICK", "WOKS", "WOKE", "WALE", "WANE", "WAVE", "WASH",
-        "WARM", "WARD", "WARE", "WARK", "WORT", "WORK", "PORK", "CORK", "BARK", "LARK", "MARK",
-        "RANK", "BANK", "SANK", "TANK", "LINK", "PINK", "SINK", "WINK", "WISH", "DISH", "FISH"
-    ]);
-
     let history = [START_WORD];
 
     const ladderEl = document.getElementById('ladder');
@@ -233,9 +227,10 @@
         history = [START_WORD];
         ladderEl.innerHTML = '';
         inputEl.value = '';
-        messageEl.textContent = '';
+        showMessage('', '');
         gameControls.style.display = 'block';
         winScreen.style.display = 'none';
+        enableUI(true);
         
         addStepToUi(START_WORD, 0, 'start');
         inputEl.focus();
@@ -257,7 +252,6 @@
         stepDiv.appendChild(countSpan);
         ladderEl.appendChild(stepDiv);
         
-        // Auto scroll to bottom
         ladderEl.scrollTop = ladderEl.scrollHeight;
     }
 
@@ -270,13 +264,30 @@
         return diff === 1;
     }
 
-    function handleGuess() {
+    function enableUI(enabled) {
+        inputEl.disabled = !enabled;
+        submitBtn.disabled = !enabled;
+        if(enabled) inputEl.focus();
+    }
+
+    // New API validation function
+    async function isValidEnglishWord(word) {
+        try {
+            const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word.toLowerCase()}`);
+            // If the API returns a 200 OK, the word exists in the dictionary
+            return response.ok;
+        } catch (error) {
+            console.error("Dictionary API Error:", error);
+            // Fallback: If the API goes down, we assume it's valid just to keep the game playable
+            return true; 
+        }
+    }
+
+    async function handleGuess() {
         const guess = inputEl.value.trim().toUpperCase();
         const currentWord = history[history.length - 1];
 
-        // Clear previous messages
-        messageEl.textContent = '';
-        messageEl.className = 'message';
+        showMessage('', '');
 
         if (guess.length !== 4) {
             showMessage("Word must be exactly 4 letters long.", "error");
@@ -288,25 +299,30 @@
             return;
         }
 
-        // Basic check against our internal client dictionary
-        if (!VALID_WORDS.has(guess) && guess !== TARGET_WORD) {
-            // Note: If you want to allow all standard english words, you can fetch an API 
-            // but this internal list covers paths like WALL -> WALK -> WACK -> RACK -> ROCK
-            showMessage("Not a recognized word in this puzzle's dictionary.", "error");
-            return;
-        }
-
         if (!checkOneLetterDiff(currentWord, guess)) {
             showMessage(`"${guess}" must change exactly ONE letter from "${currentWord}".`, "error");
             return;
         }
 
-        // Valid step
+        // Lock UI while checking dictionary API
+        showMessage("Checking word...", "info");
+        enableUI(false);
+
+        const isValid = await isValidEnglishWord(guess);
+
+        if (!isValid) {
+            showMessage(`"${guess}" is not recognized as a valid English word.`, "error");
+            enableUI(true);
+            return;
+        }
+
+        // Valid word and step confirmed
+        showMessage('', '');
         history.push(guess);
         const isEnd = (guess === TARGET_WORD);
         addStepToUi(guess, history.length - 1, isEnd ? 'end' : '');
         inputEl.value = '';
-        inputEl.focus();
+        enableUI(true);
 
         if (isEnd) {
             endGame();
@@ -328,15 +344,13 @@
         initGame();
     }
 
-    // Event Listeners
     submitBtn.addEventListener('click', handleGuess);
     inputEl.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') handleGuess();
+        if (e.key === 'Enter' && !inputEl.disabled) handleGuess();
     });
 
-    // Start on load
     initGame();
 </script>
 
 </body>
-          </html>
+</html>
