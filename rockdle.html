@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doctordle - Medical Guessing Game</title>
+    <title>Doctordle - Infinite Medical Cases</title>
     <style>
         :root {
             --primary: #0284c7;
@@ -39,6 +39,16 @@
             text-align: center;
             color: var(--primary);
             margin-top: 0;
+            margin-bottom: 5px;
+        }
+
+        .case-number {
+            text-align: center;
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-transform: uppercase;
         }
 
         .tracker {
@@ -57,6 +67,7 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
+            transition: all 0.3s ease;
         }
 
         .box.correct { background-color: var(--success); color: white; border-color: var(--success); }
@@ -143,6 +154,13 @@
         .result.win { background-color: #dcfce7; color: #166534; }
         .result.loss { background-color: #fee2e2; color: #991b1b; }
 
+        #next-btn {
+            margin-top: 12px;
+            background-color: #1e293b;
+            display: none;
+        }
+        #next-btn:hover { background-color: #0f172a; }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(4px); }
             to { opacity: 1; transform: translateY(0); }
@@ -153,6 +171,7 @@
 
 <div class="game-container">
     <h1>Doctordle</h1>
+    <div class="case-number" id="case-title">Case Study</div>
     
     <!-- Guess Trackers -->
     <div class="tracker" id="tracker">
@@ -179,51 +198,132 @@
     
     <button id="submit-btn" disabled>Submit Guess</button>
     <div class="result" id="result-message"></div>
+    <button id="next-btn">Next Case ➔</button>
 </div>
 
 <script>
-    // Game Configuration Data
-    const targetDisease = "Appendicitis";
-    const gameClues = [
-        "Initial symptom: Vague, dull pain localized around the umbilicus (belly button).",
-        "Associated symptoms: Low-grade fever, nausea, vomiting, and loss of appetite.",
-        "Pain progression: Over several hours, the pain shifts cleanly to the Right Lower Quadrant (RLQ).",
-        "Physical Exam Sign 1: Exquisite tenderness at McBurney's point upon palpation.",
-        "Physical Exam Sign 2: Positive Rovsing's sign (pressing the LLQ causes pain in the RLQ).",
-        "Laboratory findings: Leukocytosis (elevated White Blood Cell count) with a left shift.",
-        "Definitive Imaging: Ultrasound or CT scan reveals a blind-ending, non-compressible pouch measuring greater than 6mm."
+    // --- CASES DATABASE ---
+    const caseDatabase = [
+        {
+            disease: "Appendicitis",
+            clues: [
+                "Initial symptom: Vague, dull pain localized right around the umbilicus (belly button).",
+                "Associated signs: Low-grade fever, mild nausea, and a sudden loss of appetite (anorexia).",
+                "Pain shift: Over several hours, the pain migrates cleanly down into the Right Lower Quadrant (RLQ).",
+                "Physical Exam Sign 1: Sharp localized tenderness noted specifically at McBurney's point.",
+                "Physical Exam Sign 2: Positive Rovsing's sign (pressing down on the left side causes pain on the right side).",
+                "Laboratory findings: Elevated White Blood Cell count (leukocytosis) with a neutrophil left shift.",
+                "Definitive Imaging: Ultrasound or CT scan reveals a blind-ending, inflamed appendix measuring > 6mm."
+            ]
+        },
+        {
+            disease: "Acute Cholecystitis",
+            clues: [
+                "Initial presentation: Sudden, severe pain in the Right Upper Quadrant (RUQ) or epigastrium.",
+                "Radiation pattern: The abdominal pain frequently radiates straight through to the right scapula or shoulder.",
+                "Trigger event: Symptoms classically flare up 1 to 2 hours after consuming a high-fat meal.",
+                "Physical Exam Sign 1: Positive Murphy's Sign (the patient abruptly stops breathing in during RUQ palpation).",
+                "Associated labs: Mildly elevated Leukocytes, with normal or only slightly elevated Bilirubin levels.",
+                "Risk Profile: Patient often fits the classic demographic profile: Female, Forty, Fertile, and Fat.",
+                "Definitive Imaging: Abdominal ultrasound shows gallbladder wall thickening (>4mm) and pericholecystic fluid."
+            ]
+        },
+        {
+            disease: "Pancreatitis",
+            clues: [
+                "Initial presentation: Severe, steady epigastric abdominal pain.",
+                "Radiation pattern: The boring pain penetrates completely straight through to the patient's upper back.",
+                "Alleviating factor: The pain is often partially relieved when the patient sits up and leans forward.",
+                "Associated symptoms: Severe, intractable vomiting that does not relieve the underlying pain.",
+                "Common etiologies: Most cases are triggered either by a history of chronic alcohol abuse or gallstones.",
+                "Physical Exam Signs (Rare): Cullen's sign (periumbilical bruising) or Grey Turner's sign (flank bruising).",
+                "Definitive Diagnostic Labs: Serum Amylase and Lipase levels are elevated to more than 3 times the upper limit of normal."
+            ]
+        },
+        {
+            disease: "Diverticulitis",
+            clues: [
+                "Initial presentation: Constant, aching pain predominantly localized in the Left Lower Quadrant (LLQ).",
+                "Associated signs: Altered bowel habits (constipation or diarrhea) accompanied by low-grade fever.",
+                "Risk Profile: Much more frequently diagnosed in elderly patients or populations with a low-fiber diet.",
+                "Physical Exam Sign: Localized tenderness, guarding, or a palpable mass in the lower left abdominal sector.",
+                "Laboratory findings: Elevated C-Reactive Protein (CRP) and Leukocytosis indicating active inflammation.",
+                "Contraindication: Barium enemas and traditional Colonoscopies are strictly avoided in the acute phase due to perforation risk.",
+                "Definitive Imaging: Abdominal/Pelvic CT scan reveals localized colonic wall thickening and outpouching fat stranding."
+            ]
+        },
+        {
+            disease: "Kidney Stones",
+            clues: [
+                "Initial presentation: Sudden, agonizing, crampy flank pain that comes and goes in waves (colic).",
+                "Radiation pattern: The excruciating pain radiates downward from the flank into the groin, testicle, or labia.",
+                "Patient behavior: The patient is visibly writhing in pain, completely unable to find a comfortable position to sit or lie down.",
+                "Associated symptoms: Microscopic or gross blood visible in the urine sample (hematuria), with frequent urges to void.",
+                "Laboratory findings: Urinalysis is negative for nitrites and bacteria, but heavily saturated with crystals.",
+                "Common composition: The vast majority of these obstructing objects are made of Calcium Oxalate.",
+                "Definitive Imaging: A non-contrast helical CT scan of the abdomen and pelvis reveals an obstructing calcification."
+            ]
+        }
     ];
 
+    // --- SEARCH DICTIONARY FOR THE DROPDOWN ---
     const dictionary = [
-        "Appendicitis", "Acute Cholecystitis", "Pancreatitis", "Diverticulitis", 
+        "Appendicitis", "Acute Cholecystitis", "Pancreatitis", "Diverticulitis", "Kidney Stones",
         "Gastroenteritis", "Crohn's Disease", "Ulcerative Colitis", "Peptic Ulcer Disease",
-        "Ectopic Pregnancy", "Ovarian Torsion", "Kidney Stones", "Urinary Tract Infection",
-        "Pneumonia", "Pulmonary Embolism", "Myocardial Infarction", "Aortic Dissection",
-        "Streptococcal Pharyngitis", "Mononucleosis", "Meningitis", "Sepsis"
+        "Ectopic Pregnancy", "Ovarian Torsion", "Urinary Tract Infection", "Pneumonia", 
+        "Pulmonary Embolism", "Myocardial Infarction", "Aortic Dissection"
     ].sort();
 
+    // --- GAME STATE VARIABLES ---
+    let currentCaseIndex = 0;
     let currentAttempt = 1;
     const maxAttempts = 7;
 
+    // --- DOM ELEMENTS ---
+    const caseTitle = document.getElementById("case-title");
     const input = document.getElementById("diagnosis-input");
     const dropdown = document.getElementById("dropdown-list");
     const submitBtn = document.getElementById("submit-btn");
+    const nextBtn = document.getElementById("next-btn");
     const cluesList = document.getElementById("clues-list");
     const resultMessage = document.getElementById("result-message");
 
-    // Initialize Game
-    function initGame() {
+    // --- GAME ENGINE LOGIC ---
+    function startNewGame() {
+        // Reset state variables
+        currentAttempt = 1;
+        cluesList.innerHTML = "";
+        resultMessage.style.display = "none";
+        input.value = "";
+        input.disabled = false;
+        submitBtn.disabled = true;
+        nextBtn.style.display = "none";
+        document.getElementById("controls-container").style.display = "block";
+        submitBtn.style.display = "block";
+
+        // Update UI Title
+        caseTitle.textContent = `Case Study #${currentCaseIndex + 1} of ${caseDatabase.length}`;
+
+        // Reset Tracker Boxes
+        for (let i = 1; i <= maxAttempts; i++) {
+            const box = document.getElementById(`b${i}`);
+            box.className = "box";
+            box.textContent = i;
+        }
+
+        // Show first clue
         revealNextClue(0);
     }
 
     function revealNextClue(index) {
+        const activeCase = caseDatabase[currentCaseIndex];
         const div = document.createElement("div");
         div.className = "clue-item";
-        div.innerHTML = `<strong>Clue ${index + 1}:</strong> ${gameClues[index]}`;
+        div.innerHTML = `<strong>Clue ${index + 1}:</strong> ${activeCase.clues[index]}`;
         cluesList.appendChild(div);
     }
 
-    // Dropdown Filtering Logic
+    // Search input Filtering
     input.addEventListener("input", () => {
         const val = input.value.toLowerCase();
         dropdown.innerHTML = "";
@@ -252,24 +352,23 @@
         }
     });
 
-    // Close dropdown on outside click
+    // Close dropdown on click-away
     document.addEventListener("click", (e) => {
         if (e.target !== input && e.target !== dropdown) {
             dropdown.style.display = "none";
         }
     });
 
-    // Submit Action Logic
+    // Handle submission check
     submitBtn.addEventListener("click", () => {
         const userGuess = input.value.trim();
+        const activeCase = caseDatabase[currentCaseIndex];
         const currentBox = document.getElementById(`b${currentAttempt}`);
 
-        if (userGuess.toLowerCase() === targetDisease.toLowerCase()) {
-            // Handle Win Conditions
+        if (userGuess.toLowerCase() === activeCase.disease.toLowerCase()) {
             currentBox.className = "box correct";
             endGame(true);
         } else {
-            // Handle Wrong Guess Logic
             currentBox.className = "box wrong";
             if (currentAttempt < maxAttempts) {
                 revealNextClue(currentAttempt);
@@ -283,22 +382,31 @@
     });
 
     function endGame(isWin) {
+        const activeCase = caseDatabase[currentCaseIndex];
         input.disabled = true;
         submitBtn.disabled = true;
         document.getElementById("controls-container").style.display = "none";
         submitBtn.style.display = "none";
         
         if (isWin) {
-            resultMessage.textContent = `Correct! You diagnosed ${targetDisease} on attempt ${currentAttempt}/${maxAttempts}.`;
+            resultMessage.textContent = `Correct! You diagnosed ${activeCase.disease} on attempt ${currentAttempt}/${maxAttempts}.`;
             resultMessage.className = "result win";
         } else {
-            resultMessage.textContent = `Case Closed. The correct diagnosis was ${targetDisease}.`;
+            resultMessage.textContent = `Case Closed. The correct diagnosis was ${activeCase.disease}.`;
             resultMessage.className = "result loss";
         }
         resultMessage.style.display = "block";
+        nextBtn.style.display = "block";
     }
 
-    initGame();
+    // Move to next case index loop
+    nextBtn.addEventListener("click", () => {
+        currentCaseIndex = (currentCaseIndex + 1) % caseDatabase.length;
+        startNewGame();
+    });
+
+    // Initialize first case run
+    startNewGame();
 </script>
 
 </body>
