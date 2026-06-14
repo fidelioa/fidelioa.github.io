@@ -31,7 +31,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 2rem;
-            overflow: hidden; /* Keeps the single-screen editorial look */
+            overflow-x: hidden; /* Prevent horizontal scrolling safely */
         }
 
         /* Fixed Navigation Bar */
@@ -46,6 +46,7 @@
             padding: 2rem 2.5rem;
             background: var(--nav-bg);
             backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             z-index: 100;
         }
 
@@ -57,6 +58,7 @@
             color: var(--text-primary);
             text-decoration: none;
             opacity: 0.8;
+            flex-shrink: 0;
         }
 
         .nav-links {
@@ -73,6 +75,7 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             transition: color 0.3s ease, text-shadow 0.3s ease;
+            white-space: nowrap;
         }
 
         .nav-links a:hover {
@@ -89,7 +92,8 @@
             align-items: center;
             gap: 4rem;
             margin: auto; /* Centers the block vertically on screen */
-            padding-top: 60px;
+            padding-top: 100px; /* Enhanced to clear fixed nav safely */
+            padding-bottom: 40px;
         }
 
         /* Left side: Big, structural typography */
@@ -139,30 +143,67 @@
             letter-spacing: 1.5px;
             text-align: center;
             width: 100%;
+            padding-top: 20px;
         }
 
         /* Responsive collapse for tablets/phones */
         @media (max-width: 768px) {
-            body { overflow: auto; }
+            nav {
+                padding: 1.5rem 1.5rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                gap: 1.2rem;
+            }
+
+            .nav-links a {
+                font-size: 0.75rem;
+                letter-spacing: 1px;
+            }
+
             main {
                 grid-template-columns: 1fr;
-                gap: 2rem;
+                gap: 2.5rem;
                 text-align: center;
-                padding-top: 100px;
+                padding-top: 140px; /* Leaves room for stacked nav */
             }
-            .brand-axis { text-align: center; }
-            h1 { font-size: 3rem; margin-bottom: 1rem; }
+
+            .brand-axis { 
+                text-align: center; 
+            }
+
+            h1 { 
+                font-size: 2.8rem; /* Scaled down slightly to prevent awkward wrap */
+                letter-spacing: -1px;
+                margin-bottom: 0.5rem; 
+            }
+
             .statement-axis {
                 border-left: none;
                 border-top: 1px solid var(--border);
-                padding: 2rem 0 0 0;
+                padding: 2rem 1rem 0 1rem;
+            }
+
+            .home-quote {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Target extra small screens (iPhone SE, etc.) */
+        @media (max-width: 380px) {
+            .nav-links {
+                gap: 0.8rem;
+            }
+            h1 {
+                font-size: 2.4rem;
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- Top Navigation Bar -->
     <nav>
         <a href="index.html" class="nav-logo">// f&e</a>
         <ul class="nav-links">
@@ -173,7 +214,6 @@
         </ul>
     </nav>
 
-    <!-- Main Typographic Layout -->
     <main>
         <div class="brand-axis">
             <h1>fragments<br>& echoes</h1>
@@ -187,7 +227,6 @@
         </div>
     </main>
 
-    <!-- Footer -->
     <footer>
         [ digital scrapbook // 2026 ]
     </footer>
