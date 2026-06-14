@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verse // Fragments & Echoes</title>
+    <style>
+        :root {
+            --bg-color: #0b0b0e;
+            --panel-bg: #111116;
+            --text-primary: #e4e4ed;
+            --text-secondary: #6e6e80;
+            --accent: #a385b9; /* Soft, artsy violet */
+            --accent-dim: rgba(163, 133, 185, 0.3);
+            --nav-bg: rgba(11, 11, 14, 0.8);
+            --border: #1b1b22;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Georgia', serif;
+            line-height: 1.8;
+            padding: 100px 1.5rem 4rem 1.5rem; /* Top padding leaves space for fixed nav */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Fixed Navigation Bar (Matches Index) */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            background: var(--nav-bg);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            z-index: 100;
+        }
+
+        .nav-logo {
+            font-family: monospace;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+
+        .nav-links a:hover, .nav-links .active {
+            color: var(--accent);
+            text-shadow: 0 0 8px var(--accent-dim);
+        }
+
+        /* Page Header */
+        header {
+            width: 100%;
+            max-width: 650px;
+            margin-bottom: 4rem;
+            text-align: left;
+        }
+
+        header h2 {
+            font-size: 1.8rem;
+            font-weight: 400;
+            font-style: italic;
+            color: var(--text-primary);
+            opacity: 0.9;
+        }
+
+        .page-subtitle {
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 0.3rem;
+        }
+
+        /* Content Container */
+        main {
+            width: 100%;
+            max-width: 650px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Poem Entry */
+        .poem-entry {
+            margin-bottom: 4.5rem;
+            position: relative;
+        }
+
+        .poem-title {
+            font-size: 1.3rem;
+            font-weight: 400;
+            color: var(--text-primary);
+            margin-bottom: 0.2rem;
+            letter-spacing: -0.3px;
+        }
+
+        .poem-author {
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 1.8rem;
+            display: block;
+        }
+
+        /* Preserves spacing and indentation exactly as written */
+        .poem-body {
+            white-space: pre-line;
+            font-size: 1.05rem;
+            color: #d1d1db;
+            letter-spacing: 0.2px;
+            padding-left: 0.5rem;
+            border-left: 1px solid rgba(163, 133, 185, 0.15);
+        }
+
+        .poem-date {
+            display: block;
+            font-family: monospace;
+            font-size: 0.7rem;
+            color: rgba(110, 110, 128, 0.4);
+            margin-top: 1.5rem;
+            text-align: right;
+        }
+
+        /* Artsy divider between entries */
+        .poem-divider {
+            width: 30px;
+            height: 1px;
+            background-color: var(--border);
+            margin: 0 auto 4.5rem 0;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: auto;
+            padding-top: 4rem;
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: rgba(110, 110, 128, 0.5);
+            letter-spacing: 1px;
+            text-align: center;
+            width: 100%;
+            max-width: 650px;
+            border-top: 1px dashed var(--border);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation Bar -->
+    <nav>
+        <a href="index.html" class="nav-logo">// f&e</a>
+        <ul class="nav-links">
+            <li><a href="quotes.html">Quotes</a></li>
+            <li><a href="poems.html" class="active">Poems</a></li>
+            <li><a href="cinema.html">Cinema</a></li>
+            <li><a href="about.html">About</a></li>
+        </ul>
+    </nav>
+
+    <!-- Page Title Header -->
+    <header>
+        <h2>collected verse.</h2>
+        <div class="page-subtitle">entire pieces / stolen lines</div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main>
+        
+        <!-- Poem 1 -->
+        <article class="poem-entry">
+            <h3 class="poem-title">The Layers</h3>
+            <span class="poem-author">Stanley Kunitz</span>
+            <p class="poem-body">
+                I have walked through many lives,
+                some of them my own,
+                and I am not who I was,
+                though some principle of being
+                abides, from which I struggle
+                not to stray.
+                
+                When I look behind,
+                as I am compelled to look,
+                before I can gather strength
+                to proceed on my journey,
+                I see the milestones dwindling
+                into the background...
+            </p>
+            <span class="poem-date">Uploaded: June 2026</span>
+        </article>
+
+        <div class="poem-divider"></div>
+
+        <!-- Poem 2 -->
+        <article class="poem-entry">
+            <h3 class="poem-title">Separation</h3>
+            <span class="poem-author">W.S. Merwin</span>
+            <p class="poem-body">
+                Your absence has gone through me
+                Like thread through a needle.
+                Everything I do is stitched with its color.
+            </p>
+            <span class="poem-date">Uploaded: May 2026</span>
+        </article>
+
+        <div class="poem-divider"></div>
+
+        <!-- Poem 3 -->
+        <article class="poem-entry">
+            <h3 class="poem-title">A Midnight Sketch</h3>
+            <span class="poem-author">Unknown</span>
+            <p class="poem-body">
+                The ink is patient,
+                the night is deep.
+                
+                Some thoughts we structure,
+                and some we keep.
+            </p>
+            <span class="poem-date">Uploaded: April 2026</span>
+        </article>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        [ fragments & echoes / verse collection ]
+    </footer>
+
+</body>
+</html>
