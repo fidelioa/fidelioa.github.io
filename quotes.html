@@ -10,6 +10,7 @@
             --text-primary: #e4e4ed;
             --text-secondary: #5a5a6e;
             --accent: #a385b9; /* Soft artsy violet */
+            --accent-dim: rgba(163, 133, 185, 0.15);
             --nav-bg: rgba(8, 8, 11, 0.9);
             --border: #161622;
             --card-bg: #0f0f14;
@@ -26,11 +27,12 @@
             color: var(--text-primary);
             font-family: 'Georgia', serif;
             line-height: 1.6;
-            padding: 140px 2rem 5rem 2rem;
+            padding: 140px 2rem 5rem 2rem; /* Adjusted gracefully in media queries */
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         /* Fixed Navigation Bar */
@@ -45,6 +47,7 @@
             padding: 2rem 2.5rem;
             background: var(--nav-bg);
             backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             z-index: 100;
             border-bottom: 1px solid rgba(255, 255, 255, 0.01);
         }
@@ -57,6 +60,7 @@
             color: var(--text-primary);
             text-decoration: none;
             opacity: 0.8;
+            flex-shrink: 0;
         }
 
         .nav-links {
@@ -73,6 +77,7 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             transition: color 0.3s ease;
+            white-space: nowrap;
         }
 
         .nav-links a:hover, .nav-links .active {
@@ -127,6 +132,7 @@
             border-radius: 4px;
             outline: none;
             transition: border-color 0.3s ease;
+            -webkit-appearance: none; /* Fixes iOS shadow styling bugs */
         }
 
         #searchBar:focus {
@@ -184,12 +190,69 @@
             letter-spacing: 1.5px;
             text-align: center;
             width: 100%;
+            padding-top: 2rem;
+        }
+
+        /* Responsive collapse for tablets/phones */
+        @media (max-width: 768px) {
+            body {
+                padding: 160px 1.25rem 4rem 1.25rem; /* More compact screen margins */
+            }
+
+            nav {
+                padding: 1.5rem 1.5rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                gap: 1.2rem;
+            }
+
+            .nav-links a {
+                font-size: 0.75rem;
+                letter-spacing: 1px;
+            }
+
+            header {
+                margin-bottom: 2rem;
+            }
+
+            h2 {
+                font-size: 1.9rem; /* Prevent layout breaking on small headers */
+            }
+
+            .search-container {
+                margin-bottom: 2.5rem;
+            }
+
+            .quote-grid {
+                gap: 1.75rem;
+            }
+
+            .quote-card {
+                padding: 1.25rem 0 1.25rem 1.25rem; /* Reduced indent to give text more breathability */
+            }
+
+            .quote-text {
+                font-size: 1.05rem;
+                line-height: 1.6;
+            }
+        }
+
+        /* Optimization for ultra-narrow phones */
+        @media (max-width: 380px) {
+            .nav-links {
+                gap: 0.8rem;
+            }
+            .quote-card {
+                padding: 1rem 0 1rem 1rem;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- Top Navigation Bar -->
     <nav>
         <a href="../index.html" class="nav-logo">// f&e</a>
         <ul class="nav-links">
@@ -210,7 +273,6 @@
             <input type="text" id="searchBar" placeholder="Search by author, title, or text..." onkeyup="filterQuotes()">
         </div>
 
-        <!-- Target section where JavaScript will inject shuffled data -->
         <section class="quote-grid" id="quoteGrid"></section>
     </main>
 
@@ -284,10 +346,8 @@
             { text: `“I looked up at the mass of signs and stars in the night sky and laid myself open for the first time to the benign indifference of the world.”`, author: "Albert Camus", book: "The Stranger" }
         ];
 
-        // Global variable to store our shuffled structure
         let shuffledQuotes = [];
 
-        // 1. Fisher-Yates Algorithm to randomize array values on layout init
         function shuffleArray(array) {
             let currentIndex = array.length, randomIndex;
             while (currentIndex !== 0) {
@@ -298,10 +358,9 @@
             return array;
         }
 
-        // 2. Build DOM structures dynamically from current data subset
         function renderQuotes(quotesToRender) {
             const grid = document.getElementById('quoteGrid');
-            grid.innerHTML = ''; // Wipe container clean
+            grid.innerHTML = ''; 
 
             quotesToRender.forEach(item => {
                 const card = document.createElement('div');
@@ -315,7 +374,6 @@
             });
         }
 
-        // 3. Handle live keyword filtering across texts, authors, or book titles
         function filterQuotes() {
             const query = document.getElementById('searchBar').value.toLowerCase();
             
@@ -328,9 +386,7 @@
             renderQuotes(filtered);
         }
 
-        // 4. Initialize layout cleanly when page initializes
         window.addEventListener('DOMContentLoaded', () => {
-            // Create a randomized shallow clone copy so the root database remains safe
             shuffledQuotes = shuffleArray([...quoteDatabase]);
             renderQuotes(shuffledQuotes);
         });
