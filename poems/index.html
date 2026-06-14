@@ -7,11 +7,10 @@
     <style>
         :root {
             --bg-color: #0b0b0e;
-            --panel-bg: #111116;
             --text-primary: #e4e4ed;
             --text-secondary: #6e6e80;
             --accent: #a385b9; /* Soft, artsy violet */
-            --accent-dim: rgba(163, 133, 185, 0.3);
+            --accent-dim: rgba(163, 133, 185, 0.2);
             --nav-bg: rgba(11, 11, 14, 0.8);
             --border: #1b1b22;
         }
@@ -27,14 +26,14 @@
             color: var(--text-primary);
             font-family: 'Georgia', serif;
             line-height: 1.8;
-            padding: 100px 1.5rem 4rem 1.5rem; /* Top padding leaves space for fixed nav */
+            padding: 120px 1.5rem 4rem 1.5rem; /* Space for nav bar */
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
         }
 
-        /* Fixed Navigation Bar (Matches Index) */
+        /* Fixed Navigation Bar */
         nav {
             position: fixed;
             top: 0;
@@ -83,8 +82,8 @@
         /* Page Header */
         header {
             width: 100%;
-            max-width: 650px;
-            margin-bottom: 4rem;
+            max-width: 600px;
+            margin-bottom: 3.5rem;
             text-align: left;
         }
 
@@ -105,63 +104,46 @@
             margin-top: 0.3rem;
         }
 
-        /* Content Container */
+        /* Minimalist List Layout */
         main {
             width: 100%;
-            max-width: 650px;
+            max-width: 600px;
             display: flex;
             flex-direction: column;
+            gap: 1.5rem;
         }
 
-        /* Poem Entry */
-        .poem-entry {
-            margin-bottom: 4.5rem;
-            position: relative;
+        /* Artsy List Item Row */
+        .poem-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(27, 27, 34, 0.6);
+            transition: all 0.3s ease;
         }
 
-        .poem-title {
-            font-size: 1.3rem;
-            font-weight: 400;
+        /* Title Link Styling */
+        .poem-link {
+            font-size: 1.15rem;
             color: var(--text-primary);
-            margin-bottom: 0.2rem;
-            letter-spacing: -0.3px;
+            text-decoration: none;
+            font-style: italic;
+            transition: color 0.2s ease, padding-left 0.2s ease;
         }
 
+        .poem-row:hover .poem-link {
+            color: var(--accent);
+            padding-left: 6px; /* Subtle responsive shift on hover */
+        }
+
+        /* Author Metadata */
         .poem-author {
             font-family: monospace;
             font-size: 0.75rem;
-            color: var(--accent);
+            color: var(--text-secondary);
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 1.8rem;
-            display: block;
-        }
-
-        /* Preserves spacing and indentation exactly as written */
-        .poem-body {
-            white-space: pre-line;
-            font-size: 1.05rem;
-            color: #d1d1db;
-            letter-spacing: 0.2px;
-            padding-left: 0.5rem;
-            border-left: 1px solid rgba(163, 133, 185, 0.15);
-        }
-
-        .poem-date {
-            display: block;
-            font-family: monospace;
-            font-size: 0.7rem;
-            color: rgba(110, 110, 128, 0.4);
-            margin-top: 1.5rem;
-            text-align: right;
-        }
-
-        /* Artsy divider between entries */
-        .poem-divider {
-            width: 30px;
-            height: 1px;
-            background-color: var(--border);
-            margin: 0 auto 4.5rem 0;
+            letter-spacing: 1px;
         }
 
         /* Footer */
@@ -170,12 +152,11 @@
             padding-top: 4rem;
             font-family: monospace;
             font-size: 0.75rem;
-            color: rgba(110, 110, 128, 0.5);
+            color: rgba(110, 110, 128, 0.4);
             letter-spacing: 1px;
             text-align: center;
             width: 100%;
-            max-width: 650px;
-            border-top: 1px dashed var(--border);
+            max-width: 600px;
         }
     </style>
 </head>
@@ -185,79 +166,51 @@
     <nav>
         <a href="index.html" class="nav-logo">// f&e</a>
         <ul class="nav-links">
-            <li><a href="quotes.html">Quotes</a></li>
-            <li><a href="poems.html" class="active">Poems</a></li>
-            <li><a href="cinema.html">Cinema</a></li>
-            <li><a href="about.html">About</a></li>
+            <li><a href="quotes">Quotes</a></li>
+            <li><a href="poems" class="active">Poems</a></li>
+            <li><a href="cinema">Cinema</a></li>
+            <li><a href="about">About</a></li>
         </ul>
     </nav>
 
     <!-- Page Title Header -->
     <header>
         <h2>collected verse.</h2>
-        <div class="page-subtitle">entire pieces / stolen lines</div>
+        <div class="page-subtitle">Index / Click to uncover</div>
     </header>
 
-    <!-- Main Content Area -->
+    <!-- Main Index List -->
     <main>
         
         <!-- Poem 1 -->
-        <article class="poem-entry">
-            <h3 class="poem-title">The Layers</h3>
-            <span class="poem-author">Stanley Kunitz</span>
-            <p class="poem-body">
-                I have walked through many lives,
-                some of them my own,
-                and I am not who I was,
-                though some principle of being
-                abides, from which I struggle
-                not to stray.
-                
-                When I look behind,
-                as I am compelled to look,
-                before I can gather strength
-                to proceed on my journey,
-                I see the milestones dwindling
-                into the background...
-            </p>
-            <span class="poem-date">Uploaded: June 2026</span>
-        </article>
-
-        <div class="poem-divider"></div>
+        <div class="poem-row">
+            <a href="because-i-could-not-stop-for-death.html" class="poem-link">Because I could not stop for Death</a>
+            <span class="poem-author">Emily Dickinson</span>
+        </div>
 
         <!-- Poem 2 -->
-        <article class="poem-entry">
-            <h3 class="poem-title">Separation</h3>
-            <span class="poem-author">W.S. Merwin</span>
-            <p class="poem-body">
-                Your absence has gone through me
-                Like thread through a needle.
-                Everything I do is stitched with its color.
-            </p>
-            <span class="poem-date">Uploaded: May 2026</span>
-        </article>
-
-        <div class="poem-divider"></div>
+        <div class="poem-row">
+            <a href="o-captain-my-captain.html" class="poem-link">O Captain! My Captain!</a>
+            <span class="poem-author">Walt Whitman</span>
+        </div>
 
         <!-- Poem 3 -->
-        <article class="poem-entry">
-            <h3 class="poem-title">A Midnight Sketch</h3>
-            <span class="poem-author">Unknown</span>
-            <p class="poem-body">
-                The ink is patient,
-                the night is deep.
-                
-                Some thoughts we structure,
-                and some we keep.
-            </p>
-            <span class="poem-date">Uploaded: April 2026</span>
-        </article>
+        <div class="poem-row">
+            <a href="hope-is-the-thing-with-feathers.html" class="poem-link">Hope is the thing with feathers</a>
+            <span class="poem-author">Emily Dickinson</span>
+        </div>
+
+        <!-- Poem 4 -->
+        <div class="poem-row">
+            <a href="do-not-go-gentle.html" class="poem-link">Do not go gentle into that good night</a>
+            <span class="poem-author">Dylan Thomas</span>
+        </div>
 
     </main>
 
     <!-- Footer -->
     <footer>
-        [ fragments & echoes / verse collection ]
+        [ fragments & echoes / index ]
     </footer>
 
 </body>
