@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fragments & Echoes</title>
+    <title>Verse // Fragments & Echoes</title>
     <style>
         :root {
             --bg-color: #0b0b0e;
             --text-primary: #e4e4ed;
             --text-secondary: #6e6e80;
             --accent: #a385b9; /* Soft, artsy violet */
-            --accent-dim: rgba(163, 133, 185, 0.3);
+            --accent-dim: rgba(163, 133, 185, 0.2);
             --nav-bg: rgba(11, 11, 14, 0.8);
+            --border: #1b1b22;
         }
 
         * {
@@ -24,15 +25,15 @@
             background-color: var(--bg-color);
             color: var(--text-primary);
             font-family: 'Georgia', serif;
-            min-height: 100vh;
+            line-height: 1.8;
+            padding: 120px 1.5rem 4rem 1.5rem; /* Space for nav bar */
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
             align-items: center;
-            overflow: hidden; /* Keeps the minimalist, single-page look */
+            min-height: 100vh;
         }
 
-        /* Fixed Navigation Bar at Top */
+        /* Fixed Navigation Bar */
         nav {
             position: fixed;
             top: 0;
@@ -43,7 +44,7 @@
             align-items: center;
             padding: 1.5rem 2rem;
             background: var(--nav-bg);
-            backdrop-filter: blur(8px); /* Subtle glass effect */
+            backdrop-filter: blur(8px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.03);
             z-index: 100;
         }
@@ -73,56 +74,89 @@
             transition: color 0.3s ease, text-shadow 0.3s ease;
         }
 
-        .nav-links a:hover {
+        .nav-links a:hover, .nav-links .active {
             color: var(--accent);
             text-shadow: 0 0 8px var(--accent-dim);
         }
 
-        /* Central Minimalist Landing Area */
-        main {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            flex-grow: 1;
-            padding: 2rem;
+        /* Page Header */
+        header {
+            width: 100%;
             max-width: 600px;
-            margin-top: 60px; /* Offset for fixed nav */
+            margin-bottom: 3.5rem;
+            text-align: left;
         }
 
-        h1 {
-            font-size: 3rem;
+        header h2 {
+            font-size: 1.8rem;
             font-weight: 400;
             font-style: italic;
-            letter-spacing: -1px;
-            margin-bottom: 1rem;
+            color: var(--text-primary);
             opacity: 0.9;
         }
 
-        .divider {
-            width: 40px;
-            height: 1px;
-            background-color: var(--accent);
-            margin: 1.5rem 0;
-            opacity: 0.5;
+        .page-subtitle {
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 0.3rem;
         }
 
-        /* A singular, striking quote just to anchor the home page */
-        .home-quote {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-            line-height: 1.8;
+        /* Minimalist List Layout */
+        main {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Artsy List Item Row */
+        .poem-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(27, 27, 34, 0.6);
+            transition: all 0.3s ease;
+        }
+
+        /* Title Link Styling */
+        .poem-link {
+            font-size: 1.15rem;
+            color: var(--text-primary);
+            text-decoration: none;
             font-style: italic;
+            transition: color 0.2s ease, padding-left 0.2s ease;
+        }
+
+        .poem-row:hover .poem-link {
+            color: var(--accent);
+            padding-left: 6px; /* Subtle responsive shift on hover */
+        }
+
+        /* Author Metadata */
+        .poem-author {
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         /* Footer */
         footer {
-            padding-bottom: 2rem;
+            margin-top: auto;
+            padding-top: 4rem;
             font-family: monospace;
             font-size: 0.75rem;
-            color: rgba(110, 110, 128, 0.5);
+            color: rgba(110, 110, 128, 0.4);
             letter-spacing: 1px;
+            text-align: center;
+            width: 100%;
+            max-width: 600px;
         }
     </style>
 </head>
@@ -132,25 +166,51 @@
     <nav>
         <a href="index.html" class="nav-logo">// f&e</a>
         <ul class="nav-links">
-            <li><a href="quotes">Quotes</a></li>
-            <li><a href="poems">Poems</a></li>
-            <li><a href="cinema">Cinema</a></li>
-            <li><a href="about">About</a></li>
+            <li><a href="quotes.html">Quotes</a></li>
+            <li><a href="poems.html" class="active">Poems</a></li>
+            <li><a href="cinema.html">Cinema</a></li>
+            <li><a href="about.html">About</a></li>
         </ul>
     </nav>
 
-    <!-- Main Entry Screen -->
+    <!-- Page Title Header -->
+    <header>
+        <h2>collected verse.</h2>
+        <div class="page-subtitle">Index / Click to uncover</div>
+    </header>
+
+    <!-- Main Index List -->
     <main>
-        <h1>fragments & echoes</h1>
-        <div class="divider"></div>
-        <p class="home-quote">
-            "We read to know that we are not alone."
-        </p>
+        
+        <!-- Poem 1 -->
+        <div class="poem-row">
+            <a href="because-i-could-not-stop-for-death.html" class="poem-link">Because I could not stop for Death</a>
+            <span class="poem-author">Emily Dickinson</span>
+        </div>
+
+        <!-- Poem 2 -->
+        <div class="poem-row">
+            <a href="o-captain-my-captain.html" class="poem-link">O Captain! My Captain!</a>
+            <span class="poem-author">Walt Whitman</span>
+        </div>
+
+        <!-- Poem 3 -->
+        <div class="poem-row">
+            <a href="hope-is-the-thing-with-feathers.html" class="poem-link">Hope is the thing with feathers</a>
+            <span class="poem-author">Emily Dickinson</span>
+        </div>
+
+        <!-- Poem 4 -->
+        <div class="poem-row">
+            <a href="do-not-go-gentle.html" class="poem-link">Do not go gentle into that good night</a>
+            <span class="poem-author">Dylan Thomas</span>
+        </div>
+
     </main>
 
     <!-- Footer -->
     <footer>
-        [ digital scrapbook / 2026 ]
+        [ fragments & echoes / index ]
     </footer>
 
 </body>
