@@ -139,48 +139,41 @@
             flex-direction: column;
         }
 
-        .spotlight-img-holder {
+        .spotlight-header-holder {
             width: 100%;
-            height: 180px;
-            background-color: #0b0b0f;
-            overflow: hidden;
+            background: linear-gradient(180deg, #12121a 0%, #0b0b0f 100%);
             border-bottom: 1px solid var(--border);
-        }
-
-        .spotlight-img-holder img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0.5;
-            transition: opacity 0.3s ease;
-        }
-
-        .spotlight-card:hover .spotlight-img-holder img {
-            opacity: 0.8;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
         }
 
         .spotlight-content {
             padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
         }
 
         .spotlight-card h4 {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: normal;
             font-style: italic;
-            margin-bottom: 0.6rem;
             color: #e4e4ed;
         }
 
         .spotlight-card p {
             font-size: 0.95rem;
             color: #9a9aa8;
-            margin-bottom: 1.2rem;
+            margin-bottom: 1.5rem;
         }
 
         .tag-list {
             display: flex;
             flex-wrap: wrap;
             gap: 0.5rem;
+            margin-top: auto;
         }
 
         .tag {
@@ -239,23 +232,27 @@
         .film-poster-holder {
             width: 100%;
             height: 290px;
-            background-color: #0b0b0f;
-            overflow: hidden;
+            background: linear-gradient(180deg, #0e0e14 0%, #08080b 100%);
             border-bottom: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 1.5rem;
             position: relative;
+            box-sizing: border-box;
         }
 
-        .film-poster-holder img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0.8;
-            transition: opacity 0.2s ease, transform 0.2s ease;
-        }
-
-        .film-card:hover .film-poster-holder img {
-            opacity: 0.98;
-            transform: scale(1.02);
+        .film-poster-holder::before {
+            content: "CINE";
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            font-family: monospace;
+            font-size: 3rem;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.015);
+            letter-spacing: -2px;
+            pointer-events: none;
         }
 
         .film-info {
@@ -272,37 +269,11 @@
             margin-bottom: 0.4rem;
         }
 
-        .film-title {
-            font-size: 1rem;
-            font-weight: normal;
-            line-height: 1.4;
-            color: #e4e4ed;
-            margin-bottom: 0.5rem;
-        }
-
         .film-meta {
             font-family: monospace;
             font-size: 0.75rem;
             color: var(--text-secondary);
             margin-top: auto;
-        }
-
-        .poster-fallback-bg {
-            background: linear-gradient(180deg, #12121a 0%, #08080c 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-        }
-
-        .poster-fallback-text {
-            font-family: monospace;
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            text-align: center;
-            padding: 1rem;
         }
 
         footer {
@@ -319,7 +290,7 @@
         @media (max-width: 600px) {
             body { padding-top: 100px; }
             .film-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; }
-            .film-poster-holder { height: 210px; }
+            .film-poster-holder { height: 210px; padding: 1rem; }
         }
     </style>
 </head>
@@ -357,151 +328,136 @@
     </footer>
 
     <script>
-        // High-fidelity open source assets compiled directly via Wikimedia Commons / Wikipedia file repositories
         const filmDatabase = [
-            { rank: "01", title: "The Godfather Part II", director: "Francis Ford Coppola", year: "1974", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/e/e3/Francis_Ford_Coppola_2011_CC.jpg" },
-            { rank: "02", title: "The Human Condition Part I", director: "Masaki Kobayashi", year: "1959", country: "Japan", img: "https://upload.wikimedia.org/wikipedia/commons/4/48/Masaki_Kobayashi_1950s.jpg" },
-            { rank: "03", title: "The Lord of the Rings: The Return of the King", director: "Peter Jackson", year: "2003", country: "New Zealand", img: "https://upload.wikimedia.org/wikipedia/commons/4/4a/Peter_Jackson_at_the_Hobbit_Red_Carpet_Premiere.jpg" },
-            { rank: "04", title: "The Seventh Seal", director: "Ingmar Bergman", year: "1957", country: "Sweden", img: "https://upload.wikimedia.org/wikipedia/commons/d/d1/Ingmar_Bergman_1965.jpg" },
-            { rank: "05", title: "Before Sunrise", director: "Richard Linklater", year: "1995", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/c/ce/Richard_Linklater_2014.jpg" },
-            { rank: "06", title: "Come and See", director: "Elem Klimov", year: "1985", country: "Soviet Union", img: "https://upload.wikimedia.org/wikipedia/commons/a/a2/Klimov_Elem_1993.jpg" },
-            { rank: "07", title: "Grave of the Fireflies", director: "Isao Takahata", year: "1988", country: "Japan", img: "https://upload.wikimedia.org/wikipedia/commons/d/de/Isao_Takahata_Cannes_2014.jpg" },
-            { rank: "08", title: "Carol", director: "Todd Haynes", year: "2015", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/e/e0/Todd_Haynes_2015.jpg" },
-            { rank: "09", title: "Fargo", director: "Joel Coen", year: "1996", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/d/d6/Joel_Coen_Cannes_2013.jpg" },
-            { rank: "10", title: "Portrait of a Lady on Fire", director: "Céline Sciamma", year: "2019", country: "France", img: "https://upload.wikimedia.org/wikipedia/commons/f/ff/C%C3%A9line_Sciamma_Cannes_2019.jpg" },
-            { rank: "11", title: "A Separation", director: "Asghar Farhadi", year: "2011", country: "Iran", img: "https://upload.wikimedia.org/wikipedia/commons/c/cb/Asghar_Farhadi-Cannes2021.jpg" },
-            { rank: "12", title: "Breaking the Waves", director: "Lars von Trier", year: "1996", country: "Denmark", img: "https://upload.wikimedia.org/wikipedia/commons/a/ad/Lars_von_Trier_01.jpg" },
-            { rank: "13", title: "The Banshees of Inisherin", director: "Martin McDonagh", year: "2022", country: "Ireland", img: "https://upload.wikimedia.org/wikipedia/commons/c/cd/Martin_McDonagh_2018.jpg" },
-            { rank: "14", title: "Frances Ha", director: "Noah Baumbach", year: "2012", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/f/f6/Noah_Baumbach_2014.jpg" },
-            { rank: "15", title: "In the Mood for Love", director: "Wong Kar-wai", year: "2000", country: "Hong Kong", img: "https://upload.wikimedia.org/wikipedia/commons/b/be/Wong_Kar-wai_2014.jpg" },
-            { rank: "16", title: "Paterson", director: "Jim Jarmusch", year: "2016", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/d/d2/Jim_Jarmusch_V_2009.jpg" },
-            { rank: "17", title: "The Good, the Bad and the Ugly", director: "Sergio Leone", year: "1966", country: "Italy", img: "https://upload.wikimedia.org/wikipedia/commons/2/23/Sergio_Leone_1975.jpg" },
-            { rank: "18", title: "The 400 Blows", director: "François Truffaut", year: "1959", country: "France", img: "https://upload.wikimedia.org/wikipedia/commons/0/03/Francois_Truffaut_1968.jpg" },
-            { rank: "19", title: "Once Upon a Time in America", director: "Sergio Leone", year: "1984", country: "Italy", img: "https://upload.wikimedia.org/wikipedia/commons/e/ea/Leone_e_Morricone.jpg" },
-            { rank: "20", title: "Underground", director: "Emir Kusturica", year: "1995", country: "Yugoslavia", img: "https://upload.wikimedia.org/wikipedia/commons/e/ee/Emir_Kusturica_2018.jpg" },
-            { rank: "21", title: "20th Century Women", director: "Mike Mills", year: "2016", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/f/fc/Mike_Mills_Berlin_2023.jpg" },
-            { rank: "22", title: "Son of Saul", director: "László Nemes", year: "2015", country: "Hungary", img: "https://upload.wikimedia.org/wikipedia/commons/4/4b/L%C3%A1szl%C3%B3_Nemes_2016.jpg" },
-            { rank: "23", title: "La Haine", director: "Mathieu Kassovitz", year: "1995", country: "France", img: "https://upload.wikimedia.org/wikipedia/commons/0/01/Mathieu_Kassovitz_Cannes_2011.jpg" },
-            { rank: "24", title: "The Great Beauty", director: "Paolo Sorrentino", year: "2013", country: "Italy", img: "https://upload.wikimedia.org/wikipedia/commons/f/f3/Paolo_Sorrentino_Cannes_2015.jpg" },
-            { rank: "25", title: "The Piano Teacher", director: "Michael Haneke", year: "2001", country: "Austria", img: "https://upload.wikimedia.org/wikipedia/commons/e/ef/Michael_Haneke_Cannes_2012.jpg" },
-            { rank: "26", title: "The Man Without a Past", director: "Aki Kaurismäki", year: "2002", country: "Finland", img: "https://upload.wikimedia.org/wikipedia/commons/c/cb/Aki_Kaurism%C3%A4ki_2004.jpg" },
-            { rank: "27", title: "La La Land", director: "Damien Chazelle", year: "2016", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/7/74/Damien_Chazelle_2016.jpg" },
-            { rank: "28", title: "12 Angry Men", director: "Sidney Lumet", year: "1957", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/c/c5/Sidney_Lumet_1963.jpg" },
-            { rank: "29", title: "Barry Lyndon", director: "Stanley Kubrick", year: "1975", country: "UK", img: "https://upload.wikimedia.org/wikipedia/commons/7/7e/Stanley_Kubrick_Look_magazine.jpg" },
-            { rank: "30", title: "Close-Up", director: "Abbas Kiarostani", year: "1990", country: "Iran", img: "https://upload.wikimedia.org/wikipedia/commons/a/af/Abbas_Kiarostani.jpg" },
-            { rank: "31", title: "La Strada", director: "Federico Fellini", year: "1954", country: "Italy", img: "https://upload.wikimedia.org/wikipedia/commons/d/d3/Federico_Fellini_1965.jpg" },
-            { rank: "32", title: "Seven Samurai", director: "Akira Kurosawa", year: "1954", country: "Japan", img: "https://upload.wikimedia.org/wikipedia/commons/3/36/Akira_Kurosawa_1953.jpg" },
-            { rank: "33", title: "Army of Shadows", director: "Jean-Pierre Melville", year: "1969", country: "France", img: "https://upload.wikimedia.org/wikipedia/commons/3/33/Jean-Pierre_Melville_1971.jpg" },
-            { rank: "34", title: "Possession", director: "Andrzej Żuławski", year: "1981", country: "France", img: "https://upload.wikimedia.org/wikipedia/commons/3/30/Andrzej_Zulawski_2011.jpg" },
-            { rank: "35", title: "Memories of Murder", director: "Bong Joon Ho", year: "2003", country: "South Korea", img: "https://upload.wikimedia.org/wikipedia/commons/c/ca/Bong_Joon-ho_2019.jpg" },
-            { rank: "36", title: "About Elly", director: "Asghar Farhadi", year: "2009", country: "Iran", img: "https://upload.wikimedia.org/wikipedia/commons/4/41/Asghar_Farhadi_Venice_2022.jpg" },
-            { rank: "37", title: "It's Such a Beautiful Day", director: "Don Hertzfeldt", year: "2012", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/2/23/DonHertzfeldt98.jpg" },
-            { rank: "38", title: "Once Upon a Time in the West", director: "Sergio Leone", year: "1968", country: "Italy", img: "https://upload.wikimedia.org/wikipedia/commons/c/c9/Sergio_Leone_1982.jpg" },
-            { rank: "39", title: "Swiss Army Man", director: "Daniel Kwan, Daniel Scheinert", year: "2016", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/d/da/Daniel_Kwan_%26_Daniel_Scheinert_2023.jpg" },
-            { rank: "40", title: "Fantastic Mr. Fox", director: "Wes Anderson", year: "2009", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/3/39/Wes_Anderson_Cannes_2023.jpg" },
-            { rank: "41", title: "Eternal Sunshine of the Spotless Mind", director: "Michel Gondry", year: "2004", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/0/07/Michel_Gondry_Deauville_2011.jpg" },
-            { rank: "42", title: "Tokyo Story", director: "Yasujirō Ozu", year: "1953", country: "Japan", img: "https://upload.wikimedia.org/wikipedia/commons/c/cf/Yasujiro_Ozu_1951.jpg" },
-            { rank: "43", title: "Dogville", director: "Lars von Trier", year: "2003", country: "Denmark", img: "https://upload.wikimedia.org/wikipedia/commons/5/52/Lars_von_Trier.jpg" },
-            { rank: "44", title: "The Truman Show", director: "Peter Weir", year: "1998", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/9/91/Peter_Weir_2011.jpg" },
-            { rank: "45", title: "Stalker", director: "Andrei Tarkovsky", year: "1979", country: "Soviet Union", img: "https://upload.wikimedia.org/wikipedia/commons/3/32/Andrei_Tarkovsky_1965.jpg" },
-            { rank: "46", title: "A Woman Under the Influence", director: "John Cassavetes", year: "1974", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/1/15/John_Cassavetes_1969.jpg" },
-            { rank: "47", title: "GoodFellas", director: "Martin Scorsese", year: "1990", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/e/eb/Martin_Scorsese_Cannes_2018.jpg" },
-            { rank: "48", title: "Dog Day Afternoon", director: "Sidney Lumet", year: "1975", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/9/9c/Sidney_Lumet_NYWT.jpg" },
-            { rank: "49", title: "The Big Lebowski", director: "Joel Coen", year: "1998", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/2/22/Coen_brothers_2007.jpg" },
-            { rank: "50", title: "There Will Be Blood", director: "Paul Thomas Anderson", year: "2007", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/e/ec/Paul_Thomas_Anderson_2012.jpg" },
-            { rank: "51", title: "Your Name.", director: "Makoto Shinkai", year: "2016", country: "Japan", img: "https://upload.wikimedia.org/wikipedia/commons/4/4e/Makoto_Shinkai_2016.jpg" },
-            { rank: "52", title: "Farewell My Concubine", director: "Chen Kaige", year: "1993", country: "China", img: "https://upload.wikimedia.org/wikipedia/commons/b/b3/Chen_Kaige_Venice_2009.jpg" },
-            { rank: "53", title: "Hiroshima Mon Amour", director: "Alain Resnais", year: "1959", country: "France", img: "https://upload.wikimedia.org/wikipedia/commons/d/da/Alain_Resnais_1994.jpg" },
-            { rank: "54", title: "Jules and Jim", director: "François Truffaut", year: "1962", country: "France", img: "https://upload.wikimedia.org/wikipedia/commons/b/be/Francois_Truffaut_1976.jpg" },
-            { rank: "55", title: "Cure", director: "Kiyoshi Kurosawa", year: "1997", country: "Japan", img: "https://upload.wikimedia.org/wikipedia/commons/7/77/Kiyoshi_Kurosawa_Cannes_2015.jpg" },
-            { rank: "56", title: "Arrival", director: "Denis Villeneuve", year: "2016", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/d/d1/Denis_Villeneuve_by_Gage_Skidmore.jpg" },
-            { rank: "57", title: "Another Round", director: "Thomas Vinterberg", year: "2020", country: "Denmark", img: "https://upload.wikimedia.org/wikipedia/commons/c/cc/Thomas_Vinterberg_2013.jpg" },
-            { rank: "58", title: "Pride & Prejudice", director: "Joe Wright", year: "2005", country: "UK", img: "https://upload.wikimedia.org/wikipedia/commons/4/44/Joe_Wright_San_Sebastian_2011.jpg" },
-            { rank: "59", title: "Parasite", director: "Bong Joon Ho", year: "2019", country: "South Korea", img: "https://upload.wikimedia.org/wikipedia/commons/2/27/Bong_Joon-ho_2017.jpg" },
-            { rank: "60", title: "Fitzcarraldo", director: "Werner Herzog", year: "1982", country: "West Germany", img: "https://upload.wikimedia.org/wikipedia/commons/a/ad/Werner_Herzog_2018.jpg" },
-            { rank: "61", title: "Little Women", director: "Greta Gerwig", year: "2019", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/2/20/Greta_Gerwig_2019_Cannes.jpg" },
-            { rank: "62", title: "Interstellar", director: "Christopher Nolan", year: "2014", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/9/95/Christopher_Nolan_Cannes_2018.jpg" },
-            { rank: "63", title: "Unforgiven", director: "Clint Eastwood", year: "1992", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/a/af/Clint_Eastwood_Cannes_2017.jpg" },
-            { rank: "64", title: "The Thing", director: "John Carpenter", year: "1982", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/5/5a/John_Carpenter_Paris_2019.jpg" },
-            { rank: "65", title: "Aftersun", director: "Charlotte Wells", year: "2022", country: "UK", img: "https://upload.wikimedia.org/wikipedia/commons/8/87/Charlotte_Wells_2023.jpg" },
-            { rank: "66", title: "Anatomy of a Fall", director: "Justine Triet", year: "2023", country: "France", img: "https://upload.wikimedia.org/wikipedia/commons/e/ea/Justine_Triet_Cannes_2023.jpg" },
-            { rank: "67", title: "The Zone of Interest", director: "Jonathan Glazer", year: "2023", country: "UK", img: "https://upload.wikimedia.org/wikipedia/commons/c/ca/Jonathan_Glazer_2014.jpg" },
-            { rank: "68", title: "Volver", director: "Pedro Almodóvar", year: "2006", country: "Spain", img: "https://upload.wikimedia.org/wikipedia/commons/3/30/Pedro_Almod%C3%B3var_2017.jpg" },
-            { rank: "69", title: "Memento", director: "Christopher Nolan", year: "2000", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/2/23/Christopher_Nolan_2010.jpg" },
-            { rank: "70", title: "Brokeback Mountain", director: "Ang Lee", year: "2005", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/4/41/Ang_Lee_2013.jpg" },
-            { rank: "71", title: "Bicycle Thieves", director: "Vittorio De Sica", year: "1948", country: "Italy", img: "https://upload.wikimedia.org/wikipedia/commons/0/05/Vittorio_De_Sica_1955.jpg" },
-            { rank: "72", title: "My Dinner with Andre", director: "Louis Malle", year: "1981", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/f/fc/Louis_Malle_1990.jpg" },
-            { rank: "73", title: "Twin Peaks: Fire Walk with Me", director: "David Lynch", year: "1992", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/2/21/David_Lynch_Lumiere_2014.jpg" },
-            { rank: "74", title: "The Vanishing", director: "George Sluizer", year: "1988", country: "Netherlands", img: "https://upload.wikimedia.org/wikipedia/commons/f/ff/George_Sluizer_1985.jpg" },
-            { rank: "75", title: "The Long Goodbye", director: "Robert Altman", year: "1973", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/0/04/Robert_Altman_1975.jpg" },
-            { rank: "76", title: "What We Do in the Shadows", director: "Taika Waititi, Jemaine Clement", year: "2014", country: "New Zealand", img: "https://upload.wikimedia.org/wikipedia/commons/c/c5/Taika_Waititi_by_Gage_Skidmore_2.jpg" },
-            { rank: "77", title: "Dune: Part Two", director: "Denis Villeneuve", year: "2024", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/c/cb/Denis_Villeneuve_Cannes_2018.jpg" },
-            { rank: "78", title: "Magnolia", director: "Paul Thomas Anderson", year: "1999", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/2/27/Paul_Thomas_Anderson_Cannes.jpg" },
-            { rank: "79", title: "Inside Llewyn Davis", director: "Joel Coen, Ethan Coen", year: "2013", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/e/ee/Coen_brothers_Cannes_2015.jpg" },
-            { rank: "80", title: "Caché", director: "Michael Haneke", year: "2005", country: "France", img: "https://upload.wikimedia.org/wikipedia/commons/0/07/Michael_Haneke_2009.jpg" },
-            { rank: "81", title: "Moonlight", director: "Barry Jenkins", year: "2016", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/9/90/Barry_Jenkins_2017.jpg" },
-            { rank: "82", title: "The Fall", director: "Tarsem Singh", year: "2006", country: "India", img: "https://upload.wikimedia.org/wikipedia/commons/c/cb/Tarsem_Singh_Comic-Con.jpg" },
-            { rank: "83", title: "The Tree of Life", director: "Terrence Malick", year: "2011", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/c/cc/Terrence_Malick_Deauville_2011.jpg" },
-            { rank: "84", title: "The Wages of Fear", director: "Henri-Georges Clouzot", year: "1953", country: "France", img: "https://upload.wikimedia.org/wikipedia/commons/4/4b/Henri-Georges_Clouzot_1955.jpg" },
-            { rank: "85", title: "Le Samouraï", director: "Jean-Pierre Melville", year: "1967", country: "France", img: "https://upload.wikimedia.org/wikipedia/commons/6/67/Jean-Pierre_Melville_Studio.jpg" },
-            { rank: "86", title: "Lady Bird", director: "Greta Gerwig", year: "2017", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/a/af/Greta_Gerwig_2018.jpg" },
-            { rank: "87", title: "Vivre Sa Vie", director: "Jean-Luc Godard", year: "1962", country: "France", img: "https://upload.wikimedia.org/wikipedia/commons/a/a8/Jean-Luc_Godard_1968.jpg" },
-            { rank: "88", title: "Kill Bill: Vol. 1", director: "Quentin Tarantino", year: "2003", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/a/a4/Quentin_Tarantino_by_Gage_Skidmore_2.jpg" },
-            { rank: "89", title: "The Piano", director: "Jane Campion", year: "1993", country: "New Zealand", img: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Jane_Campion_2014.jpg" },
-            { rank: "90", title: "My Darling Clementine", director: "John Ford", year: "1946", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/a/ae/John_Ford_1946.jpg" },
-            { rank: "91", title: "The Night of the Hunter", director: "Charles Laughton", year: "1955", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/a/a2/Charles_Laughton_1934.jpg" },
-            { rank: "92", title: "The General", director: "Buster Keaton", year: "1926", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/e/ec/Buster_Keaton_1920.jpg" },
-            { rank: "93", title: "Y Tu Mamá También", director: "Alfonso Cuarón", year: "2001", country: "Mexico", img: "https://upload.wikimedia.org/wikipedia/commons/0/0b/Alfonso_Cuar%C3%B3n_Cannes_2014.jpg" },
-            { rank: "94", title: "The Florida Project", director: "Sean Baker", year: "2017", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/b/b3/Sean_Baker_2018.jpg" },
-            { rank: "95", title: "Uncut Gems", director: "Josh Safdie, Benny Safdie", year: "2019", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/e/ee/Safdie_brothers_2017.jpg" },
-            { rank: "96", title: "Rosemary's Baby", director: "Roman Polanski", year: "1968", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/b/bd/Roman_Polanski_2010.jpg" },
-            { rank: "97", title: "Office Space", director: "Mike Judge", year: "1999", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/3/30/Mike_Judge_by_Gage_Skidmore.jpg" },
-            { rank: "98", title: "Saving Private Ryan", director: "Steven Spielberg", year: "1998", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/6/67/Steven_Spielberg_by_Gage_Skidmore.jpg" },
-            { rank: "99", title: "Humanist Vampire Seeking Consenting Suicidal Person", director: "Ariane Louis-Seize", year: "2023", country: "Canada", img: "https://upload.wikimedia.org/wikipedia/commons/7/77/La_r%C3%A9alisatrice_Ariane_Louis-Seize.jpg" },
-            { rank: "100", title: "Coco", director: "Lee Unkrich", year: "2017", country: "USA", img: "https://upload.wikimedia.org/wikipedia/commons/f/fa/Lee_Unkrich_2011.jpg" },
-            { rank: "101", title: "The Cook, the Thief, His Wife & Her Lover", director: "Peter Greenaway", year: "1989", country: "UK", img: "https://upload.wikimedia.org/wikipedia/commons/a/ae/Peter_Greenaway_Cannes_2014.jpg" }
+            { rank: "01", title: "The Godfather Part II", director: "Francis Ford Coppola", year: "1974", country: "USA" },
+            { rank: "02", title: "The Human Condition Part I", director: "Masaki Kobayashi", year: "1959", country: "Japan" },
+            { rank: "03", title: "The Lord of the Rings: The Return of the King", director: "Peter Jackson", year: "2003", country: "New Zealand" },
+            { rank: "04", title: "The Seventh Seal", director: "Ingmar Bergman", year: "1957", country: "Sweden" },
+            { rank: "05", title: "Before Sunrise", director: "Richard Linklater", year: "1995", country: "USA" },
+            { rank: "06", title: "Come and See", director: "Elem Klimov", year: "1985", country: "Soviet Union" },
+            { rank: "07", title: "Grave of the Fireflies", director: "Isao Takahata", year: "1988", country: "Japan" },
+            { rank: "08", title: "Carol", director: "Todd Haynes", year: "2015", country: "USA" },
+            { rank: "09", title: "Fargo", director: "Joel Coen", year: "1996", country: "USA" },
+            { rank: "10", title: "Portrait of a Lady on Fire", director: "Céline Sciamma", year: "2019", country: "France" },
+            { rank: "11", title: "A Separation", director: "Asghar Farhadi", year: "2011", country: "Iran" },
+            { rank: "12", title: "Breaking the Waves", director: "Lars von Trier", year: "1996", country: "Denmark" },
+            { rank: "13", title: "The Banshees of Inisherin", director: "Martin McDonagh", year: "2022", country: "Ireland" },
+            { rank: "14", title: "Frances Ha", director: "Noah Baumbach", year: "2012", country: "USA" },
+            { rank: "15", title: "In the Mood for Love", director: "Wong Kar-wai", year: "2000", country: "Hong Kong" },
+            { rank: "16", title: "Paterson", director: "Jim Jarmusch", year: "2016", country: "USA" },
+            { rank: "17", title: "The Good, the Bad and the Ugly", director: "Sergio Leone", year: "1966", country: "Italy" },
+            { rank: "18", title: "The 400 Blows", director: "François Truffaut", year: "1959", country: "France" },
+            { rank: "19", title: "Once Upon a Time in America", director: "Sergio Leone", year: "1984", country: "Italy" },
+            { rank: "20", title: "Underground", director: "Emir Kusturica", year: "1995", country: "Yugoslavia" },
+            { rank: "21", title: "20th Century Women", director: "Mike Mills", year: "2016", country: "USA" },
+            { rank: "22", title: "Son of Saul", director: "László Nemes", year: "2015", country: "Hungary" },
+            { rank: "23", title: "La Haine", director: "Mathieu Kassovitz", year: "1995", country: "France" },
+            { rank: "24", title: "The Great Beauty", director: "Paolo Sorrentino", year: "2013", country: "Italy" },
+            { rank: "25", title: "The Piano Teacher", director: "Michael Haneke", year: "2001", country: "Austria" },
+            { rank: "26", title: "The Man Without a Past", director: "Aki Kaurismäki", year: "2002", country: "Finland" },
+            { rank: "27", title: "La La Land", director: "Damien Chazelle", year: "2016", country: "USA" },
+            { rank: "28", title: "12 Angry Men", director: "Sidney Lumet", year: "1957", country: "USA" },
+            { rank: "29", title: "Barry Lyndon", director: "Stanley Kubrick", year: "1975", country: "UK" },
+            { rank: "30", title: "Close-Up", director: "Abbas Kiarostani", year: "1990", country: "Iran" },
+            { rank: "31", title: "La Strada", director: "Federico Fellini", year: "1954", country: "Italy" },
+            { rank: "32", title: "Seven Samurai", director: "Akira Kurosawa", year: "1954", country: "Japan" },
+            { rank: "33", title: "Army of Shadows", director: "Jean-Pierre Melville", year: "1969", country: "France" },
+            { rank: "34", title: "Possession", director: "Andrzej Żuławski", year: "1981", country: "France" },
+            { rank: "35", title: "Memories of Murder", director: "Bong Joon Ho", year: "2003", country: "South Korea" },
+            { rank: "36", title: "About Elly", director: "Asghar Farhadi", year: "2009", country: "Iran" },
+            { rank: "37", title: "It's Such a Beautiful Day", director: "Don Hertzfeldt", year: "2012", country: "USA" },
+            { rank: "38", title: "Once Upon a Time in the West", director: "Sergio Leone", year: "1968", country: "Italy" },
+            { rank: "39", title: "Swiss Army Man", director: "Daniel Kwan, Daniel Scheinert", year: "2016", country: "USA" },
+            { rank: "40", title: "Fantastic Mr. Fox", director: "Wes Anderson", year: "2009", country: "USA" },
+            { rank: "41", title: "Eternal Sunshine of the Spotless Mind", director: "Michel Gondry", year: "2004", country: "USA" },
+            { rank: "42", title: "Tokyo Story", director: "Yasujirō Ozu", year: "1953", country: "Japan" },
+            { rank: "43", title: "Dogville", director: "Lars von Trier", year: "2003", country: "Denmark" },
+            { rank: "44", title: "The Truman Show", director: "Peter Weir", year: "1998", country: "USA" },
+            { rank: "45", title: "Stalker", director: "Andrei Tarkovsky", year: "1979", country: "Soviet Union" },
+            { rank: "46", title: "A Woman Under the Influence", director: "John Cassavetes", year: "1974", country: "USA" },
+            { rank: "47", title: "GoodFellas", director: "Martin Scorsese", year: "1990", country: "USA" },
+            { rank: "48", title: "Dog Day Afternoon", director: "Sidney Lumet", year: "1975", country: "USA" },
+            { rank: "49", title: "The Big Lebowski", director: "Joel Coen", year: "1998", country: "USA" },
+            { rank: "50", title: "There Will Be Blood", director: "Paul Thomas Anderson", year: "2007", country: "USA" },
+            { rank: "51", title: "Your Name.", director: "Makoto Shinkai", year: "2016", country: "Japan" },
+            { rank: "52", title: "Farewell My Concubine", director: "Chen Kaige", year: "1993", country: "China" },
+            { rank: "53", title: "Hiroshima Mon Amour", director: "Alain Resnais", year: "1959", country: "France" },
+            { rank: "54", title: "Jules and Jim", director: "François Truffaut", year: "1962", country: "France" },
+            { rank: "55", title: "Cure", director: "Kiyoshi Kurosawa", year: "1997", country: "Japan" },
+            { rank: "56", title: "Arrival", director: "Denis Villeneuve", year: "2016", country: "USA" },
+            { rank: "57", title: "Another Round", director: "Thomas Vinterberg", year: "2020", country: "Denmark" },
+            { rank: "58", title: "Pride & Prejudice", director: "Joe Wright", year: "2005", country: "UK" },
+            { rank: "59", title: "Parasite", director: "Bong Joon Ho", year: "2019", country: "South Korea" },
+            { rank: "60", title: "Fitzcarraldo", director: "Werner Herzog", year: "1982", country: "West Germany" },
+            { rank: "61", title: "Little Women", director: "Greta Gerwig", year: "2019", country: "USA" },
+            { rank: "62", title: "Interstellar", director: "Christopher Nolan", year: "2014", country: "USA" },
+            { rank: "63", title: "Unforgiven", director: "Clint Eastwood", year: "1992", country: "USA" },
+            { rank: "64", title: "The Thing", director: "John Carpenter", year: "1982", country: "USA" },
+            { rank: "65", title: "Aftersun", director: "Charlotte Wells", year: "2022", country: "UK" },
+            { rank: "66", title: "Anatomy of a Fall", director: "Justine Triet", year: "2023", country: "France" },
+            { rank: "67", title: "The Zone of Interest", director: "Jonathan Glazer", year: "2023", country: "UK" },
+            { rank: "68", title: "Volver", director: "Pedro Almodóvar", year: "2006", country: "Spain" },
+            { rank: "69", title: "Memento", director: "Christopher Nolan", year: "2000", country: "USA" },
+            { rank: "70", title: "Brokeback Mountain", director: "Ang Lee", year: "2005", country: "USA" },
+            { rank: "71", title: "Bicycle Thieves", director: "Vittorio De Sica", year: "1948", country: "Italy" },
+            { rank: "72", title: "My Dinner with Andre", director: "Louis Malle", year: "1981", country: "USA" },
+            { rank: "73", title: "Twin Peaks: Fire Walk with Me", director: "David Lynch", year: "1992", country: "USA" },
+            { rank: "74", title: "The Vanishing", director: "George Sluizer", year: "1988", country: "Netherlands" },
+            { rank: "75", title: "The Long Goodbye", director: "Robert Altman", year: "1973", country: "USA" },
+            { rank: "76", title: "What We Do in the Shadows", director: "Taika Waititi, Jemaine Clement", year: "2014", country: "New Zealand" },
+            { rank: "77", title: "Dune: Part Two", director: "Denis Villeneuve", year: "2024", country: "USA" },
+            { rank: "78", title: "Magnolia", director: "Paul Thomas Anderson", year: "1999", country: "USA" },
+            { rank: "79", title: "Inside Llewyn Davis", director: "Joel Coen, Ethan Coen", year: "2013", country: "USA" },
+            { rank: "80", title: "Caché", director: "Michael Haneke", year: "2005", country: "France" },
+            { rank: "81", title: "Moonlight", director: "Barry Jenkins", year: "2016", country: "USA" },
+            { rank: "82", title: "The Fall", director: "Tarsem Singh", year: "2006", country: "India" },
+            { rank: "83", title: "The Tree of Life", director: "Terrence Malick", year: "2011", country: "USA" },
+            { rank: "84", title: "The Wages of Fear", director: "Henri-Georges Clouzot", year: "1953", country: "France" },
+            { rank: "85", title: "Le Samouraï", director: "Jean-Pierre Melville", year: "1967", country: "France" },
+            { rank: "86", title: "Lady Bird", director: "Greta Gerwig", year: "2017", country: "USA" },
+            { rank: "87", title: "Vivre Sa Vie", director: "Jean-Luc Godard", year: "1962", country: "France" },
+            { rank: "88", title: "Kill Bill: Vol. 1", director: "Quentin Tarantino", year: "2003", country: "USA" },
+            { rank: "89", title: "The Piano", director: "Jane Campion", year: "1993", country: "New Zealand" },
+            { rank: "90", title: "My Darling Clementine", director: "John Ford", year: "1946", country: "USA" },
+            { rank: "91", title: "The Night of the Hunter", director: "Charles Laughton", year: "1955", country: "USA" },
+            { rank: "92", title: "The General", director: "Buster Keaton", year: "1926", country: "USA" },
+            { rank: "93", title: "Y Tu Mamá También", director: "Alfonso Cuarón", year: "2001", country: "Mexico" },
+            { rank: "94", title: "The Florida Project", director: "Sean Baker", year: "2017", country: "USA" },
+            { rank: "95", title: "Uncut Gems", director: "Josh Safdie, Benny Safdie", year: "2019", country: "USA" },
+            { rank: "96", title: "Rosemary's Baby", director: "Roman Polanski", year: "1968", country: "USA" },
+            { rank: "97", title: "Office Space", director: "Mike Judge", year: "1999", country: "USA" },
+            { rank: "98", title: "Saving Private Ryan", director: "Steven Spielberg", year: "1998", country: "USA" },
+            { rank: "99", title: "Humanist Vampire Seeking Consenting Suicidal Person", director: "Ariane Louis-Seize", year: "2023", country: "Canada" },
+            { rank: "100", title: "Coco", director: "Lee Unkrich", year: "2017", country: "USA" },
+            { rank: "101", title: "The Cook, the Thief, His Wife & Her Lover", director: "Peter Greenaway", year: "1989", country: "UK" }
         ];
 
-        // Direct architectural/profile image assets from Wikimedia
         const spotlightPool = [
             {
                 type: "Director Spotlight",
                 title: "The Coen Brothers",
-                img: "https://upload.wikimedia.org/wikipedia/commons/e/ee/Coen_brothers_Cannes_2015.jpg",
                 desc: "An obsession with structural ironies, deadpan fatalism, and regular folks stumbling into beautifully complex moral quicksands.",
                 tags: ["Fargo (#09)", "The Big Lebowski (#49)", "Inside Llewyn Davis (#79)"]
             },
             {
                 type: "Director Spotlight",
                 title: "Mike Leigh",
-                img: "https://upload.wikimedia.org/wikipedia/commons/0/08/Mike_Leigh_Venice_2010.jpg",
                 desc: "Unvarnished, improvisational slices of human friction. Masterful observation of quiet desperation and profound tenderness in British landscapes.",
                 tags: ["Naked", "Secrets & Lies"]
             },
             {
                 type: "Aesthetic Constants",
                 title: "The Tilda Swinton Presence",
-                img: "https://upload.wikimedia.org/wikipedia/commons/b/bf/Tilda_Swinton_Cannes_2019.jpg",
                 desc: "Chameleonic, architectural, and thoroughly alien. Tracking a fascination with performances that transcend traditional character work into pure presence.",
                 tags: ["The Zone of Interest (#67)"]
             },
             {
                 type: "Director Spotlight",
                 title: "Asghar Farhadi",
-                img: "https://upload.wikimedia.org/wikipedia/commons/c/cb/Asghar_Farhadi-Cannes2021.jpg",
                 desc: "Intense, localized micro-dramas where simple misunderstandings escalate into profound systemic and moral breakdowns.",
                 tags: ["A Separation (#11)", "About Elly (#36)"]
             }
         ];
-
-        function handleImgError(imageElement, title) {
-            const parent = imageElement.parentElement;
-            imageElement.style.display = 'none';
-            if(parent) {
-                parent.classList.add('poster-fallback-bg');
-                parent.innerHTML = `<span class="poster-fallback-text">${title}</span>`;
-            }
-        }
 
         function renderFilms(films) {
             const grid = document.getElementById('filmGrid');
@@ -513,12 +469,13 @@
 
                 card.innerHTML = `
                     <div class="film-poster-holder">
-                        <img src="${film.img}" alt="${film.title}" onerror="handleImgError(this, '${film.title.replace(/'/g, "\\'")}')">
+                        <span class="subtitle" style="font-size: 0.65rem; color: var(--accent); opacity: 0.7;">[ ${film.country} ]</span>
+                        <h4 style="font-family: 'Georgia', serif; font-style: italic; font-weight: normal; font-size: 1.25rem; line-height: 1.3; color: #f0f0f5; margin-top: auto; margin-bottom: auto;">${film.title}</h4>
+                        <span style="font-family: monospace; font-size: 0.7rem; color: var(--text-secondary); text-align: right;">${film.year}</span>
                     </div>
                     <div class="film-info">
                         <span class="film-rank">#${film.rank}</span>
-                        <h5 class="film-title">${film.title}</h5>
-                        <span class="film-meta">${film.director} (${film.year})</span>
+                        <span class="film-meta" style="color: var(--text-primary); font-weight: 500;">${film.director}</span>
                     </div>
                 `;
                 grid.appendChild(card);
@@ -551,12 +508,13 @@
                 <h3>Featured Today</h3>
                 <div class="spotlight-grid">
                     <div class="spotlight-card">
-                        <div class="spotlight-img-holder">
-                            <img src="${card1.img}" alt="${card1.title}" onerror="handleImgError(this, '${card1.title.replace(/'/g, "\\'")}')">
+                        <div class="spotlight-header-holder">
+                            <div>
+                                <span class="subtitle" style="font-size:0.65rem; color:var(--accent);">${card1.type}</span>
+                                <h4 style="margin-top:0.2rem;">${card1.title}</h4>
+                            </div>
                         </div>
                         <div class="spotlight-content">
-                            <span class="subtitle" style="font-size:0.65rem; color:var(--text-secondary);">${card1.type}</span>
-                            <h4 style="margin-top:0.2rem;">${card1.title}</h4>
                             <p>${card1.desc}</p>
                             <div class="tag-list">
                                 ${card1.tags.map(t => `<span class="tag">${t}</span>`).join('')}
@@ -564,12 +522,13 @@
                         </div>
                     </div>
                     <div class="spotlight-card">
-                        <div class="spotlight-img-holder">
-                            <img src="${card2.img}" alt="${card2.title}" onerror="handleImgError(this, '${card2.title.replace(/'/g, "\\'")}')">
+                        <div class="spotlight-header-holder">
+                            <div>
+                                <span class="subtitle" style="font-size:0.65rem; color:var(--accent);">${card2.type}</span>
+                                <h4 style="margin-top:0.2rem;">${card2.title}</h4>
+                            </div>
                         </div>
                         <div class="spotlight-content">
-                            <span class="subtitle" style="font-size:0.65rem; color:var(--text-secondary);">${card2.type}</span>
-                            <h4 style="margin-top:0.2rem;">${card2.title}</h4>
                             <p>${card2.desc}</p>
                             <div class="tag-list">
                                 ${card2.tags.map(t => `<span class="tag">${t}</span>`).join('')}
