@@ -135,7 +135,7 @@
             font-style: italic;
         }
 
-        /* Re-engineered text layout formatting to remove the "crammed" feel */
+        /* Expansive text layout formatting to remove the "crammed" feel */
         .poem-content {
             white-space: pre-wrap; 
             font-size: 1.05rem;
@@ -144,10 +144,20 @@
             margin-bottom: 5rem;
             text-align: left;
             
-            /* Structural changes for expansive layout */
+            /* Structural setup for long breath-length lines */
             line-height: 2.2;         /* Opened vertical separation drastically */
             padding-left: 4rem;       /* Indentation buffer zone */
             text-indent: -4rem;       /* Hanging indent: pulls original line breaks back out */
+        }
+
+        /* Postscript alignment for location/date lines at the end */
+        .poem-postscript {
+            display: block;
+            text-align: right;
+            font-style: italic;
+            margin-top: 2.2rem;       /* Exactly matching your line-height for a clean 1-line gap */
+            text-indent: 0;           /* Resets the hanging indent so it aligns perfectly to the right margin */
+            color: var(--text-secondary);
         }
 
         /* Footer */
@@ -201,7 +211,7 @@ who got busted in their pubic beards returning through Laredo with a belt of mar
 who ate fire in paint hotels or drank turpentine in Paradise Alley, death, or purgatoried their torsos night after night
 with dreams, with drugs, with waking nightmares, alcohol and cock and endless balls,
 incomparable blind streets of shuddering cloud and lightning in the mind leaping toward poles of Canada & Paterson, illuminating all the motionless world of Time between,
-Peyote solidities of halls, backyard green tree cemetery dawns, wine drunkenness over the rooftops, storefront boroughs of teahead joyride neon blinking traffic light, sun and moon and tree vibrations in the roaring winter dusks of Brooklyn, ashcan rantings and kind king light of mind,
+Peyote solidities of halls, backyard green tree cemetery dawns, wine drunkenness over the rooftops, storefront boroughs of teahead joyride neon blinking traffic light, sun and moon and tree vibrations in the roaring winter dawns of Brooklyn, ashcan rantings and kind king light of mind,
 who chained themselves to subways for the endless ride from Battery to holy Bronx on benzedrine until the noise of wheels and children brought them down shuddering mouth-wracked and battered bleak of brain all drained of brilliance in the drear light of Zoo,
 who sank all night in submarine light of Bickford’s floated out and sat through the stale beer afternoon in desolate Fugazzi’s, listening to the crack of doom on the hydrogen jukebox,
 who talked continuously seventy hours from park to pad to bar to Bellevue to museum to the Brooklyn Bridge,
@@ -328,7 +338,9 @@ I’m with you in Rockland
    where we wake up electrified out of the coma by our own souls’ airplanes roaring over the roof they’ve come to drop angelic bombs the hospital illuminates itself    imaginary walls collapse    O skinny legions run outside    O starry-spangled shock of mercy the eternal war is here    O victory forget your underwear we’re free
 I’m with you in Rockland
    in my dreams you walk dripping from a sea-journey on the highway across America in tears to the door of my cottage in the Western night
- San Francisco, 1955—1956</article>
+
+        <span class="poem-postscript">San Francisco, 1955—1956</span>
+</article>
 
     </main>
 
