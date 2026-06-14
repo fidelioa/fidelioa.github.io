@@ -3,433 +3,202 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Grand Budapest - Board Review</title>
-    
-    <link rel="icon" type="image/png" href="./assets/favicon.png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <script src="main.js" defer type="module"></script>
-    
+    <title>Fragments & Echoes</title>
     <style>
-        /* ========================================================
-            ARTSY RESET & BASE (Performance Optimized Canvas)
-           ======================================================== */
-        body, html, 
-        .main-inner, .content-outer, .post-body, .entry-content,
-        #main, #content, .wrapper, .main-content-wrapper {
-            margin: 0 !important;
-            padding: 0 !important;
-            max-width: 100% !important;
-            width: 100% !important;
-            background: #090f1d !important;
-            min-height: 100%;
-        }
-
-        .sidebar-container, #sidebar-wrapper, .main-header, .blog-header, 
-        header, footer {
-            display: none !important;
+        :root {
+            --bg-color: #0d0d11;
+            --panel-bg: #14141c;
+            --text-primary: #e2e2e9;
+            --text-secondary: #8a8a9d;
+            --accent: #9d7bb0; /* Muted gothic violet */
+            --accent-glow: rgba(157, 123, 176, 0.15);
+            --border: #232330;
         }
 
         * {
-            margin: 0; padding: 0; box-sizing: border-box;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Georgia', serif;
+            line-height: 1.7;
+            padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            width: 100%;
+            max-width: 750px;
+            margin-bottom: 4rem;
+            text-align: center;
+            border-bottom: 1px dashed var(--border);
+            padding-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 400;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            font-style: italic;
+        }
+
+        .subtitle {
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        main {
+            width: 100%;
+            max-width: 750px;
+            display: flex;
+            flex-direction: column;
+            gap: 3.5rem;
+        }
+
+        /* Artsy Log Entry Card */
+        .entry {
+            background: var(--panel-bg);
+            border: 1px solid var(--border);
+            padding: 2.5rem;
+            border-radius: 4px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .entry:hover {
+            border-color: var(--accent);
+            box-shadow: 0 10px 30px var(--accent-glow);
+        }
+
+        .meta {
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            text-transform: uppercase;
+        }
+
+        .tag {
+            color: var(--accent);
+        }
+
+        /* Typography styles for different contents */
+        .quote {
+            font-size: 1.25rem;
+            font-style: italic;
+            border-left: 2px solid var(--accent);
+            padding-left: 1.5rem;
+            margin: 1rem 0;
+            color: #f0f0f5;
+        }
+
+        .citation {
+            display: block;
+            font-size: 0.9.5rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+            text-align: right;
             font-family: 'Georgia', serif;
         }
 
-        /* ========================================================
-            STARRY BACKGROUND CANVAS
-           ======================================================== */
-        .art-canvas-container {
-            position: relative;
-            width: 100% !important;
-            min-height: 100vh !important;
-            z-index: 1 !important;
-            background: 
-                linear-gradient(rgba(9, 15, 29, 0.4), rgba(15, 23, 42, 0.6)),
-                url('./assets/Background.jpg') no-repeat center center !important;
-            background-size: cover !important;
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
-            justify-content: flex-start !important;
-            overflow-x: hidden !important;
-            padding-bottom: 60px !important;
-        }
-
-        /* ========================================================
-            NAVIGATION BAR
-           ======================================================== */
-        .custom-navbar {
-            position: relative;
-            z-index: 100;
-            width: 100%;
-            min-height: 80px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 50px;
-            background: rgba(9, 15, 29, 0.75);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(234, 179, 8, 0.2);
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .nav-logo {
-            font-size: 1.4rem;
-            font-weight: 700;
-            font-style: italic;
-            letter-spacing: 1px;
-            color: #fef08a;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            text-decoration: none;
-            transition: transform 0.3s ease;
-        }
-        .nav-logo:hover { transform: scale(1.02); }
-
-        .nav-links {
-            display: flex;
-            gap: 35px;
-            list-style: none;
-            align-items: center;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: #cbd5e1;
-            font-size: 0.95rem;
-            font-weight: 500;
+        .poem {
+            white-space: pre-line;
+            font-size: 1.05rem;
             letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-            position: relative;
-            padding-bottom: 4px;
-        }
-        .nav-links a:hover, .nav-links a.active { color: #fef08a; }
-
-        /* Generic Lockout Global Rules for Navigation Link Protection */
-        .nav-links a.disabled-link {
-            color: #475569 !important;
-            cursor: not-allowed !important;
-            pointer-events: none !important;
-            opacity: 0.5;
-        }
-        .nav-links a.active-link {
-            color: #cbd5e1 !important;
-            cursor: pointer !important;
-            pointer-events: auto !important;
-            opacity: 1;
-        }
-        .nav-links a.active-link:hover {
-            color: #fef08a !important;
+            color: #e2e2e9;
+            padding-left: 1rem;
         }
 
-        /* ========================================================
-            TOP-RIGHT NAV PROFILE HUB
-           ======================================================== */
-        .nav-profile-wrapper {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-        }
-
-        #nav-user-profile {
-            display: none; 
-            align-items: center;
-        }
-
-        #nav-user-photo {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #eab308;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-        }
-        #nav-user-photo:hover { transform: scale(1.05); }
-
-        .profile-dropdown-menu {
-            display: none; 
-            position: absolute;
-            top: 55px;
-            right: 0; 
-            background: rgba(13, 21, 39, 0.95);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(234, 179, 8, 0.4);
-            border-radius: 12px;
-            padding: 16px;
-            min-width: 230px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-            z-index: 105;
-            text-align: left;
-        }
-        .profile-dropdown-menu.show {
-            display: block !important;
-        }
-
-        .dropdown-name {
-            color: #ffffff;
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 2px;
-        }
-        .dropdown-email {
-            color: #94a3b8;
-            font-size: 0.8rem;
-            margin-bottom: 12px;
-            word-break: break-all;
-        }
-        .dropdown-divider {
-            border: 0;
-            border-top: 1px solid rgba(234, 179, 8, 0.2);
-            margin-bottom: 12px;
-        }
-
-        .logout-btn {
+        footer {
+            margin-top: auto;
+            padding-top: 5rem;
             width: 100%;
-            background: transparent;
-            color: #f87171;
-            border: 1px solid rgba(248, 113, 113, 0.4);
-            padding: 8px 14px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .logout-btn:hover {
-            background: rgba(248, 113, 113, 0.1);
-            border-color: #f87171;
-        }
-
-        /* ========================================================
-            HERO WELCOME CONSOLE
-           ======================================================== */
-        .main-wrapper {
-            position: relative;
-            flex-grow: 1;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 80px 20px;
-            z-index: 10;
-            max-width: 900px;
-        }
-
-        .art-mainframe {
-            position: relative;
-            width: 100%;
-            background: rgba(13, 21, 39, 0.75); 
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1.5px solid rgba(234, 179, 8, 0.6);
-            border-radius: 24px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
-            padding: 60px 40px;
+            max-width: 750px;
             text-align: center;
-            z-index: 15;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
         }
 
-        .art-mainframe::before, .art-mainframe::after {
-            content: ''; position: absolute; width: 24px; height: 24px; pointer-events: none; opacity: 0.85;
-        }
-        .art-mainframe::before { top: 20px; left: 20px; border-top: 2px solid #eab308; border-left: 2px solid #eab308; border-top-left-radius: 8px; }
-        .art-mainframe::after { bottom: 20px; right: 20px; border-bottom: 2px solid #eab308; border-right: 2px solid #eab308; border-bottom-right-radius: 8px; }
-
-        .main-title {
-            font-size: 3rem;
-            font-weight: 700;
-            color: #ffffff;
-            letter-spacing: -1px;
-            line-height: 1.2;
-            margin-bottom: 20px;
-            text-shadow: 0 4px 12px rgba(0,0,0,0.6);
-        }
-
-        .main-subtitle {
-            font-size: 1.15rem;
-            color: #94a3b8;
-            line-height: 1.7;
-            max-width: 650px;
-            margin: 0 auto 40px auto;
-            font-weight: 300;
-        }
-
-        .cta-container {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-            z-index: 20;
-        }
-
-        /* ========================================================
-            GOLDEN WHITE RABBIT BUTTON (Persistent Center Placement)
-           ======================================================== */
-        .explore-btn {
-            position: relative;
-            display: inline-flex; 
-            align-items: center;
-            justify-content: center;
+        footer a {
+            color: var(--accent);
             text-decoration: none;
-            padding: 16px 40px;
-            font-size: 1rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            border-radius: 50px;
-            border: none;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            gap: 10px;
         }
 
-        .explore-btn.disabled-state {
-            color: #475569 !important;
-            background: #1e293b !important;
-            border: 1px solid #334155 !important;
-            cursor: not-allowed !important;
-            box-shadow: none !important;
-            opacity: 0.6;
-            pointer-events: none !important; 
-        }
-
-        .explore-btn.active-state {
-            color: #0f172a !important;
-            background: linear-gradient(90deg, #fcd34d, #f59e0b, #fcd34d) !important;
-            background-size: 200% auto !important;
-            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3) !important;
-            cursor: pointer !important;
-            pointer-events: auto !important; 
-        }
-        .explore-btn.active-state:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.45) !important;
-            background-position: right center !important;
-        }
-        .explore-btn i {
-            font-size: 0.85rem;
-            transition: transform 0.25s ease;
-        }
-        .explore-btn.active-state:hover i { transform: translateX(4px); }
-
-        /* ========================================================
-            GOOGLE SIGN IN BUTTON
-           ======================================================== */
-        .google-btn {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #ffffff;
-            color: #1f2937;
-            font-family: 'Roboto', sans-serif, 'Georgia';
-            font-size: 0.95rem;
-            font-weight: 500;
-            text-decoration: none;
-            padding: 12px 24px;
-            border-radius: 50px;
-            border: 1px solid #e5e7eb;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            transition: background-color 0.2s, box-shadow 0.2s, transform 0.2s;
-            gap: 12px;
-            z-index: 30;
-        }
-        .google-btn:hover {
-            background-color: #f9fafb;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            transform: translateY(-1px);
-        }
-        .google-btn.hidden {
-            display: none !important;
-        }
-
-        .palette-swatches {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 50px;
-        }
-        .swatch { width: 6px; height: 6px; border-radius: 50%; opacity: 0.4; }
-
-        @media (max-width: 768px) {
-            .custom-navbar { padding: 15px 30px; }
-            .nav-links { gap: 15px; }
-            .main-title { font-size: 2.2rem; }
+        footer a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
 
-    <div class="art-canvas-container">
+    <header>
+        <h1>fragments & echoes</h1>
+        <div class="subtitle">A digital scrapbook of words, cinema, and ink</div>
+    </header>
 
-        <nav class="custom-navbar">
-            <a href="https://ankitx007x.github.io/" class="nav-logo">
-                <i class="fa-solid fa-palette"></i> The Grand Budapest
-            </a>
-            
-            <ul class="nav-links">
-                <li><a href="https://ankitx007x.github.io/" class="active">Home</a></li>
-                <li><a href="./blocks">Blocks</a></li>
-                <li><a href="./about">About Me</a></li>
-                
-                <li class="nav-profile-wrapper">
-                    <div id="nav-user-profile">
-                        <img id="nav-user-photo" src="" alt="User Avatar">
-                        
-                        <div id="profile-dropdown" class="profile-dropdown-menu">
-                            <h3 id="user-name" class="dropdown-name"></h3>
-                            <p id="user-email" class="dropdown-email"></p>
-                            <hr class="dropdown-divider">
-                            <button id="logout-btn" class="logout-btn">
-                                <i class="fa-solid fa-right-from-bracket"></i> Sign Out
-                            </button>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-        </nav>
-
-        <div class="main-wrapper">
-            <div class="art-mainframe">
-                <h1 class="main-title">Wake Up, Neo</h1>
-                <p class="main-subtitle">
-                    This is your last chance. After this, there is no turning back. You take the blue pill - the story ends, you wake up in your bed and believe whatever you want to believe. You take the red pill - you stay in Wonderland and I show you how deep the rabbit hole goes.
-                </p>
-
-                <div class="cta-container">
-                    <button class="google-btn" id="google-login-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 48 48">
-                            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-                            <path fill="#4285F4" d="M46.5 24c0-1.63-.15-3.22-.42-4.75H24v9h12.75c-.55 2.96-2.22 5.47-4.75 7.16l7.37 5.71C43.68 36.65 46.5 30.9 46.5 24z"/>
-                            <path fill="#FBBC05" d="M10.54 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.98-6.19z"/>
-                            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.37-5.71c-2.11 1.41-4.8 2.3-8.52 2.3-6.26 0-11.57-4.22-13.46-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-                        </svg>
-                        Sign in with Google
-                    </button>
-
-                    <a href="javascript:void(0);" id="white-rabbit-btn" class="explore-btn disabled-state">
-                        Follow the White Rabbit <i class="fa-solid fa-arrow-right"></i>
-                    </a>
-                </div>
-
-                <div class="palette-swatches">
-                    <div class="swatch" style="background: #ef4444;"></div>
-                    <div class="swatch" style="background: #38bdf8;"></div>
-                    <div class="swatch" style="background: #f59e0b;"></div>
-                    <div class="swatch" style="background: #6366f1;"></div>
-                </div>
+    <main>
+        
+        <article class="entry">
+            <div class="meta">
+                <span>June 15, 2026</span>
+                <span>•</span>
+                <span class="tag">Marginalia</span>
             </div>
-        </div>
-    </div>
+            <div class="quote">
+                "Tomorrow is the thing that always terrifies us, yet we run toward it anyway, heavy with old ghosts."
+                <span class="citation">— A Ghostly Classic, Chapter 4</span>
+            </div>
+        </article>
+
+        <article class="entry">
+            <div class="meta">
+                <span>June 10, 2026</span>
+                <span>•</span>
+                <span class="tag">Verse</span>
+            </div>
+            <p class="poem">
+                The shadows lean long against the floor,
+                Counting the steps to an open door.
+                A clockwork hum, a sudden chill,
+                The ink is wet, the room is still.
+                
+                We trace the lines that time forgot,
+                And build a world from what is not.
+            </p>
+        </article>
+
+        <article class="entry">
+            <div class="meta">
+                <span>May 28, 2026</span>
+                <span>•</span>
+                <span class="tag">Celluloid</span>
+            </div>
+            <div class="quote">
+                "The world doesn’t change because you look at it differently. It just blurs at the edges."
+                <span class="citation">— A Film by Someone Brilliant (2001)</span>
+            </div>
+        </article>
+
+    </main>
+
+    <footer>
+        <p>© 2026 / built out of dynamic indecision. <a href="#">top ↑</a></p>
+    </footer>
 
 </body>
 </html>
