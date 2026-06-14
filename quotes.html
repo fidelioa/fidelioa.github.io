@@ -9,7 +9,7 @@
             --bg-color: #08080b;
             --text-primary: #e4e4ed;
             --text-secondary: #5a5a6e;
-            --accent: #a385b9; /* Soft artsy violet matching Howl design */
+            --accent: #a385b9; /* Soft artsy violet */
             --nav-bg: rgba(8, 8, 11, 0.9);
             --border: #161622;
             --card-bg: #0f0f14;
@@ -157,6 +157,7 @@
             color: #c8c8d5;
             line-height: 1.7;
             margin-bottom: 1rem;
+            white-space: pre-wrap; /* Keeps breaks for the longer book fragments */
         }
 
         .quote-author {
@@ -192,10 +193,10 @@
     <nav>
         <a href="../index.html" class="nav-logo">// f&e</a>
         <ul class="nav-links">
-            <li><a href="../quotes" class="active">Quotes</a></li>
-            <li><a href="../poems">Poems</a></li>
-            <li><a href="../cinema">Cinema</a></li>
-            <li><a href="../about">About</a></li>
+            <li><a href="quotes.html" class="active">Quotes</a></li>
+            <li><a href="poems.html">Poems</a></li>
+            <li><a href="cinema.html">Cinema</a></li>
+            <li><a href="about.html">About</a></li>
         </ul>
     </nav>
 
@@ -209,93 +210,131 @@
             <input type="text" id="searchBar" placeholder="Search by author, title, or text..." onkeyup="filterQuotes()">
         </div>
 
-        <section class="quote-grid" id="quoteGrid">
-        <div class="quote-card">
-            <p class="quote-text">“Taking a new step, uttering a new word, is what people fear most.”</p>
-            <p class="quote-author">— Fyodor Dostoevsky, <span class="quote-book">Crime and Punishment</span></p>
-        </div>
+        <!-- Target section where JavaScript will inject shuffled data -->
+        <section class="quote-grid" id="quoteGrid"></section>
+    </main>
 
-        <div class="quote-card">
-            <p class="quote-text">“Pain and suffering are always inevitable for a large intelligence and a deep heart. The really great men must, I think, have great sadness on earth.”</p>
-            <p class="quote-author">— Fyodor Dostoevsky, <span class="quote-book">Crime and Punishment</span></p>
-        </div>
+    <footer>
+        [ fragments & echoes // verse archive ]
+    </footer>
 
-        <div class="quote-card">
-            <p class="quote-text">“To go wrong in one&#x27;s own way is better than to go right in someone else&#x27;s.”</p>
-            <p class="quote-author">— Fyodor Dostoevsky, <span class="quote-book">Crime and Punishment</span></p>
-        </div>
+    <script>
+        // Central Repository of saved literary lines
+        const quoteDatabase = [
+            { text: `“Taking a new step, uttering a new word, is what people fear most.”`, author: "Fyodor Dostoevsky", book: "Crime and Punishment" },
+            { text: `“Pain and suffering are always inevitable for a large intelligence and a deep heart. The really great men must, I think, have great sadness on earth.”`, author: "Fyodor Dostoevsky", book: "Crime and Punishment" },
+            { text: `“To go wrong in one's own way is better than to go right in someone else's.”`, author: "Fyodor Dostoevsky", book: "Crime and Punishment" },
+            { text: `“Perhaps one did not want to be loved so much as to be understood.”`, author: "George Orwell", book: "1984" },
+            { text: `“The best books... are those that tell you what you know already.”`, author: "George Orwell", book: "1984" },
+            { text: `“Who controls the past controls the future. Who controls the present controls the past.”`, author: "George Orwell", book: "1984" },
+            { text: `“But if thought corrupts language, language can also corrupt thought.”`, author: "George Orwell", book: "Politics and the English Language" },
+            { text: `“If you want a picture of the future, imagine a boot stamping on a human face—for ever.”`, author: "George Orwell", book: "1984" },
+            { text: `“We shall meet in the place where there is no darkness.”`, author: "George Orwell", book: "1984" },
+            { text: `“What really knocks me out is a book that, when you're all done reading it, you wish the author that wrote it was a terrific friend of yours and you could call him up on the phone whenever you felt like it. That doesn't happen much, though.”`, author: "J.D. Salinger", book: "The Catcher in the Rye" },
+            { text: `“I'm quite illiterate, but I read a lot.”`, author: "J.D. Salinger", book: "The Catcher in the Rye" },
+            { text: `“I am always saying \"Glad to've met you\" to somebody I'm not at all glad I met. If you want to stay alive, you have to say that stuff, though.”`, author: "J.D. Salinger", book: "The Catcher in the Rye" },
+            { text: `“The village of Holcomb stands on the high wheat plains of western Kansas, a lonesome area that other Kansans call “out there.”`, author: "Truman Capote", book: "In Cold Blood" },
+            { text: `“It is no shame to have a dirty face- the shame comes when you keep it dirty.”`, author: "Truman Capote", book: "In Cold Blood" },
+            { text: `“Imagination, of course, can open any door - turn the key and let terror walk right in.”`, author: "Truman Capote", book: "In Cold Blood" },
+            { text: `“As long as you live, there's always something waiting; and even if it's bad, and you know it's bad, what can you do? You can't stop living.”`, author: "Truman Capote", book: "In Cold Blood" },
+            { text: `“I hope she'll be a fool -- that's the best thing a girl can be in this world, a beautiful little fool.”`, author: "F. Scott Fitzgerald", book: "The Great Gatsby" },
+            { text: `“Angry, and half in love with her, and tremendously sorry, I turned away.”`, author: "F. Scott Fitzgerald", book: "The Great Gatsby" },
+            { text: `“So we beat on, boats against the current, borne back ceaselessly into the past.”`, author: "F. Scott Fitzgerald", book: "The Great Gatsby" },
+            { text: `“I was within and without, simultaneously enchanted and repelled by the inexhaustible variety of life.”`, author: "F. Scott Fitzgerald", book: "The Great Gatsby" },
+            { text: `“There ain't no sin and there ain't no virtue. There's just stuff people do.”`, author: "John Steinbeck", book: "The Grapes of Wrath" },
+            { text: `“And the little screaming fact that sounds through all history: repression works only to strengthen and knit the repressed.”`, author: "John Steinbeck", book: "The Grapes of Wrath" },
+            { text: `“It was her habit to build up laughter out of inadequate materials.”`, author: "John Steinbeck", book: "The Grapes of Wrath" },
+            { text: `“...and in the eyes of the people there is the failure; and in the eyes of the hungry there is a growing wrath. In the souls of the people the grapes of wrath are filling and growing heavy, growing heavy for the vintage.”`, author: "John Steinbeck", book: "The Grapes of Wrath" },
+            { text: `“How can we live without our lives? How will we know it's us without our past?”`, author: "John Steinbeck", book: "The Grapes of Wrath" },
+            { text: `“The quality of owning freezes you forever in \"I,\" and cuts you off forever from the \"we.”`, author: "John Steinbeck", book: "The Grapes of Wrath" },
+            { text: `“Before I knowed it, I was sayin' out loud, 'The hell with it! There ain't no sin and there ain't no virtue. There's just stuff people do. It's all part of the same thing.' . . . . I says, 'What's this call, this sperit?' An' I says, 'It's love. I love people so much I'm fit to bust, sometimes.' . . . . I figgered, 'Why do we got to hang it on God or Jesus? Maybe,' I figgered, 'maybe it's all men an' all women we love; maybe that's the Holy Sperit-the human sperit-the whole shebang. Maybe all men got one big soul ever'body's a part of.' Now I sat there thinkin' it, an' all of a suddent-I knew it. I knew it so deep down that it was true, and I still know it.”`, author: "John Steinbeck", book: "The Grapes of Wrath" },
+            { text: `“The works of the roots of the vines, of the trees, must be destroyed to keep up the price, and this is the saddest, bitterest thing of all. Carloads of oranges dumped on the ground. The people came for miles to take the fruit, but this could not be. How would they buy oranges at twenty cents a dozen if they could drive out and pick them up? And men with hoses squirt kerosene on the oranges, and they are angry at the crime, angry at the people who have come to take the fruit. A million people hungry, needing the fruit- and kerosene sprayed over the golden mountains. And the smell of rot fills the country. Burn coffee for fuel in the ships. Burn corn to keep warm, it makes a hot fire. Dump potatoes in the rivers and place guards along the banks to keep the hungry people from fishing them out. Slaughter the pigs and bury them, and let the putrescence drip down into the earth. There is a crime here that goes beyond denunciation. There is a sorrow here that weeping cannot symbolize. There is a failure here that topples all our success. The fertile earth, the straight tree rows, the sturdy trunks, and the ripe fruit. And children dying of pellagra must die because a profit cannot be taken from an orange. And coroners must fill in the certificate- died of malnutrition- because the food must rot, must be forced to rot. The people come with nets to fish for potatoes in the river, and the guards hold them back; they come in rattling cars to get the dumped oranges, but the kerosene is sprayed. And they stand still and watch the potatoes float by, listen to the screaming pigs being killed in a ditch and covered with quick-lime, watch the mountains of oranges slop down to a putrefying ooze; and in the eyes of the people there is the failure; and in the eyes of the hungry there is a growing wrath. In the souls of the people the grapes of wrath are filling and growing heavy, growing heavy for the vintage.”`, author: "John Steinbeck", book: "The Grapes of Wrath" },
+            { text: `“All animals are equal, but some animals are more equal than others.”`, author: "George Orwell", book: "Animal Farm" },
+            { text: `“It's easy to believe in something when you win all the time...The losses are what define a man's faith.”`, author: "Brandon Sanderson", book: "The Well of Ascension (Mistborn, #2)" },
+            { text: `“I write these words in steel, for anything not set in metal cannot be trusted.”`, author: "Brandon Sanderson", book: "The Well of Ascension (Mistborn, #2)" },
+            { text: `“If you want to know what a man's like, take a good look at how he treats his inferiors, not his equals.”`, author: "J.K. Rowling", book: "Harry Potter and the Goblet of Fire (Harry Potter, #4)" },
+            { text: `“I was forced to acknowledge too late, much too late, that I too had loved, that I was capable of suffering, and that I was human after all.”`, author: "Jacqueline Harpman", book: "I Who Have Never Known Men" },
+            { text: `“Perhaps home is not a place but simply an irrevocable condition.”`, author: "James Baldwin", book: "Giovanni’s Room" },
+            { text: `“You don’t have a home until you leave it and then, when you have left it, you never can go back.”`, author: "James Baldwin", book: "Giovanni’s Room" },
+            { text: `“People can't, unhappily, invent their mooring posts, their lovers and their friends, anymore than they can invent their parents.  Life gives these and also takes them away and the great difficulty is to say Yes to life.”`, author: "James Baldwin", book: "Giovanni’s Room" },
+            { text: `“Confusion is a luxury which only the very, very young can possibly afford and you are not that young anymore”`, author: "James Baldwin", book: "Giovanni’s Room" },
+            { text: `“For I am—or I was—one of those people who pride themselves in on their willpower, on their ability to make a decision and carry it through. This virtue, like most virtues, is ambiguity itself. People who believe that they are strong-willed and the masters of their destiny can only continue to believe this by becoming specialists in self-deception. Their decisions are not really decisions at all—a real decision makes one humble, one knows that it is at the mercy of more things than can be named—but elaborate systems of evasion, of illusion, designed to make themselves and the world appear to be what they and the world are not. This is certainly what my decision, made so long ago in Joey’s bed, came to. I had decided to allow no room in the universe for something which shamed and frightened me. I succeeded very well—by not looking at the universe, by not looking at myself, by remaining, in effect, in constant motion.”`, author: "James Baldwin", book: "Giovanni’s Room" },
+            { text: `“Perhaps, as we say in America, I wanted to find myself. This is an interesting phrase, not current as far as I know in the language of any other people, which certainly does not mean what it says but betrays a nagging suspicion that something has been misplaced. I think now that if I had any intimation that the self I was going to find would turn out to be only the same self from which I had spent so much time in flight, I would have stayed at home.”`, author: "James Baldwin", book: "Giovanni’s Room" },
+            { text: `“You do not,’ cried Giovanni, sitting up, ‘love anyone! You never have loved anyone, I am sure you never will! You love your purity, you love your mirror—you are just like a little virgin, you walk around with your hands in front of you as though you had some precious metal, gold, silver, rubies, maybe diamonds down there between your legs! You will never give it to anybody, you will never let anybody touch it—man or woman. You want to be clean. You think you came here covered with soap and you think you will go out covered with soap—and you do not want to stink, not even for five minutes, in the meantime.’ He grasped me by the collar, wrestling and caressing at once, fluid and iron at once: saliva spraying from his lips and his eyes full of tears, but with the bones of his face showing and the muscles leaping in his arms and neck. ‘You want to leave Giovanni because he makes you stink. You want to despise Giovanni because he is not afraid of the stink of love. You want to kill him in the name of all your lying little moralities. And you—you are immoral. You are, by far, the most immoral man I have met in all my life. Look, look what you have done to me. Do you think you could have done this if I did not love you? Is this what you should do to love?”`, author: "James Baldwin", book: "Giovanni’s Room" },
+            { text: `“Learn this now and learn it well. Like a compass facing north, a man’s accusing finger always finds a woman. Always. You remember that, Mariam.”`, author: "Khaled Hosseini", book: "A Thousand Splendid Suns" },
+            { text: `“Miriam wished for so much in those final moments. Yet as she closed her eyes, it was not regret any longer but a sensation of abundant peace that washed over her. She thought of her entry into this world, the harami child of a lowly villager, an unintended thing, a pitiable, regrettable accident. A weed. And yet she was leaving the world as a woman who had loved and been loved back. She was leaving it as a friend, a companion, a guardian. A mother. A person of consequence at last. No. It was not so bad, Miriam thought, that she should die this way. Not so bad. This was a legitimate end to a life of illegitimate belongings.”`, author: "Khaled Hosseini", book: "A Thousand Splendid Suns" },
+            { text: `“she is the noor of my eyes and the sultan of my heart.”`, author: "Khaled Hosseini", book: "A Thousand Splendid Suns" },
+            { text: `“And the past held only this wisdom: that love was a damaging mistake, and its accomplice, hope, a treacherous illusion. And whenever those twin poisonous flowers began to sprout in the parched land of that field, Mariam uprooted them. She uprooted them and ditched them before they took hold.”`, author: "Khaled Hosseini", book: "A Thousand Splendid Suns" },
+            { text: `“But the game involves only male names. Because, if it's a girl, Laila has already named her”`, author: "Khaled Hosseini", book: "A Thousand Splendid Suns" },
+            { text: `“Mariam lay on the couch, hands tucked between her knees, watched the whirlpool of snow twisting and spinning outside the window.  She remembered Nana saying once that each snowflake was a sigh heaved by an aggrieved woman somewhere in the world.  That all the sighs drifted up the sky, gathered into clouds, then broke into tiny pieces that fell silently on the people below.  As a reminder of how people like us suffer, she'd said.  How quietly we endure all that falls upon us.”`, author: "Khaled Hosseini", book: "A Thousand Splendid Suns" },
+            { text: `“I keep thinking about this river somewhere, with the water moving really fast.  And these two people in the water, trying to hold onto each other, holding on as hard as they can, but in the end it's just too much.  The current's too strong.  They've got to let go, drift apart.  That's how it is with us.  It's a shame, Kath, because we've loved each other all our lives.  But in the end, we can't stay together forever.”`, author: "Kazuo Ishiguro", book: "Never Let Me Go" },
+            { text: `“Sometimes I get so immersed in my own company, if I unexpectedly run into someone I know, it's a bit of a shock and takes me a while to adjust.”`, author: "Kazuo Ishiguro", book: "Never Let Me Go" },
+            { text: `“I do what I do without hope of reward or fear of punishment. I do not require Heaven or Hell to bribe or scare me into acting decently.”`, author: "Mary Doria Russell", book: "The Sparrow (The Sparrow, #1)" },
+            { text: `“The Jewish sages also tell us that God dances when His children defeat Him in argument, when they stand on their feet and use their minds.  So questions like Anne's are worth asking.  To ask them is a very fine kind of human behavior.  If we keep demanding that God yield up His answers, perhaps some day we will understand them.  And then we will be something more than clever apes, and we shall dance with God.”`, author: "Mary Doria Russell", book: "The Sparrow (The Sparrow, #1)" },
+            { text: `“we all make vows, Jimmy.  And there is something very beautiful and touching and noble about wanting good impulses to be permanent and true forever,\" she said.  \"Most of us stand up and vow to love, honor and cherish someone.  And we truly mean it, at the time.  But two or twelve or twenty years down the road, the lawyers are negotiating the property settlement.\"    \"You and George didn't go back on your promises.\"    She laughed.  \"Lemme tell ya something, sweetface.  I have been married at least four times, to four different men.\"  She watched him chew that over for a moment before continuing, \"They've all been named George Edwards but, believe me, the man who is waiting for me down the hall is a whole lot different animal from the boy I married, back before there was dirt.  Oh, there are continuities.  He has always been fun and he has never been able to budget his time properly and - well, the rest is none of your business.\"    \"But people change,\" he said quietly.    \"Precisely.  People change.  Cultures change.  Empires rise and fall.  Shit.  Geology changes!  Every ten years or so, George and I have faced the fact that we have changed and we've had to decide if it makes sense to create a new marriage between these two new people.\"  She flopped back against her chair.  \"Which is why vows are such a tricky business.  Because nothing stays the same forever.  Okay.  Okay!  I'm figuring something out now.\"  She sat up straight, eyes focused somewhere outside the room, and Jimmy realized that even Anne didn't have all the answers and that was either the most comforting thing he'd learned in a long time or the most discouraging.  \"Maybe because so few of us would be able to give up something so fundamental for something so abstract, we protect ourselves from the nobility of a priest's vows by jeering at him when he can't live up to them, always and forever.\"  She shivered and slumped suddenly, \"But, Jimmy!  What unnatural words.  Always and forever!  Those aren't human words, Jim.  Not even stones are always and forever.”`, author: "Mary Doria Russell", book: "The Sparrow (The Sparrow, #1)" },
+            { text: `“Watching him with one eye, she wondered if men ever figured out that they were more appealing when they were pursuing their own work than when they were pursuing a woman.”`, author: "Mary Doria Russell", book: "The Sparrow (The Sparrow, #1)" },
+            { text: `“You see, that is my dilemma. Because if I was led by God to love God, step by step, as it seemed, if I accept that the beauty and the rapture were real and true, then the rest of it was God's will too, and that, gentlemen, is cause for bitterness. But if I am simply a deluded ape who took a lot of old folktales far too seriously, then I brought all this on myself and my companions and the whole business becomes farcical, doesn't it. The problem with atheism, I find, under these circumstances,\" he continued with academic exactitude, each word etched on the air with acid, \"is that I have no one to despise but myself. If, however, I choose to believe that God is vicious, then at least I have the solace of hating God.”`, author: "Mary Doria Russell", book: "The Sparrow (The Sparrow, #1)" },
+            { text: `“See that's where it falls apart for me!\" Anne cried.  \"What sticks in my throat is that God gets the credit but never the blame.  I just can't swallow that kind of theological candy.  Either God's in charge or he's not...”`, author: "Mary Doria Russell", book: "The Sparrow (The Sparrow, #1)" },
+            { text: `“Nothing, nothing mattered, and I knew why. So did he. Throughout the whole absurd life I'd lived, a dark wind had been rising toward me from somewhere deep in my future, across years that were still to come, and as it passed, this wind leveled whatever was offered to me at the time, in years no more real than the ones I was living. What did other people's deaths or a mother's love matter to me; what did his God or the lives people choose or the fate they think they elect matter to me when we're all elected by the same fate, me and billions of privileged people like him who also called themselves my brothers? Couldn't he see, couldn't he see that? Everybody was privileged. There were only privileged people. The others would all be condemned one day. And he would be condemned, too.”`, author: "Albert Camus", book: "The Stranger" },
+            { text: `“I can't stand it to think my life is going so fast and I'm not really living it.”`, author: "Ernest Hemingway", book: "The Sun Also Rises" },
+            { text: `“Oh Jake,\" Brett said, \"We could have had such a damned good time together.\"Ahead was a mounted policeman in khaki directing traffic. He raised his baton. The car slowed suddenly, pressing Brett against me.Yes,\" I said. \"Isn't it pretty to think so?”`, author: "Ernest Hemingway", book: "The Sun Also Rises" },
+            { text: `“Going to another country doesn’t make any difference. I’ve tried all that. You can’t get away from yourself by moving from one place to another. There’s nothing to that.”`, author: "Ernest Hemingway", book: "The Sun Also Rises" },
+            { text: `“Have you no hope at all? And do you really live with the thought that when you die, you die, and nothing remains?\" \"Yes,\" I said.”`, author: "Albert Camus", book: "The Stranger" },
+            { text: `“I had only a little time left and I didn't want to waste it on God.”`, author: "Albert Camus", book: "L'Étranger" },
+            { text: `“I looked up at the mass of signs and stars in the night sky and laid myself open for the first time to the benign indifference of the world.”`, author: "Albert Camus", book: "The Stranger" }
+        ];
 
-        <div class="quote-card">
-            <p class="quote-text">“Perhaps one did not want to be loved so much as to be understood.”</p>
-            <p class="quote-author">— George Orwell, <span class="quote-book">1984</span></p>
-        </div>
+        // Global variable to store our shuffled structure
+        let shuffledQuotes = [];
 
-        <div class="quote-card">
-            <p class="quote-text">“The best books... are those that tell you what you know already.”</p>
-            <p class="quote-author">— George Orwell, <span class="quote-book">1984</span></p>
-        </div>
+        // 1. Fisher-Yates Algorithm to randomize array values on layout init
+        function shuffleArray(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex !== 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
 
-        <div class="quote-card">
-            <p class="quote-text">“Who controls the past controls the future. Who controls the present controls the past.”</p>
-            <p class="quote-author">— George Orwell, <span class="quote-book">1984</span></p>
-        </div>
+        // 2. Build DOM structures dynamically from current data subset
+        function renderQuotes(quotesToRender) {
+            const grid = document.getElementById('quoteGrid');
+            grid.innerHTML = ''; // Wipe container clean
 
-        <div class="quote-card">
-            <p class="quote-text">“If you want a picture of the future, imagine a boot stamping on a human face—for ever.”</p>
-            <p class="quote-author">— George Orwell, <span class="quote-book">1984</span></p>
-        </div>
+            quotesToRender.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'quote-card';
 
-        <div class="quote-card">
-            <p class="quote-text">“War is peace. 
-Freedom is slavery. 
-Ignorance is strength.”</p>
-            <p class="quote-author">— George Orwell, <span class="quote-book">1984</span></p>
-        </div>
+                card.innerHTML = `
+                    <p class="quote-text">${item.text}</p>
+                    <p class="quote-author">— ${item.author}, <span class="quote-book">${item.book}</span></p>
+                `;
+                grid.appendChild(card);
+            });
+        }
 
-        <div class="quote-card">
-            <p class="quote-text">“In the face of pain there are no heroes.”</p>
-            <p class="quote-author">— George Orwell, <span class="quote-book">1984</span></p>
-        </div>
+        // 3. Handle live keyword filtering across texts, authors, or book titles
+        function filterQuotes() {
+            const query = document.getElementById('searchBar').value.toLowerCase();
+            
+            const filtered = shuffledQuotes.filter(item => {
+                return item.text.toLowerCase().includes(query) || 
+                       item.author.toLowerCase().includes(query) || 
+                       item.book.toLowerCase().includes(query);
+            });
 
-        <div class="quote-card">
-            <p class="quote-text">“Big Brother is Watching You.”</p>
-            <p class="quote-author">— George Orwell, <span class="quote-book">1984</span></p>
-        </div>
+            renderQuotes(filtered);
+        }
 
-        <div class="quote-card">
-            <p class="quote-text">“It was a bright cold day in April, and the clocks were striking thirteen.”</p>
-            <p class="quote-author">— George Orwell, <span class="quote-book">1984</span></p>
-        </div>
+        // 4. Initialize layout cleanly when page initializes
+        window.addEventListener('DOMContentLoaded', () => {
+            // Create a randomized shallow clone copy so the root database remains safe
+            shuffledQuotes = shuffleArray([...quoteDatabase]);
+            renderQuotes(shuffledQuotes);
+        });
+    </script>
 
-        <div class="quote-card">
-            <p class="quote-text">“Until they become conscious they will never rebel, and until after they have rebelled they cannot become conscious.”</p>
-            <p class="quote-author">— George Orwell, <span class="quote-book">1984</span></p>
-        </div>
-
-        <div class="quote-card">
-            <p class="quote-text">“Sanity is not statistical.”</p>
-            <p class="quote-author">— George Orwell, <span class="quote-book">1984</span></p>
-        </div>
-
-        <div class="quote-card">
-            <p class="quote-text">“There was truth and there was untruth, and if you clung to the truth even against the whole world, you were not mad.”</p>
-            <p class="quote-author">— George Orwell, <span class="quote-book">1984</span></p>
-        </div>
-
-        <div class="quote-card">
-            <p class="quote-text">“Memory is redundant: it repeats signs so that the city can begin to exist.”</p>
-            <p class="quote-author">— Italo Calvino, <span class="quote-book">Invisible Cities</span></p>
-        </div>
-
-        <div class="quote-card">
-            <p class="quote-text">“Futures not achieved are just branches of the past: dead branches.”</p>
-            <p class="quote-author">— Italo Calvino, <span class="quote-book">Invisible Cities</span></p>
-        </div>
-
-        <div class="quote-card">
-            <p class="quote-text">“You take delight not in a city&#x27;s seven or seventy wonders, but in the answer it gives to a question of yours.”</p>
-            <p class="quote-author">— Italo Calvino, <span class="quote-book">Invisible Cities</span></p>
-        </div>
-
-        <div class="quote-card">
-            <p class="quote-text">“The inferno of the living is not something that will be; if there is one, it is what is already here, the inferno where we live every day, that we form by being together. There are two ways to escape suffering it. The first is easy for many: accept the inferno and becomeNormally I can help with things like this, but I don't seem to have access to that content. You can try again or ask me for something else.
+</body>
+</html>
