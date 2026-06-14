@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O Captain! My Captain! // Fragments & Echoes</title>
+    <style>
+        :root {
+            --bg-color: #08080b;
+            --text-primary: #e4e4ed;
+            --text-secondary: #5a5a6e;
+            --accent: #a385b9; /* Soft artsy violet */
+            --accent-dim: rgba(163, 133, 185, 0.15);
+            --nav-bg: rgba(8, 8, 11, 0.9);
+            --border: #161622;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Georgia', serif;
+            line-height: 1.8;
+            padding: 140px 1.5rem 5rem 1.5rem; /* Space for fixed nav */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Fixed Navigation Bar */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 2.5rem;
+            background: var(--nav-bg);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.01);
+        }
+
+        .nav-logo {
+            font-family: monospace;
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-primary);
+            text-decoration: none;
+            opacity: 0.8;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover, .nav-links .active {
+            color: var(--accent);
+        }
+
+        /* Poem Container Structure */
+        main {
+            width: 100%;
+            max-width: 650px; /* Marginally wider to prevent long Whitman lines from breaking ugly */
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Back Navigation link */
+        .back-link {
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 3rem;
+            display: inline-block;
+            transition: color 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: var(--accent);
+        }
+
+        /* Typography Headers */
+        header {
+            margin-bottom: 3.5rem;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            font-weight: 400;
+            font-style: italic;
+            line-height: 1.3;
+            color: #f0f0f5;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.4rem;
+        }
+
+        .poem-author {
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: block;
+        }
+
+        /* Content Block optimized for advanced indentations */
+        .poem-content {
+            white-space: pre; /* Keeps the explicit space bar/tab gaps alive */
+            font-size: 1.05rem;
+            color: #c8c8d5;
+            letter-spacing: 0.2px;
+            margin-bottom: 4rem;
+            padding-left: 1.5rem;
+            border-left: 1px solid var(--border);
+            overflow-x: auto; /* Adds smooth scrolling only if a screen gets too tiny for a line */
+        }
+
+        /* Footer */
+        footer {
+            margin-top: auto;
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: rgba(110, 110, 128, 0.3);
+            letter-spacing: 1.5px;
+            text-align: center;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation Bar -->
+    <nav>
+        <a href="../index.html" class="nav-logo">// f&e</a>
+        <ul class="nav-links">
+            <li><a href="../quotes">Quotes</a></li>
+            <li><a href="../poems" class="active">Poems</a></li>
+            <li><a href="../cinema">Cinema</a></li>
+            <li><a href="../about">About</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Poem Frame -->
+    <main>
+        
+        <a href="../poems" class="back-link">← Return to Index</a>
+
+        <header>
+            <h2>O Captain! My Captain!</h2>
+            <span class="poem-author">Walt Whitman</span>
+        </header>
+
+        <!-- Preserves indentation blocks and breaks precisely -->
+        <article class="poem-content">O Captain! my Captain! our fearful trip is done,
+The ship has weather’d every rack, the prize we sought is won,
+The port is near, the bells I hear, the people all exulting,
+While follow eyes the steady keel, the vessel grim and daring;
+                         But O heart! heart! heart!
+                            O the bleeding drops of red,
+                               Where on the deck my Captain lies,
+                                  Fallen cold and dead.
+
+O Captain! my Captain! rise up and hear the bells;
+Rise up—for you the flag is flung—for you the bugle trills,
+For you bouquets and ribbon’d wreaths—for you the shores a-crowding,
+For you they call, the swaying mass, their eager faces turning;
+                         Here Captain! dear father!
+                            This arm beneath your head!
+                               It is some dream that on the deck,
+                                  You’ve fallen cold and dead.
+
+My Captain does not answer, his lips are pale and still,
+My father does not feel my arm, he has no pulse nor will,
+The ship is anchor’d safe and sound, its voyage closed and done,
+From fearful trip the victor ship comes in with object won;
+                         Exult O shores, and ring O bells!
+                            But I with mournful tread,
+                               Walk the deck my Captain lies,
+                                  Fallen cold and dead.</article>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        [ fragments & echoes // verse archive ]
+    </footer>
+
+</body>
+</html>
