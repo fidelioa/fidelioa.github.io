@@ -6,13 +6,12 @@
     <title>Fragments & Echoes</title>
     <style>
         :root {
-            --bg-color: #0d0d11;
-            --panel-bg: #14141c;
-            --text-primary: #e2e2e9;
-            --text-secondary: #8a8a9d;
-            --accent: #9d7bb0; /* Muted gothic violet */
-            --accent-glow: rgba(157, 123, 176, 0.15);
-            --border: #232330;
+            --bg-color: #0b0b0e;
+            --text-primary: #e4e4ed;
+            --text-secondary: #6e6e80;
+            --accent: #a385b9; /* Soft, artsy violet */
+            --accent-dim: rgba(163, 133, 185, 0.3);
+            --nav-bg: rgba(11, 11, 14, 0.8);
         }
 
         * {
@@ -25,179 +24,133 @@
             background-color: var(--bg-color);
             color: var(--text-primary);
             font-family: 'Georgia', serif;
-            line-height: 1.7;
-            padding: 2rem 1rem;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
+            justify-content: space-between;
             align-items: center;
-            min-height: 100vh;
+            overflow: hidden; /* Keeps the minimalist, single-page look */
         }
 
-        header {
+        /* Fixed Navigation Bar at Top */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 750px;
-            margin-bottom: 4rem;
-            text-align: center;
-            border-bottom: 1px dashed var(--border);
-            padding-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            background: var(--nav-bg);
+            backdrop-filter: blur(8px); /* Subtle glass effect */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            z-index: 100;
         }
 
-        h1 {
-            font-size: 2.5rem;
-            font-weight: 400;
-            letter-spacing: -0.5px;
-            margin-bottom: 0.5rem;
-            color: var(--text-primary);
-            font-style: italic;
-        }
-
-        .subtitle {
+        .nav-logo {
             font-family: monospace;
             font-size: 0.9rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
             letter-spacing: 2px;
-        }
-
-        main {
-            width: 100%;
-            max-width: 750px;
-            display: flex;
-            flex-direction: column;
-            gap: 3.5rem;
-        }
-
-        /* Artsy Log Entry Card */
-        .entry {
-            background: var(--panel-bg);
-            border: 1px solid var(--border);
-            padding: 2.5rem;
-            border-radius: 4px;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        .entry:hover {
-            border-color: var(--accent);
-            box-shadow: 0 10px 30px var(--accent-glow);
-        }
-
-        .meta {
-            font-family: monospace;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            margin-bottom: 1.5rem;
-            display: flex;
-            gap: 1rem;
             text-transform: uppercase;
-        }
-
-        .tag {
-            color: var(--accent);
-        }
-
-        /* Typography styles for different contents */
-        .quote {
-            font-size: 1.25rem;
-            font-style: italic;
-            border-left: 2px solid var(--accent);
-            padding-left: 1.5rem;
-            margin: 1rem 0;
-            color: #f0f0f5;
-        }
-
-        .citation {
-            display: block;
-            font-size: 0.9.5rem;
-            color: var(--text-secondary);
-            margin-top: 0.5rem;
-            text-align: right;
-            font-family: 'Georgia', serif;
-        }
-
-        .poem {
-            white-space: pre-line;
-            font-size: 1.05rem;
-            letter-spacing: 0.5px;
-            color: #e2e2e9;
-            padding-left: 1rem;
-        }
-
-        footer {
-            margin-top: auto;
-            padding-top: 5rem;
-            width: 100%;
-            max-width: 750px;
-            text-align: center;
-            font-family: monospace;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-
-        footer a {
-            color: var(--accent);
+            color: var(--text-primary);
             text-decoration: none;
         }
 
-        footer a:hover {
-            text-decoration: underline;
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+            text-shadow: 0 0 8px var(--accent-dim);
+        }
+
+        /* Central Minimalist Landing Area */
+        main {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            flex-grow: 1;
+            padding: 2rem;
+            max-width: 600px;
+            margin-top: 60px; /* Offset for fixed nav */
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 400;
+            font-style: italic;
+            letter-spacing: -1px;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .divider {
+            width: 40px;
+            height: 1px;
+            background-color: var(--accent);
+            margin: 1.5rem 0;
+            opacity: 0.5;
+        }
+
+        /* A singular, striking quote just to anchor the home page */
+        .home-quote {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            font-style: italic;
+        }
+
+        /* Footer */
+        footer {
+            padding-bottom: 2rem;
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: rgba(110, 110, 128, 0.5);
+            letter-spacing: 1px;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>fragments & echoes</h1>
-        <div class="subtitle">A digital scrapbook of words, cinema, and ink</div>
-    </header>
+    <!-- Top Navigation Bar -->
+    <nav>
+        <a href="index.html" class="nav-logo">// f&e</a>
+        <ul class="nav-links">
+            <li><a href="quotes.html">Quotes</a></li>
+            <li><a href="poems.html">Poems</a></li>
+            <li><a href="cinema.html">Cinema</a></li>
+            <li><a href="about.html">About</a></li>
+        </ul>
+    </nav>
 
+    <!-- Main Entry Screen -->
     <main>
-        
-        <article class="entry">
-            <div class="meta">
-                <span>June 15, 2026</span>
-                <span>•</span>
-                <span class="tag">Marginalia</span>
-            </div>
-            <div class="quote">
-                "Tomorrow is the thing that always terrifies us, yet we run toward it anyway, heavy with old ghosts."
-                <span class="citation">— A Ghostly Classic, Chapter 4</span>
-            </div>
-        </article>
-
-        <article class="entry">
-            <div class="meta">
-                <span>June 10, 2026</span>
-                <span>•</span>
-                <span class="tag">Verse</span>
-            </div>
-            <p class="poem">
-                The shadows lean long against the floor,
-                Counting the steps to an open door.
-                A clockwork hum, a sudden chill,
-                The ink is wet, the room is still.
-                
-                We trace the lines that time forgot,
-                And build a world from what is not.
-            </p>
-        </article>
-
-        <article class="entry">
-            <div class="meta">
-                <span>May 28, 2026</span>
-                <span>•</span>
-                <span class="tag">Celluloid</span>
-            </div>
-            <div class="quote">
-                "The world doesn’t change because you look at it differently. It just blurs at the edges."
-                <span class="citation">— A Film by Someone Brilliant (2001)</span>
-            </div>
-        </article>
-
+        <h1>fragments & echoes</h1>
+        <div class="divider"></div>
+        <p class="home-quote">
+            "We read to know that we are not alone."
+        </p>
     </main>
 
+    <!-- Footer -->
     <footer>
-        <p>© 2026 / built out of dynamic indecision. <a href="#">top ↑</a></p>
+        [ digital scrapbook / 2026 ]
     </footer>
 
 </body>
