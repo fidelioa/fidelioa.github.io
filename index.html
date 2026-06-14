@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verse // Fragments & Echoes</title>
+    <title>Fragments & Echoes</title>
     <style>
         :root {
-            --bg-color: #0b0b0e;
+            --bg-color: #09090c;
+            --panel-bg: #111116;
             --text-primary: #e4e4ed;
             --text-secondary: #6e6e80;
-            --accent: #a385b9; /* Soft, artsy violet */
-            --accent-dim: rgba(163, 133, 185, 0.2);
-            --nav-bg: rgba(11, 11, 14, 0.8);
-            --border: #1b1b22;
+            --accent: #a385b9; /* Soft violet */
+            --accent-dim: rgba(163, 133, 185, 0.15);
+            --nav-bg: rgba(9, 9, 12, 0.9);
+            --border: #1a1a24;
         }
 
         * {
@@ -25,12 +26,11 @@
             background-color: var(--bg-color);
             color: var(--text-primary);
             font-family: 'Georgia', serif;
-            line-height: 1.8;
-            padding: 120px 1.5rem 4rem 1.5rem; /* Space for nav bar */
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
+            padding: 120px 2rem 3rem 2rem;
         }
 
         /* Fixed Navigation Bar */
@@ -45,7 +45,7 @@
             padding: 1.5rem 2rem;
             background: var(--nav-bg);
             backdrop-filter: blur(8px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
             z-index: 100;
         }
 
@@ -71,92 +71,147 @@
             text-decoration: none;
             text-transform: uppercase;
             letter-spacing: 1.5px;
-            transition: color 0.3s ease, text-shadow 0.3s ease;
+            transition: color 0.3s ease;
         }
 
-        .nav-links a:hover, .nav-links .active {
+        .nav-links a:hover {
             color: var(--accent);
-            text-shadow: 0 0 8px var(--accent-dim);
         }
 
-        /* Page Header */
-        header {
+        /* Artsy Asymmetric Grid Layout */
+        .grid-container {
             width: 100%;
-            max-width: 600px;
-            margin-bottom: 3.5rem;
-            text-align: left;
+            max-width: 900px;
+            display: grid;
+            grid-template-columns: 1.6fr 1fr;
+            gap: 3rem;
+            margin-top: 2rem;
         }
 
-        header h2 {
-            font-size: 1.8rem;
+        /* Left Column: Deep Vibe & Focus */
+        .hero-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-left: 1px solid var(--border);
+            padding-left: 2rem;
+        }
+
+        h1 {
+            font-size: 3.5rem;
             font-weight: 400;
             font-style: italic;
-            color: var(--text-primary);
-            opacity: 0.9;
+            letter-spacing: -1px;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, #e4e4ed, #9a9aab);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .page-subtitle {
+        .main-quote {
+            font-size: 1.2rem;
+            color: #b5b5c3;
+            line-height: 1.8;
+            font-style: italic;
+            margin-bottom: 0.5rem;
+        }
+
+        .quote-author {
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Right Column: Mini Info Blocks (No Images needed) */
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            border-radius: 4px;
+        }
+
+        .card-title {
             font-family: monospace;
             font-size: 0.75rem;
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 2px;
-            margin-top: 0.3rem;
-        }
-
-        /* Minimalist List Layout */
-        main {
-            width: 100%;
-            max-width: 600px;
+            margin-bottom: 1rem;
             display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        /* Artsy List Item Row */
-        .poem-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid rgba(27, 27, 34, 0.6);
-            transition: all 0.3s ease;
+        .card-title::after {
+            content: '';
+            flex-grow: 1;
+            height: 1px;
+            background: var(--border);
         }
 
-        /* Title Link Styling */
-        .poem-link {
-            font-size: 1.15rem;
-            color: var(--text-primary);
-            text-decoration: none;
-            font-style: italic;
-            transition: color 0.2s ease, padding-left 0.2s ease;
+        /* Meta status styling */
+        .status-item {
+            font-size: 0.95rem;
+            margin-bottom: 0.8rem;
+            color: #cdd;
+        }
+        .status-item span {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-family: monospace;
         }
 
-        .poem-row:hover .poem-link {
-            color: var(--accent);
-            padding-left: 6px; /* Subtle responsive shift on hover */
+        /* Quick micro log list */
+        .micro-log {
+            list-style: none;
         }
-
-        /* Author Metadata */
-        .poem-author {
+        .micro-log li {
+            font-size: 0.9rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px dashed rgba(26, 26, 36, 0.5);
+            color: #b5b5c3;
+        }
+        .micro-log li:last-child {
+            border: none;
+        }
+        .micro-log time {
             font-family: monospace;
             font-size: 0.75rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            color: var(--accent);
+            margin-right: 0.5rem;
         }
 
         /* Footer */
         footer {
             margin-top: auto;
-            padding-top: 4rem;
+            padding-top: 5rem;
             font-family: monospace;
             font-size: 0.75rem;
             color: rgba(110, 110, 128, 0.4);
             letter-spacing: 1px;
-            text-align: center;
             width: 100%;
-            max-width: 600px;
+            max-width: 900px;
+            text-align: center;
+        }
+
+        /* Responsive design for smaller screens */
+        @media (max-width: 768px) {
+            .grid-container {
+                grid-template-columns: 1fr;
+                gap: 4rem;
+            }
+            h1 { font-size: 2.8rem; }
+            .hero-panel { border-left: none; padding-left: 0; }
         }
     </style>
 </head>
@@ -167,50 +222,65 @@
         <a href="index.html" class="nav-logo">// f&e</a>
         <ul class="nav-links">
             <li><a href="quotes.html">Quotes</a></li>
-            <li><a href="poems.html" class="active">Poems</a></li>
+            <li><a href="poems.html">Poems</a></li>
             <li><a href="cinema.html">Cinema</a></li>
             <li><a href="about.html">About</a></li>
         </ul>
     </nav>
 
-    <!-- Page Title Header -->
-    <header>
-        <h2>collected verse.</h2>
-        <div class="page-subtitle">Index / Click to uncover</div>
-    </header>
-
-    <!-- Main Index List -->
-    <main>
+    <!-- Main Dynamic Content Grid -->
+    <div class="grid-container">
         
-        <!-- Poem 1 -->
-        <div class="poem-row">
-            <a href="because-i-could-not-stop-for-death.html" class="poem-link">Because I could not stop for Death</a>
-            <span class="poem-author">Emily Dickinson</span>
-        </div>
+        <!-- Left Wing: Bold Entry Statement -->
+        <main class="hero-panel">
+            <h1>fragments &<br>echoes</h1>
+            <p class="main-quote">
+                "We trace the lines that time forgot, and build a world from what is not."
+            </p>
+            <span class="quote-author">— marginalia no. 01</span>
+        </main>
 
-        <!-- Poem 2 -->
-        <div class="poem-row">
-            <a href="o-captain-my-captain.html" class="poem-link">O Captain! My Captain!</a>
-            <span class="poem-author">Walt Whitman</span>
-        </div>
+        <!-- Right Wing: Personal Log/Status Radar -->
+        <aside class="side-panel">
+            
+            <!-- Card 1: Currently Consuming Status -->
+            <div class="card">
+                <div class="card-title">Currently</div>
+                
+                <div class="status-item">
+                    <span>Reading //</span>
+                    The Odyssey
+                </div>
+                
+                <div class="status-item">
+                    <span>Stanza Focus //</span>
+                    Emily Dickinson
+                </div>
+            </div>
 
-        <!-- Poem 3 -->
-        <div class="poem-row">
-            <a href="hope-is-the-thing-with-feathers.html" class="poem-link">Hope is the thing with feathers</a>
-            <span class="poem-author">Emily Dickinson</span>
-        </div>
+            <!-- Card 2: Recent Activity / Micro Log Updates -->
+            <div class="card">
+                <div class="card-title">Recent Updates</div>
+                <ul class="micro-log">
+                    <li>
+                        <time>06.15</time> Added 4 poetry indices to /verse
+                    </li>
+                    <li>
+                        <time>05.28</time> Sorted out movie log draft lines
+                    </li>
+                    <li>
+                        <time>04.12</time> Blueprinting dark architecture design
+                    </li>
+                </ul>
+            </div>
 
-        <!-- Poem 4 -->
-        <div class="poem-row">
-            <a href="do-not-go-gentle.html" class="poem-link">Do not go gentle into that good night</a>
-            <span class="poem-author">Dylan Thomas</span>
-        </div>
+        </aside>
 
-    </main>
+    </div>
 
     <!-- Footer -->
     <footer>
-        [ fragments & echoes / index ]
+        [ digital scrapbook / structured ink & code / 2026 ]
     </footer>
 
 </body>
