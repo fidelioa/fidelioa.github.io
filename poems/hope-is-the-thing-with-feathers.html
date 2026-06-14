@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>“Hope” is the thing with feathers // Fragments & Echoes</title>
+    <style>
+        :root {
+            --bg-color: #08080b;
+            --text-primary: #e4e4ed;
+            --text-secondary: #5a5a6e;
+            --accent: #a385b9; /* Soft artsy violet */
+            --accent-dim: rgba(163, 133, 185, 0.15);
+            --nav-bg: rgba(8, 8, 11, 0.9);
+            --border: #161622;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Georgia', serif;
+            line-height: 1.8;
+            padding: 140px 1.5rem 5rem 1.5rem; /* Space for fixed nav */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Fixed Navigation Bar */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 2.5rem;
+            background: var(--nav-bg);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.01);
+        }
+
+        .nav-logo {
+            font-family: monospace;
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-primary);
+            text-decoration: none;
+            opacity: 0.8;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover, .nav-links .active {
+            color: var(--accent);
+        }
+
+        /* Poem Container Structure */
+        main {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Back Navigation link */
+        .back-link {
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 3rem;
+            display: inline-block;
+            transition: color 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: var(--accent);
+        }
+
+        /* Typography Headers */
+        header {
+            margin-bottom: 3.5rem;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            font-weight: 400;
+            font-style: italic;
+            line-height: 1.3;
+            color: #f0f0f5;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.4rem;
+        }
+
+        .poem-author {
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: block;
+        }
+
+        /* Content Block to preserve layout breaks cleanly */
+        .poem-content {
+            white-space: pre-line;
+            font-size: 1.1rem;
+            color: #c8c8d5;
+            letter-spacing: 0.2px;
+            margin-bottom: 4rem;
+            padding-left: 1.5rem;
+            border-left: 1px solid var(--border);
+        }
+
+        /* Footer */
+        footer {
+            margin-top: auto;
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: rgba(110, 110, 128, 0.3);
+            letter-spacing: 1.5px;
+            text-align: center;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation Bar -->
+    <nav>
+        <a href="../index.html" class="nav-logo">// f&e</a>
+        <ul class="nav-links">
+            <li><a href="../quotes">Quotes</a></li>
+            <li><a href="../poems" class="active">Poems</a></li>
+            <li><a href="../cinema">Cinema</a></li>
+            <li><a href="../about">About</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Poem Frame -->
+    <main>
+        
+        <a href="../poems" class="back-link">← Return to Index</a>
+
+        <header>
+            <h2>“Hope” is the thing with feathers - (254)</h2>
+            <span class="poem-author">Emily Dickinson</span>
+        </header>
+
+        <!-- Preserves capitalization, breaks, and em-dashes exactly -->
+        <article class="poem-content">“Hope” is the thing with feathers -
+That perches in the soul -
+And sings the tune without the words -
+And never stops - at all -
+
+And sweetest - in the Gale - is heard -
+And sore must be the storm -
+That could abash the little Bird
+That kept so many warm -
+
+I’ve heard it in the chillest land -
+And on the strangest Sea -
+Yet - never - in Extremity,
+It asked a crumb - of me.</article>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        [ fragments & echoes // verse archive ]
+    </footer>
+
+</body>
+</html>
