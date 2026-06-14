@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fragments & Echoes // Collected Quotes</title>
+    <style>
+        :root {
+            --bg-color: #08080b;
+            --text-primary: #e4e4ed;
+            --text-secondary: #5a5a6e;
+            --accent: #a385b9; /* Soft artsy violet matching Howl design */
+            --nav-bg: rgba(8, 8, 11, 0.9);
+            --border: #161622;
+            --card-bg: #0f0f14;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Georgia', serif;
+            line-height: 1.6;
+            padding: 140px 2rem 5rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Fixed Navigation Bar */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 2.5rem;
+            background: var(--nav-bg);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.01);
+        }
+
+        .nav-logo {
+            font-family: monospace;
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-primary);
+            text-decoration: none;
+            opacity: 0.8;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover, .nav-links .active {
+            color: var(--accent);
+        }
+
+        main {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            margin-bottom: 3rem;
+            text-align: left;
+        }
+
+        h2 {
+            font-size: 2.4rem;
+            font-weight: 400;
+            font-style: italic;
+            line-height: 1.3;
+            color: #f0f0f5;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Live Filtering Search Bar */
+        .search-container {
+            margin-bottom: 3.5rem;
+            width: 100%;
+        }
+
+        #searchBar {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            font-family: 'Georgia', serif;
+            font-size: 1.05rem;
+            font-style: italic;
+            color: var(--text-primary);
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        #searchBar:focus {
+            border-color: var(--accent);
+        }
+
+        /* Quotes Layout Stack */
+        .quote-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+            margin-bottom: 5rem;
+        }
+
+        .quote-card {
+            background: var(--card-bg);
+            border-left: 2px solid var(--border);
+            padding: 1.5rem 0 1.5rem 2rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .quote-card:hover {
+            border-left-color: var(--accent);
+        }
+
+        .quote-text {
+            font-size: 1.15rem;
+            color: #c8c8d5;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+
+        .quote-author {
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .quote-book {
+            font-family: 'Georgia', serif;
+            text-transform: none;
+            font-style: italic;
+            letter-spacing: 0;
+            color: var(--accent);
+        }
+
+        footer {
+            margin-top: auto;
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: rgba(110, 110, 128, 0.3);
+            letter-spacing: 1.5px;
+            text-align: center;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation Bar -->
+    <nav>
+        <a href="../index.html" class="nav-logo">// f&e</a>
+        <ul class="nav-links">
+            <li><a href="../quotes" class="active">Quotes</a></li>
+            <li><a href="../poems">Poems</a></li>
+            <li><a href="../cinema">Cinema</a></li>
+            <li><a href="../about">About</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <header>
+            <h2>Collected Fragments</h2>
+            <span class="subtitle">Index of marginalia and saved echoes</span>
+        </header>
+
+        <div class="search-container">
+            <input type="text" id="searchBar" placeholder="Search by author, title, or text..." onkeyup="filterQuotes()">
+        </div>
+
+        <section class="quote-grid" id="quoteGrid">
+        <div class="quote-card">
+            <p class="quote-text">“Taking a new step, uttering a new word, is what people fear most.”</p>
+            <p class="quote-author">— Fyodor Dostoevsky, <span class="quote-book">Crime and Punishment</span></p>
+        </div>
+
+        <div class="quote-card">
+            <p class="quote-text">“Pain and suffering are always inevitable for a large intelligence and a deep heart. The really great men must, I think, have great sadness on earth.”</p>
+            <p class="quote-author">— Fyodor Dostoevsky, <span class="quote-book">Crime and Punishment</span></p>
+        </div>
+
+        <div class="quote-card">
+            <p class="quote-text">“To go wrong in one&#x27;s own way is better than to go right in someone else&#x27;s.”</p>
+            <p class="quote-author">— Fyodor Dostoevsky, <span class="quote-book">Crime and Punishment</span></p>
+        </div>
+
+        <div class="quote-card">
+            <p class="quote-text">“Perhaps one did not want to be loved so much as to be understood.”</p>
+            <p class="quote-author">— George Orwell, <span class="quote-book">1984</span></p>
+        </div>
+
+        <div class="quote-card">
+            <p class="quote-text">“The best books... are those that tell you what you know already.”</p>
+            <p class="quote-author">— George Orwell, <span class="quote-book">1984</span></p>
+        </div>
+
+        <div class="quote-card">
+            <p class="quote-text">“Who controls the past controls the future. Who controls the present controls the past.”</p>
+            <p class="quote-author">— George Orwell, <span class="quote-book">1984</span></p>
+        </div>
+
+        <div class="quote-card">
+            <p class="quote-text">“If you want a picture of the future, imagine a boot stamping on a human face—for ever.”</p>
+            <p class="quote-author">— George Orwell, <span class="quote-book">1984</span></p>
+        </div>
+
+        <div class="quote-card">
+            <p class="quote-text">“War is peace. 
+Freedom is slavery. 
+Ignorance is strength.”</p>
+            <p class="quote-author">— George Orwell, <span class="quote-book">1984</span></p>
+        </div>
+
+        <div class="quote-card">
+            <p class="quote-text">“In the face of pain there are no heroes.”</p>
+            <p class="quote-author">— George Orwell, <span class="quote-book">1984</span></p>
+        </div>
+
+        <div class="quote-card">
+            <p class="quote-text">“Big Brother is Watching You.”</p>
+            <p class="quote-author">— George Orwell, <span class="quote-book">1984</span></p>
+        </div>
+
+        <div class="quote-card">
+            <p class="quote-text">“It was a bright cold day in April, and the clocks were striking thirteen.”</p>
+            <p class="quote-author">— George Orwell, <span class="quote-book">1984</span></p>
+        </div>
+
+        <div class="quote-card">
+            <p class="quote-text">“Until they become conscious they will never rebel, and until after they have rebelled they cannot become conscious.”</p>
+            <p class="quote-author">— George Orwell, <span class="quote-book">1984</span></p>
+        </div>
+
+        <div class="quote-card">
+            <p class="quote-text">“Sanity is not statistical.”</p>
+            <p class="quote-author">— George Orwell, <span class="quote-book">1984</span></p>
+        </div>
+
+        <div class="quote-card">
+            <p class="quote-text">“There was truth and there was untruth, and if you clung to the truth even against the whole world, you were not mad.”</p>
+            <p class="quote-author">— George Orwell, <span class="quote-book">1984</span></p>
+        </div>
+
+        <div class="quote-card">
+            <p class="quote-text">“Memory is redundant: it repeats signs so that the city can begin to exist.”</p>
+            <p class="quote-author">— Italo Calvino, <span class="quote-book">Invisible Cities</span></p>
+        </div>
+
+        <div class="quote-card">
+            <p class="quote-text">“Futures not achieved are just branches of the past: dead branches.”</p>
+            <p class="quote-author">— Italo Calvino, <span class="quote-book">Invisible Cities</span></p>
+        </div>
+
+        <div class="quote-card">
+            <p class="quote-text">“You take delight not in a city&#x27;s seven or seventy wonders, but in the answer it gives to a question of yours.”</p>
+            <p class="quote-author">— Italo Calvino, <span class="quote-book">Invisible Cities</span></p>
+        </div>
+
+        <div class="quote-card">
+            <p class="quote-text">“The inferno of the living is not something that will be; if there is one, it is what is already here, the inferno where we live every day, that we form by being together. There are two ways to escape suffering it. The first is easy for many: accept the inferno and becomeNormally I can help with things like this, but I don't seem to have access to that content. You can try again or ask me for something else.
