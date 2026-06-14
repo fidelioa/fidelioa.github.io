@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+\<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -6,14 +6,13 @@
     <title>Fragments & Echoes</title>
     <style>
         :root {
-            --bg-color: #09090c;
-            --panel-bg: #111116;
+            --bg-color: #08080b;
             --text-primary: #e4e4ed;
-            --text-secondary: #6e6e80;
-            --accent: #a385b9; /* Soft violet */
+            --text-secondary: #5a5a6e;
+            --accent: #a385b9; /* Soft artsy violet */
             --accent-dim: rgba(163, 133, 185, 0.15);
-            --nav-bg: rgba(9, 9, 12, 0.9);
-            --border: #1a1a24;
+            --nav-bg: rgba(8, 8, 11, 0.9);
+            --border: #161622;
         }
 
         * {
@@ -29,8 +28,10 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            justify-content: space-between;
             align-items: center;
-            padding: 120px 2rem 3rem 2rem;
+            padding: 2rem;
+            overflow: hidden; /* Keeps the single-screen editorial look */
         }
 
         /* Fixed Navigation Bar */
@@ -42,25 +43,25 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1.5rem 2rem;
+            padding: 2rem 2.5rem;
             background: var(--nav-bg);
             backdrop-filter: blur(8px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
             z-index: 100;
         }
 
         .nav-logo {
             font-family: monospace;
             font-size: 0.9rem;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             text-transform: uppercase;
             color: var(--text-primary);
             text-decoration: none;
+            opacity: 0.8;
         }
 
         .nav-links {
             display: flex;
-            gap: 2rem;
+            gap: 2.5rem;
             list-style: none;
         }
 
@@ -70,148 +71,92 @@
             color: var(--text-secondary);
             text-decoration: none;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            transition: color 0.3s ease;
+            letter-spacing: 2px;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
         }
 
         .nav-links a:hover {
             color: var(--accent);
+            text-shadow: 0 0 8px var(--accent-dim);
         }
 
-        /* Artsy Asymmetric Grid Layout */
-        .grid-container {
+        /* Artsy Split Layout Frame */
+        main {
             width: 100%;
             max-width: 900px;
             display: grid;
-            grid-template-columns: 1.6fr 1fr;
-            gap: 3rem;
-            margin-top: 2rem;
+            grid-template-columns: 1.2fr 1fr;
+            align-items: center;
+            gap: 4rem;
+            margin: auto; /* Centers the block vertically on screen */
+            padding-top: 60px;
         }
 
-        /* Left Column: Deep Vibe & Focus */
-        .hero-panel {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            border-left: 1px solid var(--border);
-            padding-left: 2rem;
+        /* Left side: Big, structural typography */
+        .brand-axis {
+            text-align: right;
         }
 
         h1 {
-            font-size: 3.5rem;
+            font-size: 4rem;
             font-weight: 400;
             font-style: italic;
-            letter-spacing: -1px;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(to right, #e4e4ed, #9a9aab);
+            letter-spacing: -2px;
+            line-height: 0.95;
+            background: linear-gradient(to bottom, #e4e4ed 30%, #4a4a5a);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .main-quote {
-            font-size: 1.2rem;
+        /* Right side: The Statement Content */
+        .statement-axis {
+            border-left: 1px solid var(--border);
+            padding: 1.5rem 0 1.5rem 3rem;
+        }
+
+        .home-quote {
+            font-size: 1.25rem;
             color: #b5b5c3;
             line-height: 1.8;
             font-style: italic;
-            margin-bottom: 0.5rem;
-        }
-
-        .quote-author {
-            font-family: monospace;
-            font-size: 0.75rem;
-            color: var(--accent);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        /* Right Column: Mini Info Blocks (No Images needed) */
-        .side-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-        }
-
-        .card {
-            background: var(--panel-bg);
-            border: 1px solid var(--border);
-            padding: 1.5rem;
-            border-radius: 4px;
-        }
-
-        .card-title {
-            font-family: monospace;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .card-title::after {
-            content: '';
-            flex-grow: 1;
-            height: 1px;
-            background: var(--border);
-        }
-
-        /* Meta status styling */
-        .status-item {
-            font-size: 0.95rem;
             margin-bottom: 0.8rem;
-            color: #cdd;
-        }
-        .status-item span {
-            display: block;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            font-family: monospace;
         }
 
-        /* Quick micro log list */
-        .micro-log {
-            list-style: none;
-        }
-        .micro-log li {
-            font-size: 0.9rem;
-            padding: 0.5rem 0;
-            border-bottom: 1px dashed rgba(26, 26, 36, 0.5);
-            color: #b5b5c3;
-        }
-        .micro-log li:last-child {
-            border: none;
-        }
-        .micro-log time {
+        .quote-source {
             font-family: monospace;
             font-size: 0.75rem;
             color: var(--accent);
-            margin-right: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: block;
         }
 
         /* Footer */
         footer {
-            margin-top: auto;
-            padding-top: 5rem;
             font-family: monospace;
             font-size: 0.75rem;
-            color: rgba(110, 110, 128, 0.4);
-            letter-spacing: 1px;
-            width: 100%;
-            max-width: 900px;
+            color: rgba(110, 110, 128, 0.3);
+            letter-spacing: 1.5px;
             text-align: center;
+            width: 100%;
         }
 
-        /* Responsive design for smaller screens */
+        /* Responsive collapse for tablets/phones */
         @media (max-width: 768px) {
-            .grid-container {
+            body { overflow: auto; }
+            main {
                 grid-template-columns: 1fr;
-                gap: 4rem;
+                gap: 2rem;
+                text-align: center;
+                padding-top: 100px;
             }
-            h1 { font-size: 2.8rem; }
-            .hero-panel { border-left: none; padding-left: 0; }
+            .brand-axis { text-align: center; }
+            h1 { font-size: 3rem; margin-bottom: 1rem; }
+            .statement-axis {
+                border-left: none;
+                border-top: 1px solid var(--border);
+                padding: 2rem 0 0 0;
+            }
         }
     </style>
 </head>
@@ -228,59 +173,23 @@
         </ul>
     </nav>
 
-    <!-- Main Dynamic Content Grid -->
-    <div class="grid-container">
+    <!-- Main Typographic Layout -->
+    <main>
+        <div class="brand-axis">
+            <h1>fragments<br>& echoes</h1>
+        </div>
         
-        <!-- Left Wing: Bold Entry Statement -->
-        <main class="hero-panel">
-            <h1>fragments &<br>echoes</h1>
-            <p class="main-quote">
+        <div class="statement-axis">
+            <p class="home-quote">
                 "We trace the lines that time forgot, and build a world from what is not."
             </p>
-            <span class="quote-author">— marginalia no. 01</span>
-        </main>
-
-        <!-- Right Wing: Personal Log/Status Radar -->
-        <aside class="side-panel">
-            
-            <!-- Card 1: Currently Consuming Status -->
-            <div class="card">
-                <div class="card-title">Currently</div>
-                
-                <div class="status-item">
-                    <span>Reading //</span>
-                    The Odyssey
-                </div>
-                
-                <div class="status-item">
-                    <span>Stanza Focus //</span>
-                    Emily Dickinson
-                </div>
-            </div>
-
-            <!-- Card 2: Recent Activity / Micro Log Updates -->
-            <div class="card">
-                <div class="card-title">Recent Updates</div>
-                <ul class="micro-log">
-                    <li>
-                        <time>06.15</time> Added 4 poetry indices to /verse
-                    </li>
-                    <li>
-                        <time>05.28</time> Sorted out movie log draft lines
-                    </li>
-                    <li>
-                        <time>04.12</time> Blueprinting dark architecture design
-                    </li>
-                </ul>
-            </div>
-
-        </aside>
-
-    </div>
+            <span class="quote-source">— marginalia no. 01</span>
+        </div>
+    </main>
 
     <!-- Footer -->
     <footer>
-        [ digital scrapbook / structured ink & code / 2026 ]
+        [ digital scrapbook // 2026 ]
     </footer>
 
 </body>
