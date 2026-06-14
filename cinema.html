@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fragments & Echoes // Cinema Archive</title>
+    <title>Fragments & Echoes // Cinema</title>
     <style>
         :root {
             --bg-color: #08080b;
             --text-primary: #e4e4ed;
             --text-secondary: #5a5a6e;
-            --accent: #a385b9; /* Soft artsy violet */
+            --accent: #a385b9; 
             --nav-bg: rgba(8, 8, 11, 0.9);
             --border: #161622;
             --card-bg: #0f0f14;
@@ -33,7 +33,6 @@
             min-height: 100vh;
         }
 
-        /* Fixed Navigation Bar */
         nav {
             position: fixed;
             top: 0;
@@ -110,12 +109,12 @@
         }
 
         section {
-            margin-bottom: 5rem;
+            margin-bottom: 4rem;
         }
 
         h3 {
             font-family: monospace;
-            font-size: 1rem;
+            font-size: 0.9rem;
             font-weight: 400;
             text-transform: uppercase;
             letter-spacing: 3px;
@@ -125,7 +124,6 @@
             padding-bottom: 0.5rem;
         }
 
-        /* Curated Spotlights Layout */
         .spotlight-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -134,23 +132,27 @@
 
         .spotlight-card {
             background: var(--card-bg);
-            border: 1px solid var(--border);
-            padding: 1.8rem;
-            border-radius: 4px;
+            border-left: 2px solid var(--border);
+            padding: 1.5rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .spotlight-card:hover {
+            border-left-color: var(--accent);
         }
 
         .spotlight-card h4 {
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             font-weight: normal;
             font-style: italic;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.6rem;
             color: #e4e4ed;
         }
 
         .spotlight-card p {
             font-size: 0.95rem;
             color: #9a9aa8;
-            margin-bottom: 1rem;
+            margin-bottom: 1.2rem;
         }
 
         .tag-list {
@@ -162,13 +164,12 @@
         .tag {
             font-family: monospace;
             font-size: 0.75rem;
-            background: rgba(163, 133, 185, 0.1);
+            background: rgba(163, 133, 185, 0.08);
             color: var(--accent);
             padding: 0.2rem 0.6rem;
             border-radius: 2px;
         }
 
-        /* Live Filtering Search Bar */
         .search-container {
             margin-bottom: 2.5rem;
             width: 100%;
@@ -192,11 +193,10 @@
             border-color: var(--accent);
         }
 
-        /* Films Grid */
         .film-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 2rem;
+            gap: 1.5rem;
         }
 
         .film-card {
@@ -206,16 +206,16 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            transition: transform 0.3s ease, border-color 0.3s ease;
+            transition: transform 0.2s ease, border-color 0.2s ease;
         }
 
         .film-card:hover {
-            transform: translateY(-4px);
+            transform: translateY(-3px);
             border-color: var(--accent);
         }
 
         .film-info {
-            padding: 1rem;
+            padding: 1.2rem;
             display: flex;
             flex-direction: column;
             flex-grow: 1;
@@ -225,15 +225,15 @@
             font-family: monospace;
             font-size: 0.75rem;
             color: var(--text-secondary);
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.4rem;
         }
 
         .film-title {
             font-size: 1rem;
             font-weight: normal;
-            line-height: 1.3;
+            line-height: 1.4;
             color: #e4e4ed;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.5rem;
         }
 
         .film-meta {
@@ -261,7 +261,6 @@
 </head>
 <body>
 
-    <!-- Top Navigation Bar -->
     <nav>
         <a href="../index.html" class="nav-logo">// f&e</a>
         <ul class="nav-links">
@@ -275,58 +274,18 @@
     <main>
         <header>
             <h2>Moving Images</h2>
-            <span class="subtitle">Notes on framework, form, and duration</span>
+            <span class="subtitle">101 movies I keep returning to</span>
         </header>
 
-        <!-- Curated Cinematic Focus Sections -->
-        <section>
-            <h3>Director Spotlights</h3>
-            <div class="spotlight-grid">
-                <div class="spotlight-card">
-                    <h4>The Coen Brothers</h4>
-                    <p>An obsession with structural ironies, deadpan fatalism, and regular folks stumbling into beautifully complex moral quicksands.</p>
-                    <div class="tag-list">
-                        <span class="tag">Fargo (#9)</span>
-                        <span class="tag">The Big Lebowski (#49)</span>
-                        <span class="tag">Inside Llewyn Davis (#79)</span>
-                    </div>
-                </div>
-                <div class="spotlight-card">
-                    <h4>Mike Leigh</h4>
-                    <p>Unvarnished, improvisational slices of human friction. Masterful observation of the quiet desperation and profound tenderness found in ordinary British landscapes.</p>
-                    <div class="tag-list">
-                        <span class="tag">Naked</span>
-                        <span class="tag">Secrets & Lies</span>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <!-- Dynamic Daily Spotlight Sections -->
+        <section id="dailySpotlightSection"></section>
 
+        <!-- Entire List Grid -->
         <section>
-            <h3>Aesthetic Constants</h3>
-            <div class="spotlight-grid">
-                <div class="spotlight-card">
-                    <h4>The Tilda Swinton Presence</h4>
-                    <p>Chameleonic, architectural, and thoroughly alien. Tracking a fascination with performances that transcend traditional character work into pure text and presence.</p>
-                    <div class="tag-list">
-                        <span class="tag">The Zone of Interest (#67)</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Interactive Core Vault Selection -->
-        <section>
-            <h3>The 101 Index</h3>
-            <p style="color: var(--text-secondary); font-style: italic; margin-bottom: 2rem; font-size: 0.95rem;">
-                A live, searchable index tracking fragments of a shifting personal canon.
-            </p>
-
+            <h3>The 101 Favorites</h3>
             <div class="search-container">
                 <input type="text" id="searchBar" placeholder="Search by title, director, or country..." onkeyup="filterFilms()">
             </div>
-
-            <!-- Dynamic Target Container -->
             <div class="film-grid" id="filmGrid"></div>
         </section>
     </main>
@@ -336,7 +295,7 @@
     </footer>
 
     <script>
-        // Data populated meticulously from your personal ledger screenshots (7391.png - 7399.png)
+        // Full database from your images (7391.png to 7399.png)
         const filmDatabase = [
             { rank: "01", title: "The Godfather Part II", director: "Francis Ford Coppola", year: "1974", country: "USA" },
             { rank: "02", title: "The Human Condition Part I", director: "Masaki Kobayashi", year: "1959", country: "Japan" },
@@ -441,10 +400,50 @@
             { rank: "101", title: "The Cook, the Thief, His Wife & Her Lover", director: "Peter Greenaway", year: "1989", country: "UK" }
         ];
 
+        // A deep pool of spotlights. The script grabs pairs automatically based on the calendar date.
+        const spotlightPool = [
+            {
+                type: "Director Spotlight",
+                title: "The Coen Brothers",
+                desc: "An obsession with structural ironies, deadpan fatalism, and regular folks stumbling into beautifully complex moral quicksands.",
+                tags: ["Fargo (#9)", "The Big Lebowski (#49)", "Inside Llewyn Davis (#79)"]
+            },
+            {
+                type: "Director Spotlight",
+                title: "Mike Leigh",
+                desc: "Unvarnished, improvisational slices of human friction. Masterful observation of the quiet desperation and profound tenderness found in ordinary British landscapes.",
+                tags: ["Naked", "Secrets & Lies"]
+            },
+            {
+                type: "Aesthetic Constants",
+                title: "The Tilda Swinton Presence",
+                desc: "Chameleonic, architectural, and thoroughly alien. Tracking a fascination with performances that transcend traditional character work into pure text and presence.",
+                tags: ["The Zone of Interest (#67)"]
+            },
+            {
+                type: "Director Spotlight",
+                title: "Asghar Farhadi",
+                desc: "Intense, localized micro-dramas where simple misunderstandings escalate into profound systemic and moral breakdowns.",
+                tags: ["A Separation (#11)", "About Elly (#36)"]
+            },
+            {
+                type: "Director Spotlight",
+                title: "Sergio Leone",
+                desc: "Operatic scale, massive close-ups, and long stretches of tactical silence that stretch time right up until the shots are fired.",
+                tags: ["The Good, the Bad and the Ugly (#17)", "Once Upon a Time in America (#19)", "Once Upon a Time in the West (#38)"]
+            },
+            {
+                type: "Aesthetic Constants",
+                title: "The Logic of the Dream",
+                desc: "Stories that prioritize subconscious association, eerie internal geometries, and heavy atmosphere over straightforward narrative lines.",
+                tags: ["Stalker (#45)", "Possession (#34)", "Twin Peaks: FWWM (#73)"]
+            }
+        ];
+
+        // Renders the main alphabetical/ranked grid
         function renderFilms(films) {
             const grid = document.getElementById('filmGrid');
             grid.innerHTML = '';
-
             films.forEach(film => {
                 const card = document.createElement('div');
                 card.className = 'film-card';
@@ -459,6 +458,7 @@
             });
         }
 
+        // Live filtration
         function filterFilms() {
             const query = document.getElementById('searchBar').value.toLowerCase();
             const filtered = filmDatabase.filter(film => {
@@ -469,8 +469,47 @@
             renderFilms(filtered);
         }
 
-        // Init layout mapping on DOM load
+        // Uses the current calendar day to calculate a stable index shift every 24 hours
+        function generateDailySpotlights() {
+            const container = document.getElementById('dailySpotlightSection');
+            
+            // Get a unique single integer for the current date (YYYYMMDD)
+            const today = new Date();
+            const dateSeed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+            
+            // Use mathematical modulo to reliably pluck two different cards based on the day
+            const index1 = dateSeed % spotlightPool.length;
+            const index2 = (dateSeed + 2) % spotlightPool.length; // Shifted index for card 2
+            
+            const card1 = spotlightPool[index1];
+            // If offset somehow hits the same spot, safely nudge it
+            const card2 = (index1 === index2) ? spotlightPool[(index1 + 1) % spotlightPool.length] : spotlightPool[index2];
+
+            container.innerHTML = `
+                <h3>Featured Today</h3>
+                <div class="spotlight-grid">
+                    <div class="spotlight-card">
+                        <span class="subtitle" style="font-size:0.65rem; color:var(--text-secondary);">${card1.type}</span>
+                        <h4 style="margin-top:0.2rem;">${card1.title}</h4>
+                        <p>${card1.desc}</p>
+                        <div class="tag-list">
+                            ${card1.tags.map(t => `<span class="tag">${t}</span>`).join('')}
+                        </div>
+                    </div>
+                    <div class="spotlight-card">
+                        <span class="subtitle" style="font-size:0.65rem; color:var(--text-secondary);">${card2.type}</span>
+                        <h4 style="margin-top:0.2rem;">${card2.title}</h4>
+                        <p>${card2.desc}</p>
+                        <div class="tag-list">
+                            ${card2.tags.map(t => `<span class="tag">${t}</span>`).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
+            generateDailySpotlights();
             renderFilms(filmDatabase);
         });
     </script>
