@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fragments & Echoes // Cinema Archive</title>
+    <style>
+        :root {
+            --bg-color: #08080b;
+            --text-primary: #e4e4ed;
+            --text-secondary: #5a5a6e;
+            --accent: #a385b9; /* Soft artsy violet */
+            --nav-bg: rgba(8, 8, 11, 0.9);
+            --border: #161622;
+            --card-bg: #0f0f14;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Georgia', serif;
+            line-height: 1.6;
+            padding: 140px 2rem 5rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Fixed Navigation Bar */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 2.5rem;
+            background: var(--nav-bg);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.01);
+        }
+
+        .nav-logo {
+            font-family: monospace;
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-primary);
+            text-decoration: none;
+            opacity: 0.8;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover, .nav-links .active {
+            color: var(--accent);
+        }
+
+        main {
+            width: 100%;
+            max-width: 950px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            margin-bottom: 4rem;
+            text-align: left;
+        }
+
+        h2 {
+            font-size: 2.4rem;
+            font-weight: 400;
+            font-style: italic;
+            line-height: 1.3;
+            color: #f0f0f5;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        section {
+            margin-bottom: 5rem;
+        }
+
+        h3 {
+            font-family: monospace;
+            font-size: 1rem;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        /* Curated Spotlights Layout */
+        .spotlight-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .spotlight-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 1.8rem;
+            border-radius: 4px;
+        }
+
+        .spotlight-card h4 {
+            font-size: 1.25rem;
+            font-weight: normal;
+            font-style: italic;
+            margin-bottom: 0.75rem;
+            color: #e4e4ed;
+        }
+
+        .spotlight-card p {
+            font-size: 0.95rem;
+            color: #9a9aa8;
+            margin-bottom: 1rem;
+        }
+
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tag {
+            font-family: monospace;
+            font-size: 0.75rem;
+            background: rgba(163, 133, 185, 0.1);
+            color: var(--accent);
+            padding: 0.2rem 0.6rem;
+            border-radius: 2px;
+        }
+
+        /* Live Filtering Search Bar */
+        .search-container {
+            margin-bottom: 2.5rem;
+            width: 100%;
+        }
+
+        #searchBar {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            font-family: 'Georgia', serif;
+            font-size: 1.05rem;
+            font-style: italic;
+            color: var(--text-primary);
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        #searchBar:focus {
+            border-color: var(--accent);
+        }
+
+        /* Films Grid */
+        .film-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 2rem;
+        }
+
+        .film-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .film-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+        }
+
+        .film-info {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .film-rank {
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .film-title {
+            font-size: 1rem;
+            font-weight: normal;
+            line-height: 1.3;
+            color: #e4e4ed;
+            margin-bottom: 0.25rem;
+        }
+
+        .film-meta {
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: auto;
+        }
+
+        footer {
+            margin-top: auto;
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: rgba(110, 110, 128, 0.3);
+            letter-spacing: 1.5px;
+            text-align: center;
+            width: 100%;
+        }
+
+        @media (max-width: 600px) {
+            body { padding-top: 100px; }
+            .film-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation Bar -->
+    <nav>
+        <a href="../index.html" class="nav-logo">// f&e</a>
+        <ul class="nav-links">
+            <li><a href="quotes.html">Quotes</a></li>
+            <li><a href="poems.html">Poems</a></li>
+            <li><a href="cinema.html" class="active">Cinema</a></li>
+            <li><a href="about.html">About</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <header>
+            <h2>Moving Images</h2>
+            <span class="subtitle">Notes on framework, form, and duration</span>
+        </header>
+
+        <!-- Curated Cinematic Focus Sections -->
+        <section>
+            <h3>Director Spotlights</h3>
+            <div class="spotlight-grid">
+                <div class="spotlight-card">
+                    <h4>The Coen Brothers</h4>
+                    <p>An obsession with structural ironies, deadpan fatalism, and regular folks stumbling into beautifully complex moral quicksands.</p>
+                    <div class="tag-list">
+                        <span class="tag">Fargo (#9)</span>
+                        <span class="tag">The Big Lebowski (#49)</span>
+                        <span class="tag">Inside Llewyn Davis (#79)</span>
+                    </div>
+                </div>
+                <div class="spotlight-card">
+                    <h4>Mike Leigh</h4>
+                    <p>Unvarnished, improvisational slices of human friction. Masterful observation of the quiet desperation and profound tenderness found in ordinary British landscapes.</p>
+                    <div class="tag-list">
+                        <span class="tag">Naked</span>
+                        <span class="tag">Secrets & Lies</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h3>Aesthetic Constants</h3>
+            <div class="spotlight-grid">
+                <div class="spotlight-card">
+                    <h4>The Tilda Swinton Presence</h4>
+                    <p>Chameleonic, architectural, and thoroughly alien. Tracking a fascination with performances that transcend traditional character work into pure text and presence.</p>
+                    <div class="tag-list">
+                        <span class="tag">The Zone of Interest (#67)</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Core Vault Selection -->
+        <section>
+            <h3>The 101 Index</h3>
+            <p style="color: var(--text-secondary); font-style: italic; margin-bottom: 2rem; font-size: 0.95rem;">
+                A live, searchable index tracking fragments of a shifting personal canon.
+            </p>
+
+            <div class="search-container">
+                <input type="text" id="searchBar" placeholder="Search by title, director, or country..." onkeyup="filterFilms()">
+            </div>
+
+            <!-- Dynamic Target Container -->
+            <div class="film-grid" id="filmGrid"></div>
+        </section>
+    </main>
+
+    <footer>
+        [ fragments & echoes // cinema archive ]
+    </footer>
+
+    <script>
+        // Data populated meticulously from your personal ledger screenshots (7391.png - 7399.png)
+        const filmDatabase = [
+            { rank: "01", title: "The Godfather Part II", director: "Francis Ford Coppola", year: "1974", country: "USA" },
+            { rank: "02", title: "The Human Condition Part I", director: "Masaki Kobayashi", year: "1959", country: "Japan" },
+            { rank: "03", title: "The Lord of the Rings: The Return of the King", director: "Peter Jackson", year: "2003", country: "New Zealand" },
+            { rank: "04", title: "The Seventh Seal", director: "Ingmar Bergman", year: "1957", country: "Sweden" },
+            { rank: "05", title: "Before Sunrise", director: "Richard Linklater", year: "1995", country: "USA" },
+            { rank: "06", title: "Come and See", director: "Elem Klimov", year: "1985", country: "Soviet Union" },
+            { rank: "07", title: "Grave of the Fireflies", director: "Isao Takahata", year: "1988", country: "Japan" },
+            { rank: "08", title: "Carol", director: "Todd Haynes", year: "2015", country: "USA" },
+            { rank: "09", title: "Fargo", director: "Joel Coen", year: "1996", country: "USA" },
+            { rank: "10", title: "Portrait of a Lady on Fire", director: "Céline Sciamma", year: "2019", country: "France" },
+            { rank: "11", title: "A Separation", director: "Asghar Farhadi", year: "2011", country: "Iran" },
+            { rank: "12", title: "Breaking the Waves", director: "Lars von Trier", year: "1996", country: "Denmark" },
+            { rank: "13", title: "The Banshees of Inisherin", director: "Martin McDonagh", year: "2022", country: "Ireland" },
+            { rank: "14", title: "Frances Ha", director: "Noah Baumbach", year: "2012", country: "USA" },
+            { rank: "15", title: "In the Mood for Love", director: "Wong Kar-wai", year: "2000", country: "Hong Kong" },
+            { rank: "16", title: "Paterson", director: "Jim Jarmusch", year: "2016", country: "USA" },
+            { rank: "17", title: "The Good, the Bad and the Ugly", director: "Sergio Leone", year: "1966", country: "Italy" },
+            { rank: "18", title: "The 400 Blows", director: "François Truffaut", year: "1959", country: "France" },
+            { rank: "19", title: "Once Upon a Time in America", director: "Sergio Leone", year: "1984", country: "Italy" },
+            { rank: "20", title: "Underground", director: "Emir Kusturica", year: "1995", country: "Yugoslavia" },
+            { rank: "21", title: "20th Century Women", director: "Mike Mills", year: "2016", country: "USA" },
+            { rank: "22", title: "Son of Saul", director: "László Nemes", year: "2015", country: "Hungary" },
+            { rank: "23", title: "La Haine", director: "Mathieu Kassovitz", year: "1995", country: "France" },
+            { rank: "24", title: "The Great Beauty", director: "Paolo Sorrentino", year: "2013", country: "Italy" },
+            { rank: "25", title: "The Piano Teacher", director: "Michael Haneke", year: "2001", country: "Austria" },
+            { rank: "26", title: "The Man Without a Past", director: "Aki Kaurismäki", year: "2002", country: "Finland" },
+            { rank: "27", title: "La La Land", director: "Damien Chazelle", year: "2016", country: "USA" },
+            { rank: "28", title: "12 Angry Men", director: "Sidney Lumet", year: "1957", country: "USA" },
+            { rank: "29", title: "Barry Lyndon", director: "Stanley Kubrick", year: "1975", country: "UK" },
+            { rank: "30", title: "Close-Up", director: "Abbas Kiarostani", year: "1990", country: "Iran" },
+            { rank: "31", title: "La Strada", director: "Federico Fellini", year: "1954", country: "Italy" },
+            { rank: "32", title: "Seven Samurai", director: "Akira Kurosawa", year: "1954", country: "Japan" },
+            { rank: "33", title: "Army of Shadows", director: "Jean-Pierre Melville", year: "1969", country: "France" },
+            { rank: "34", title: "Possession", director: "Andrzej Żuławski", year: "1981", country: "France" },
+            { rank: "35", title: "Memories of Murder", director: "Bong Joon Ho", year: "2003", country: "South Korea" },
+            { rank: "36", title: "About Elly", director: "Asghar Farhadi", year: "2009", country: "Iran" },
+            { rank: "37", title: "It's Such a Beautiful Day", director: "Don Hertzfeldt", year: "2012", country: "USA" },
+            { rank: "38", title: "Once Upon a Time in the West", director: "Sergio Leone", year: "1968", country: "Italy" },
+            { rank: "39", title: "Swiss Army Man", director: "Daniel Kwan, Daniel Scheinert", year: "2016", country: "USA" },
+            { rank: "40", title: "Fantastic Mr. Fox", director: "Wes Anderson", year: "2009", country: "USA" },
+            { rank: "41", title: "Eternal Sunshine of the Spotless Mind", director: "Michel Gondry", year: "2004", country: "USA" },
+            { rank: "42", title: "Tokyo Story", director: "Yasujirō Ozu", year: "1953", country: "Japan" },
+            { rank: "43", title: "Dogville", director: "Lars von Trier", year: "2003", country: "Denmark" },
+            { rank: "44", title: "The Truman Show", director: "Peter Weir", year: "1998", country: "USA" },
+            { rank: "45", title: "Stalker", director: "Andrei Tarkovsky", year: "1979", country: "Soviet Union" },
+            { rank: "46", title: "A Woman Under the Influence", director: "John Cassavetes", year: "1974", country: "USA" },
+            { rank: "47", title: "GoodFellas", director: "Martin Scorsese", year: "1990", country: "USA" },
+            { rank: "48", title: "Dog Day Afternoon", director: "Sidney Lumet", year: "1975", country: "USA" },
+            { rank: "49", title: "The Big Lebowski", director: "Joel Coen", year: "1998", country: "USA" },
+            { rank: "50", title: "There Will Be Blood", director: "Paul Thomas Anderson", year: "2007", country: "USA" },
+            { rank: "51", title: "Your Name.", director: "Makoto Shinkai", year: "2016", country: "Japan" },
+            { rank: "52", title: "Farewell My Concubine", director: "Chen Kaige", year: "1993", country: "China" },
+            { rank: "53", title: "Hiroshima Mon Amour", director: "Alain Resnais", year: "1959", country: "France" },
+            { rank: "54", title: "Jules and Jim", director: "François Truffaut", year: "1962", country: "France" },
+            { rank: "55", title: "Cure", director: "Kiyoshi Kurosawa", year: "1997", country: "Japan" },
+            { rank: "56", title: "Arrival", director: "Denis Villeneuve", year: "2016", country: "USA" },
+            { rank: "57", title: "Another Round", director: "Thomas Vinterberg", year: "2020", country: "Denmark" },
+            { rank: "58", title: "Pride & Prejudice", director: "Joe Wright", year: "2005", country: "UK" },
+            { rank: "59", title: "Parasite", director: "Bong Joon Ho", year: "2019", country: "South Korea" },
+            { rank: "60", title: "Fitzcarraldo", director: "Werner Herzog", year: "1982", country: "West Germany" },
+            { rank: "61", title: "Little Women", director: "Greta Gerwig", year: "2019", country: "USA" },
+            { rank: "62", title: "Interstellar", director: "Christopher Nolan", year: "2014", country: "USA" },
+            { rank: "63", title: "Unforgiven", director: "Clint Eastwood", year: "1992", country: "USA" },
+            { rank: "64", title: "The Thing", director: "John Carpenter", year: "1982", country: "USA" },
+            { rank: "65", title: "Aftersun", director: "Charlotte Wells", year: "2022", country: "UK" },
+            { rank: "66", title: "Anatomy of a Fall", director: "Justine Triet", year: "2023", country: "France" },
+            { rank: "67", title: "The Zone of Interest", director: "Jonathan Glazer", year: "2023", country: "UK" },
+            { rank: "68", title: "Volver", director: "Pedro Almodóvar", year: "2006", country: "Spain" },
+            { rank: "69", title: "Memento", director: "Christopher Nolan", year: "2000", country: "USA" },
+            { rank: "70", title: "Brokeback Mountain", director: "Ang Lee", year: "2005", country: "USA" },
+            { rank: "71", title: "Bicycle Thieves", director: "Vittorio De Sica", year: "1948", country: "Italy" },
+            { rank: "72", title: "My Dinner with Andre", director: "Louis Malle", year: "1981", country: "USA" },
+            { rank: "73", title: "Twin Peaks: Fire Walk with Me", director: "David Lynch", year: "1992", country: "USA" },
+            { rank: "74", title: "The Vanishing", director: "George Sluizer", year: "1988", country: "Netherlands" },
+            { rank: "75", title: "The Long Goodbye", director: "Robert Altman", year: "1973", country: "USA" },
+            { rank: "76", title: "What We Do in the Shadows", director: "Taika Waititi, Jemaine Clement", year: "2014", country: "New Zealand" },
+            { rank: "77", title: "Dune: Part Two", director: "Denis Villeneuve", year: "2024", country: "USA" },
+            { rank: "78", title: "Magnolia", director: "Paul Thomas Anderson", year: "1999", country: "USA" },
+            { rank: "79", title: "Inside Llewyn Davis", director: "Joel Coen, Ethan Coen", year: "2013", country: "USA" },
+            { rank: "80", title: "Caché", director: "Michael Haneke", year: "2005", country: "France" },
+            { rank: "81", title: "Moonlight", director: "Barry Jenkins", year: "2016", country: "USA" },
+            { rank: "82", title: "The Fall", director: "Tarsem Singh", year: "2006", country: "India" },
+            { rank: "83", title: "The Tree of Life", director: "Terrence Malick", year: "2011", country: "USA" },
+            { rank: "84", title: "The Wages of Fear", director: "Henri-Georges Clouzot", year: "1953", country: "France" },
+            { rank: "85", title: "Le Samouraï", director: "Jean-Pierre Melville", year: "1967", country: "France" },
+            { rank: "86", title: "Lady Bird", director: "Greta Gerwig", year: "2017", country: "USA" },
+            { rank: "87", title: "Vivre Sa Vie", director: "Jean-Luc Godard", year: "1962", country: "France" },
+            { rank: "88", title: "Kill Bill: Vol. 1", director: "Quentin Tarantino", year: "2003", country: "USA" },
+            { rank: "89", title: "The Piano", director: "Jane Campion", year: "1993", country: "New Zealand" },
+            { rank: "90", title: "My Darling Clementine", director: "John Ford", year: "1946", country: "USA" },
+            { rank: "91", title: "The Night of the Hunter", director: "Charles Laughton", year: "1955", country: "USA" },
+            { rank: "92", title: "The General", director: "Buster Keaton", year: "1926", country: "USA" },
+            { rank: "93", title: "Y Tu Mamá También", director: "Alfonso Cuarón", year: "2001", country: "Mexico" },
+            { rank: "94", title: "The Florida Project", director: "Sean Baker", year: "2017", country: "USA" },
+            { rank: "95", title: "Uncut Gems", director: "Josh Safdie, Benny Safdie", year: "2019", country: "USA" },
+            { rank: "96", title: "Rosemary's Baby", director: "Roman Polanski", year: "1968", country: "USA" },
+            { rank: "97", title: "Office Space", director: "Mike Judge", year: "1999", country: "USA" },
+            { rank: "98", title: "Saving Private Ryan", director: "Steven Spielberg", year: "1998", country: "USA" },
+            { rank: "99", title: "Humanist Vampire Seeking Consenting Suicidal Person", director: "Ariane Louis-Seize", year: "2023", country: "Canada" },
+            { rank: "100", title: "Coco", director: "Lee Unkrich", year: "2017", country: "USA" },
+            { rank: "101", title: "The Cook, the Thief, His Wife & Her Lover", director: "Peter Greenaway", year: "1989", country: "UK" }
+        ];
+
+        function renderFilms(films) {
+            const grid = document.getElementById('filmGrid');
+            grid.innerHTML = '';
+
+            films.forEach(film => {
+                const card = document.createElement('div');
+                card.className = 'film-card';
+                card.innerHTML = `
+                    <div class="film-info">
+                        <span class="film-rank">#${film.rank}</span>
+                        <h5 class="film-title">${film.title}</h5>
+                        <span class="film-meta">${film.director} (${film.year})</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterFilms() {
+            const query = document.getElementById('searchBar').value.toLowerCase();
+            const filtered = filmDatabase.filter(film => {
+                return film.title.toLowerCase().includes(query) || 
+                       film.director.toLowerCase().includes(query) || 
+                       film.country.toLowerCase().includes(query);
+            });
+            renderFilms(filtered);
+        }
+
+        // Init layout mapping on DOM load
+        window.addEventListener('DOMContentLoaded', () => {
+            renderFilms(filmDatabase);
+        });
+    </script>
+</body>
+</html>
