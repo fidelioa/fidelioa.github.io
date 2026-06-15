@@ -222,7 +222,7 @@
         </header>
 
         <!-- Main Index List -->
-        <main>
+        <main id="poem-list">
             
             <!-- Poem 1 -->
             <div class="poem-row">
@@ -261,6 +261,23 @@
     <footer>
         [ fragments & echoes / index ]
     </footer>
+
+    <!-- JavaScript to Randomize Poem Rows -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const container = document.getElementById("poem-list");
+            const rows = Array.from(container.getElementsByClassName("poem-row"));
+            
+            // Randomize array elements using the Durstenfeld shuffle algorithm
+            for (let i = rows.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [rows[i], rows[j]] = [rows[j], rows[i]];
+            }
+            
+            // Re-append rows to container in the new order
+            rows.forEach(row => container.appendChild(row));
+        });
+    </script>
 
 </body>
 </html>
