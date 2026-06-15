@@ -25,12 +25,13 @@
             background-color: var(--bg-color);
             color: var(--text-primary);
             font-family: 'Georgia', serif;
-            line-height: 1.8;
-            padding: 140px 1.5rem 5rem 1.5rem; /* Space for fixed nav */
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
+            justify-content: space-between;
             align-items: center;
-            min-height: 100vh;
+            padding: 2rem;
+            overflow-x: hidden; /* Prevent horizontal scrolling safely */
         }
 
         /* Fixed Navigation Bar */
@@ -45,8 +46,8 @@
             padding: 2rem 2.5rem;
             background: var(--nav-bg);
             backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             z-index: 100;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.01);
         }
 
         .nav-logo {
@@ -57,6 +58,7 @@
             color: var(--text-primary);
             text-decoration: none;
             opacity: 0.8;
+            flex-shrink: 0;
         }
 
         .nav-links {
@@ -72,17 +74,28 @@
             text-decoration: none;
             text-transform: uppercase;
             letter-spacing: 2px;
-            transition: color 0.3s ease;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+            white-space: nowrap;
         }
 
-        .nav-links a:hover, .nav-links .active {
+        .nav-links a:hover, .nav-links a.active {
             color: var(--accent);
+            text-shadow: 0 0 8px var(--accent-dim);
+        }
+
+        /* Unified Core Container Frame */
+        .content-container {
+            width: 100%;
+            max-width: 500px;
+            padding-top: 120px; /* Safely clears fixed desktop nav space */
+            padding-bottom: 40px;
+            display: flex;
+            flex-direction: column;
         }
 
         /* Poem Container Structure */
         main {
             width: 100%;
-            max-width: 500px;
             display: flex;
             flex-direction: column;
         }
@@ -128,11 +141,12 @@
             display: block;
         }
 
-        /* Content Block to preserve layout breaks cleanly */
+        /* The Content Block */
         .poem-content {
-            white-space: pre-line;
+            white-space: pre-line; /* Keeps stanzas and breaks perfectly formatted */
             font-size: 1.1rem;
             color: #c8c8d5;
+            line-height: 1.6;
             letter-spacing: 0.2px;
             margin-bottom: 4rem;
             padding-left: 1.5rem;
@@ -149,6 +163,28 @@
             text-align: center;
             width: 100%;
         }
+
+        /* Responsive collapse adjustments */
+        @media (max-width: 768px) {
+            nav {
+                padding: 1.5rem 1.5rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                gap: 1.2rem;
+            }
+
+            .nav-links a {
+                font-size: 0.75rem;
+                letter-spacing: 1px;
+            }
+
+            .content-container {
+                padding-top: 160px; /* Shift down to avoid overlapping vertical mobile layout */
+            }
+        }
     </style>
 </head>
 <body>
@@ -158,24 +194,25 @@
         <a href="../index.html" class="nav-logo">// f&e</a>
         <ul class="nav-links">
             <li><a href="../quotes">Quotes</a></li>
-            <li><a href="../poems" class="active">Poems</a></li>
+            <li><a href="../poems/index" class="active">Poems</a></li>
             <li><a href="../cinema">Cinema</a></li>
             <li><a href="../about">About</a></li>
         </ul>
     </nav>
 
-    <!-- Main Poem Frame -->
-    <main>
-        
-        <a href="../poems" class="back-link">← Return to Index</a>
+    <!-- Structural Layout Content Block Container -->
+    <div class="content-container">
+        <main>
+            
+            <a href="index.html" class="back-link">← Return to Index</a>
 
-        <header>
-            <h2>“Hope” is the thing with feathers - (254)</h2>
-            <span class="poem-author">Emily Dickinson</span>
-        </header>
+            <header>
+                <h2>“Hope” is the thing with feathers - (254)</h2>
+                <span class="poem-author">Emily Dickinson</span>
+            </header>
 
-        <!-- Preserves capitalization, breaks, and em-dashes exactly -->
-        <article class="poem-content">“Hope” is the thing with feathers -
+            <!-- Preserves capitalization, breaks, and em-dashes exactly -->
+            <article class="poem-content">“Hope” is the thing with feathers -
 That perches in the soul -
 And sings the tune without the words -
 And never stops - at all -
@@ -190,7 +227,8 @@ And on the strangest Sea -
 Yet - never - in Extremity,
 It asked a crumb - of me.</article>
 
-    </main>
+        </main>
+    </div>
 
     <!-- Footer -->
     <footer>
