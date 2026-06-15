@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-<meta charset="UTF-8">
+<head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fragments & Echoes</title>
+    <title>Fragments & Echoes — Poems</title>
     <style>
         :root {
             --bg-color: #08080b;
@@ -77,15 +78,24 @@
             white-space: nowrap;
         }
 
-        .nav-links a:hover {
+        .nav-links a:hover, .nav-links a.active {
             color: var(--accent);
             text-shadow: 0 0 8px var(--accent-dim);
         }
         
+        /* Unified Core Container Frame */
+        .content-container {
+            width: 100%;
+            max-width: 600px;
+            padding-top: 120px; /* Safely pushes everything out from beneath fixed navbar */
+            padding-bottom: 40px;
+            display: flex;
+            flex-direction: column;
+        }
+
         /* Page Header */
         header {
             width: 100%;
-            max-width: 600px;
             margin-bottom: 3.5rem;
             text-align: left;
         }
@@ -110,7 +120,6 @@
         /* Minimalist List Layout */
         main {
             width: 100%;
-            max-width: 600px;
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
@@ -137,7 +146,7 @@
 
         .poem-row:hover .poem-link {
             color: var(--accent);
-            padding-left: 6px; /* Subtle responsive shift on hover */
+            padding-left: 6px; /* Subtle fluid shift on hover */
         }
 
         /* Author Metadata */
@@ -159,10 +168,9 @@
             letter-spacing: 1px;
             text-align: center;
             width: 100%;
-            max-width: 600px;
         }
 
-        /* Responsive collapse for tablets/phones */
+        /* Responsive collapse adjustments */
         @media (max-width: 768px) {
             nav {
                 padding: 1.5rem 1.5rem;
@@ -179,12 +187,18 @@
                 letter-spacing: 1px;
             }
 
-            main {
-                grid-template-columns: 1fr;
-                gap: 2.5rem;
-                text-align: center;
-                padding-top: 140px; /* Leaves room for stacked nav */
+            .content-container {
+                padding-top: 160px; /* Leaves room for stacked nav on mobile mobile ports */
             }
+        }
+        
+        @media (max-width: 480px) {
+            .poem-row {
+                flex-direction: column;
+                gap: 0.4rem;
+                align-items: flex-start;
+            }
+        }
     </style>
 </head>
 <body>
@@ -193,53 +207,56 @@
     <nav>
         <a href="../index.html" class="nav-logo">// f&e</a>
         <ul class="nav-links">
-            <li><a href="../quotes">Quotes</a></li>
-            <li><a href="../poems" class="active">Poems</a></li>
-            <li><a href="../cinema">Cinema</a></li>
-            <li><a href="../about">About</a></li>
+            <li><a href="../quotes.html">Quotes</a></li>
+            <li><a href="../poems/index.html" class="active">Poems</a></li>
+            <li><a href="../cinema.html">Cinema</a></li>
+            <li><a href="../about.html">About</a></li>
         </ul>
     </nav>
 
-    <!-- Page Title Header -->
-    <header>
-        <h2>collected verse.</h2>
-        <div class="page-subtitle">stanzas in the dark</div>
-    </header>
+    <!-- Structural Layout Content Block Container -->
+    <div class="content-container">
+        <!-- Page Title Header -->
+        <header>
+            <h2>collected verse.</h2>
+            <div class="page-subtitle">stanzas in the dark</div>
+        </header>
 
-    <!-- Main Index List -->
-    <main>
-        
-        <!-- Poem 1 -->
-        <div class="poem-row">
-            <a href="because-i-could-not-stop-for-death.html" class="poem-link">Because I could not stop for Death</a>
-            <span class="poem-author">Emily Dickinson</span>
-        </div>
+        <!-- Main Index List -->
+        <main>
+            
+            <!-- Poem 1 -->
+            <div class="poem-row">
+                <a href="because-i-could-not-stop-for-death.html" class="poem-link">Because I could not stop for Death</a>
+                <span class="poem-author">Emily Dickinson</span>
+            </div>
 
-        <!-- Poem 2 -->
-        <div class="poem-row">
-            <a href="o-captain-my-captain.html" class="poem-link">O Captain! My Captain!</a>
-            <span class="poem-author">Walt Whitman</span>
-        </div>
+            <!-- Poem 2 -->
+            <div class="poem-row">
+                <a href="o-captain-my-captain.html" class="poem-link">O Captain! My Captain!</a>
+                <span class="poem-author">Walt Whitman</span>
+            </div>
 
-        <!-- Poem 3 -->
-        <div class="poem-row">
-            <a href="hope-is-the-thing-with-feathers.html" class="poem-link">Hope is the thing with feathers</a>
-            <span class="poem-author">Emily Dickinson</span>
-        </div>
+            <!-- Poem 3 -->
+            <div class="poem-row">
+                <a href="hope-is-the-thing-with-feathers.html" class="poem-link">Hope is the thing with feathers</a>
+                <span class="poem-author">Emily Dickinson</span>
+            </div>
 
-        <!-- Poem 4 -->
-        <div class="poem-row">
-            <a href="do-not-go-gentle.html" class="poem-link">Do not go gentle into that good night</a>
-            <span class="poem-author">Dylan Thomas</span>
-        </div>
+            <!-- Poem 4 -->
+            <div class="poem-row">
+                <a href="do-not-go-gentle.html" class="poem-link">Do not go gentle into that good night</a>
+                <span class="poem-author">Dylan Thomas</span>
+            </div>
 
-        <!-- Poem 5 -->
-        <div class="poem-row">
-            <a href="howl.html" class="poem-link">Howl</a>
-            <span class="poem-author">Allen Ginsberg</span>
-        </div>
+            <!-- Poem 5 -->
+            <div class="poem-row">
+                <a href="howl.html" class="poem-link">Howl</a>
+                <span class="poem-author">Allen Ginsberg</span>
+            </div>
 
-    </main>
+        </main>
+    </div>
 
     <!-- Footer -->
     <footer>
