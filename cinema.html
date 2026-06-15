@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fragments & Echoes // Cinema</title>
+    <title>Fragments & Echoes</title>
     <style>
         :root {
             --bg-color: #08080b;
             --text-primary: #e4e4ed;
             --text-secondary: #5a5a6e;
-            --accent: #a385b9; 
+            --accent: #a385b9; /* Soft artsy violet */
+            --accent-dim: rgba(163, 133, 185, 0.15);
             --nav-bg: rgba(8, 8, 11, 0.9);
             --border: #161622;
-            --card-bg: #0f0f14;
         }
 
         * {
@@ -25,14 +24,16 @@
             background-color: var(--bg-color);
             color: var(--text-primary);
             font-family: 'Georgia', serif;
-            line-height: 1.6;
-            padding: 140px 2rem 5rem 2rem;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
+            justify-content: space-between;
             align-items: center;
-            min-height: 100vh;
+            padding: 2rem;
+            overflow-x: hidden; /* Prevent horizontal scrolling safely */
         }
 
+        /* Fixed Navigation Bar */
         nav {
             position: fixed;
             top: 0;
@@ -44,8 +45,8 @@
             padding: 2rem 2.5rem;
             background: var(--nav-bg);
             backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             z-index: 100;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.01);
         }
 
         .nav-logo {
@@ -56,6 +57,7 @@
             color: var(--text-primary);
             text-decoration: none;
             opacity: 0.8;
+            flex-shrink: 0;
         }
 
         .nav-links {
@@ -71,18 +73,13 @@
             text-decoration: none;
             text-transform: uppercase;
             letter-spacing: 2px;
-            transition: color 0.3s ease;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+            white-space: nowrap;
         }
 
-        .nav-links a:hover, .nav-links .active {
+        .nav-links a:hover {
             color: var(--accent);
-        }
-
-        main {
-            width: 100%;
-            max-width: 950px;
-            display: flex;
-            flex-direction: column;
+            text-shadow: 0 0 8px var(--accent-dim);
         }
 
         header {
