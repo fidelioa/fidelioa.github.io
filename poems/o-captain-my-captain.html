@@ -31,6 +31,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 2rem;
+            overflow-x: hidden; /* Extra insurance against horizontal layout breaks */
         }
 
         /* Fixed Navigation Bar */
@@ -86,8 +87,8 @@
         /* Unified Core Container Frame */
         .content-container {
             width: 100%;
-            max-width: 700px; /* Gives Whitman's sprawling lines extra room to breathe */
-            padding-top: 120px; /* Safe clearing block for fixed nav bar */
+            max-width: 750px; 
+            padding-top: 120px; 
             padding-bottom: 40px;
             display: flex;
             flex-direction: column;
@@ -141,17 +142,17 @@
             display: block;
         }
 
-        /* Content Block optimized for literal whitespace indentation layouts */
+        /* Content Block optimized to wrap safely without losing space alignments */
         .poem-content {
-            white-space: pre; 
+            white-space: pre-wrap; /* Allows the browser to split lines if they hit the screen edge */
             font-size: 1.05rem;
-            line-height: 1.9;
+            line-height: 2;
             color: #c8c8d5;
             letter-spacing: 0.2px;
             margin-bottom: 4rem;
-            padding-left: 1.5rem;
+            padding-left: 3rem;       /* Indentation buffer zone */
+            text-indent: -3rem;       /* Hanging indent: pulls original line breaks back out to the left margin */
             border-left: 1px solid var(--border);
-            overflow-x: auto; /* Gracefully allows horizontal swiping on mobile instead of clipping text */
         }
 
         /* Footer */
@@ -183,12 +184,14 @@
             }
 
             .content-container {
-                padding-top: 150px; /* Accounts for stacked navigation elements on tiny displays */
+                padding-top: 150px; 
             }
 
             .poem-content {
                 font-size: 0.95rem;
-                padding-left: 1rem;
+                line-height: 1.8;
+                padding-left: 2rem;   /* Marginally tighter spacing logic for small displays */
+                text-indent: -2rem;
             }
         }
     </style>
@@ -217,7 +220,7 @@
                 <span class="poem-author">Walt Whitman</span>
             </header>
 
-            <!-- Pre-formatted space metrics preserved exactly -->
+            <!-- Pre-formatted space metrics preserved with responsive wrapping fallback mechanisms -->
             <article class="poem-content">O Captain! my Captain! our fearful trip is done,
 The ship has weather’d every rack, the prize we sought is won,
 The port is near, the bells I hear, the people all exulting,
