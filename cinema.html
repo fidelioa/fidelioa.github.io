@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-<meta charset="UTF-8">
+<head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fragments & Echoes</title>
+    <title>Fragments & Echoes — Cinema</title>
     <style>
         :root {
             --bg-color: #08080b;
@@ -12,6 +13,7 @@
             --accent-dim: rgba(163, 133, 185, 0.15);
             --nav-bg: rgba(8, 8, 11, 0.9);
             --border: #161622;
+            --card-bg: rgba(18, 18, 26, 0.4);
         }
 
         * {
@@ -77,9 +79,17 @@
             white-space: nowrap;
         }
 
-        .nav-links a:hover {
+        .nav-links a:hover, .nav-links a.active {
             color: var(--accent);
             text-shadow: 0 0 8px var(--accent-dim);
+        }
+
+        /* Structured Main Layout Container */
+        main {
+            width: 100%;
+            max-width: 900px; /* Aligns perfectly with index.html structural bounds */
+            padding-top: 120px; /* Clear fixed nav room safely */
+            padding-bottom: 40px;
         }
 
         header {
@@ -107,6 +117,7 @@
 
         section {
             margin-bottom: 4rem;
+            width: 100%;
         }
 
         h3 {
@@ -164,6 +175,7 @@
             font-size: 0.95rem;
             color: #9a9aa8;
             margin-bottom: 1.5rem;
+            line-height: 1.6;
         }
 
         .tag-list {
@@ -284,22 +296,58 @@
             width: 100%;
         }
 
+        /* Combined Responsive Rules from index.html Split View */
+        @media (max-width: 768px) {
+            nav {
+                padding: 1.5rem 1.5rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                gap: 1.2rem;
+            }
+
+            .nav-links a {
+                font-size: 0.75rem;
+                letter-spacing: 1px;
+            }
+
+            main {
+                padding-top: 160px; /* Prevent header cutoff with stacked nav */
+            }
+        }
+
         @media (max-width: 600px) {
-            body { padding-top: 100px; }
-            .film-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; }
-            .film-poster-holder { height: 210px; padding: 1rem; }
+            .film-grid { 
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
+                gap: 1rem; 
+            }
+            .film-poster-holder { 
+                height: 210px; 
+                padding: 1rem; 
+            }
+            h2 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .nav-links {
+                gap: 0.8rem;
+            }
         }
     </style>
 </head>
 <body>
 
     <nav>
-        <a href="../index.html" class="nav-logo">// f&e</a>
+        <a href="index.html" class="nav-logo">// f&e</a>
         <ul class="nav-links">
-            <li><a href="quotes">Quotes</a></li>
-            <li><a href="poems">Poems</a></li>
-            <li><a href="cinema" class="active">Cinema</a></li>
-            <li><a href="about">About</a></li>
+            <li><a href="quotes.html">Quotes</a></li>
+            <li><a href="poems.html">Poems</a></li>
+            <li><a href="cinema.html" class="active">Cinema</a></li>
+            <li><a href="about.html">About</a></li>
         </ul>
     </nav>
 
