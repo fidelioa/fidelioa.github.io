@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About // Fragments & Echoes</title>
+    <title>Fragments & Echoes</title>
     <style>
         :root {
             --bg-color: #08080b;
-            --panel-bg: #111116;
             --text-primary: #e4e4ed;
             --text-secondary: #5a5a6e;
             --accent: #a385b9; /* Soft artsy violet */
@@ -26,15 +25,16 @@
             background-color: var(--bg-color);
             color: var(--text-primary);
             font-family: 'Georgia', serif;
-            line-height: 1.8;
-            padding: 140px 1.5rem 4rem 1.5rem; /* Space for nav bar */
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
+            justify-content: space-between;
             align-items: center;
-            min-height: 100vh;
+            padding: 2rem;
+            overflow-x: hidden; /* Prevent horizontal scrolling safely */
         }
 
-        /* Fixed Navigation Bar (Matches Index & Cinema) */
+        /* Fixed Navigation Bar */
         nav {
             position: fixed;
             top: 0;
@@ -46,8 +46,8 @@
             padding: 2rem 2.5rem;
             background: var(--nav-bg);
             backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             z-index: 100;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.01);
         }
 
         .nav-logo {
@@ -58,6 +58,7 @@
             color: var(--text-primary);
             text-decoration: none;
             opacity: 0.8;
+            flex-shrink: 0;
         }
 
         .nav-links {
@@ -74,9 +75,10 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             transition: color 0.3s ease, text-shadow 0.3s ease;
+            white-space: nowrap;
         }
 
-        .nav-links a:hover, .nav-links .active {
+        .nav-links a:hover {
             color: var(--accent);
             text-shadow: 0 0 8px var(--accent-dim);
         }
