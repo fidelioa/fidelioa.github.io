@@ -25,12 +25,13 @@
             background-color: var(--bg-color);
             color: var(--text-primary);
             font-family: 'Georgia', serif;
-            line-height: 1.8;
-            padding: 140px 2rem 5rem 2rem; /* Space for fixed nav */
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
+            justify-content: space-between;
             align-items: center;
-            min-height: 100vh;
+            padding: 2rem;
+            overflow-x: hidden; /* Prevent horizontal scrolling safely */
         }
 
         /* Fixed Navigation Bar */
@@ -45,8 +46,8 @@
             padding: 2rem 2.5rem;
             background: var(--nav-bg);
             backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             z-index: 100;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.01);
         }
 
         .nav-logo {
@@ -57,6 +58,7 @@
             color: var(--text-primary);
             text-decoration: none;
             opacity: 0.8;
+            flex-shrink: 0;
         }
 
         .nav-links {
@@ -72,17 +74,28 @@
             text-decoration: none;
             text-transform: uppercase;
             letter-spacing: 2px;
-            transition: color 0.3s ease;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+            white-space: nowrap;
         }
 
-        .nav-links a:hover, .nav-links .active {
+        .nav-links a:hover, .nav-links a.active {
             color: var(--accent);
+            text-shadow: 0 0 8px var(--accent-dim);
         }
 
-        /* Wide Panoramic Container Layout for Beats Poetry */
+        /* Unified Core Container Frame — Expanded max-width for Beat Poetry spacing */
+        .content-container {
+            width: 100%;
+            max-width: 1000px; 
+            padding-top: 120px; /* Safely clears fixed desktop nav space */
+            padding-bottom: 40px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Poem Container Structure */
         main {
             width: 100%;
-            max-width: 1000px; /* Expanded for maximum breathing room */
             display: flex;
             flex-direction: column;
         }
@@ -135,7 +148,7 @@
             font-style: italic;
         }
 
-        /* Expansive text layout formatting to remove the "crammed" feel */
+        /* Expansive text layout formatting for long breath-length lines */
         .poem-content {
             white-space: pre-wrap; 
             font-size: 1.05rem;
@@ -143,8 +156,6 @@
             letter-spacing: 0.2px;
             margin-bottom: 5rem;
             text-align: left;
-            
-            /* Structural setup for long breath-length lines */
             line-height: 2.2;         /* Opened vertical separation drastically */
             padding-left: 4rem;       /* Indentation buffer zone */
             text-indent: -4rem;       /* Hanging indent: pulls original line breaks back out */
@@ -170,6 +181,35 @@
             text-align: center;
             width: 100%;
         }
+
+        /* Responsive collapse adjustments */
+        @media (max-width: 768px) {
+            nav {
+                padding: 1.5rem 1.5rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                gap: 1.2rem;
+            }
+
+            .nav-links a {
+                font-size: 0.75rem;
+                letter-spacing: 1px;
+            }
+
+            .content-container {
+                padding-top: 160px; /* Shift down to avoid overlapping vertical mobile layout */
+            }
+
+            .poem-content {
+                padding-left: 2rem;
+                text-indent: -2rem;
+                font-size: 1rem;
+                line-height: 1.8;
+            }
+        }
     </style>
 </head>
 <body>
@@ -179,25 +219,26 @@
         <a href="../index.html" class="nav-logo">// f&e</a>
         <ul class="nav-links">
             <li><a href="../quotes">Quotes</a></li>
-            <li><a href="../poems" class="active">Poems</a></li>
+            <li><a href="../poems/index" class="active">Poems</a></li>
             <li><a href="../cinema">Cinema</a></li>
             <li><a href="../about">About</a></li>
         </ul>
     </nav>
 
-    <!-- Main Poem Frame -->
-    <main>
-        
-        <a href="../poems" class="back-link">← Return to Index</a>
+    <!-- Structural Layout Content Block Container -->
+    <div class="content-container">
+        <main>
+            
+            <a href="index.html" class="back-link">← Return to Index</a>
 
-        <header>
-            <h2>Howl</h2>
-            <span class="poem-author">Allen Ginsberg</span>
-            <span class="poem-dedication">For Carl Solomon</span>
-        </header>
+            <header>
+                <h2>Howl</h2>
+                <span class="poem-author">Allen Ginsberg</span>
+                <span class="poem-dedication">For Carl Solomon</span>
+            </header>
 
-        <!-- Dynamic hanging indents apply automatically to this block -->
-        <article class="poem-content">I
+            <!-- Dynamic hanging indents apply automatically to this block -->
+            <article class="poem-content">I
 
 I saw the best minds of my generation destroyed by madness, starving hysterical naked,
 dragging themselves through the negro streets at dawn looking for an angry fix,
@@ -339,10 +380,11 @@ I’m with you in Rockland
 I’m with you in Rockland
    in my dreams you walk dripping from a sea-journey on the highway across America in tears to the door of my cottage in the Western night
 
-        <span class="poem-postscript">San Francisco, 1955—1956</span>
+            <span class="poem-postscript">San Francisco, 1955—1956</span>
 </article>
 
-    </main>
+        </main>
+    </div>
 
     <!-- Footer -->
     <footer>
