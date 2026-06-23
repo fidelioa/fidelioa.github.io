@@ -136,6 +136,14 @@
             margin-bottom: 3rem;
         }
 
+        /* New Grouped Layout Container for Button + Notice */
+        .cta-container {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.85rem;
+        }
+
         /* Striking Monolith Action Link */
         .monolith-btn {
             display: inline-block;
@@ -163,13 +171,13 @@
         /* Repository Text Context Tag */
         .repo-notice {
             display: block;
-            margin-top: 1rem;
-            font-family: Georgia;
+            font-family: 'Georgia', serif;
             font-size: 0.75rem;
+            font-style: italic;
             line-height: 1.5;
             color: var(--text-secondary);
             letter-spacing: 0.5px;
-            max-width: 280px;
+            max-width: 250px;
         }
 
         /* Footer */
@@ -234,8 +242,13 @@
                 margin-bottom: 2rem;
             }
 
-            .repo-notice {
+            /* Center align entire CTA block on mobile layout */
+            .cta-container {
+                align-items: center;
                 text-align: center;
+            }
+
+            .repo-notice {
                 max-width: 100%;
             }
         }
@@ -275,15 +288,14 @@
             </p>
             <span class="quote-source">— Interstellar</span>
 
-            <!-- Striking Monolith Action Link -->
-            <a href="/monolith" class="monolith-btn">
-                → Enter Monolith
-            </a>
-
-            <!-- Explicit Study Repository Metadata Context -->
-            <span class="repo-notice">
-                this is not my beautiful house, this is not my beautiful site
-            </span>
+            <div class="cta-container">
+                <a href="/monolith" class="monolith-btn">
+                    → Enter Monolith
+                </a>
+                <span class="repo-notice">
+                    this is not my beautiful house, this is not my beautiful site
+                </span>
+            </div>
         </div>
     </main>
 
