@@ -132,68 +132,6 @@
             padding-bottom: 0.5rem;
         }
 
-        .spotlight-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 2rem;
-        }
-
-        .spotlight-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .spotlight-header-holder {
-            width: 100%;
-            background: linear-gradient(180deg, #12121a 0%, #0b0b0f 100%);
-            border-bottom: 1px solid var(--border);
-            padding: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-
-        .spotlight-content {
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-
-        .spotlight-card h4 {
-            font-size: 1.3rem;
-            font-weight: normal;
-            font-style: italic;
-            color: #e4e4ed;
-        }
-
-        .spotlight-card p {
-            font-size: 0.95rem;
-            color: #9a9aa8;
-            margin-bottom: 1.5rem;
-            line-height: 1.6;
-        }
-
-        .tag-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: auto;
-        }
-
-        .tag {
-            font-family: monospace;
-            font-size: 0.75rem;
-            background: rgba(163, 133, 185, 0.08);
-            color: var(--accent);
-            padding: 0.2rem 0.6rem;
-            border-radius: 2px;
-        }
-
         .search-container {
             margin-bottom: 2.5rem;
             width: 100%;
@@ -305,6 +243,15 @@
             max-width: 140px;
         }
 
+        .loading-text {
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-style: italic;
+            grid-column: 1 / -1;
+            padding: 2rem 0;
+        }
+
         footer {
             margin-top: auto;
             padding-top: 4rem;
@@ -353,8 +300,15 @@
             <span class="subtitle">101 movies I keep returning to</span>
         </header>
 
-        <section id="dailySpotlightSection"></section>
+        <!-- Live Letterboxd Feed Section -->
+        <section id="letterboxdSection">
+            <h3>Recent Logs</h3>
+            <div class="film-grid" id="letterboxdGrid">
+                <div class="loading-text">Fetching data from Letterboxd diary...</div>
+            </div>
+        </section>
 
+        <!-- Main Curated Archive -->
         <section>
             <h3>The 101 Favorites</h3>
             <div class="search-container">
@@ -369,7 +323,10 @@
     </footer>
 
     <script>
-        // Film database with optimized w500 asset paths mapped directly from your source data
+        // CONFIGURATION: Replace with your exact Letterboxd username string
+        const LETTERBOXD_USERNAME = "ankitx";
+
+        // Film archive database
         const filmDatabase = [
             { rank: "01", title: "The Godfather Part II", director: "Francis Ford Coppola", year: "1974", country: "USA", poster: "https://image.tmdb.org/t/p/w500/hek3koDUyRQk7FIhPXsa6mT2Zc3.jpg" },
             { rank: "02", title: "The Human Condition Part I", director: "Masaki Kobayashi", year: "1959", country: "Japan", poster: "https://image.tmdb.org/t/p/w500/gkRDYYEStn8Lb0MTMxVyl5bNvTP.jpg" },
@@ -395,7 +352,7 @@
             { rank: "22", title: "Son of Saul", director: "László Nemes", year: "2015", country: "Hungary", poster: "https://image.tmdb.org/t/p/w500/9ZcX6NjCJam5uwkooXffhHI29Lj.jpg" },
             { rank: "23", title: "La Haine", director: "Mathieu Kassovitz", year: "1995", country: "France", poster: "https://image.tmdb.org/t/p/w500/hY4exng4s29RzDbtQInjx9MA3PZ.jpg" },
             { rank: "24", title: "The Great Beauty", director: "Paolo Sorrentino", year: "2013", country: "Italy", poster: "https://image.tmdb.org/t/p/w500/7suf0vaQfv5E7X1GVh4HJwK90yo.jpg" },
-            { rank: "25", title: "The Piano Teacher", director: "Michael Haneke", year: "2001", country: "Austria", poster: "https://image.tmdb.org/t/p/w500/gNHKYQnP1RnqEhkivHJzBPb4MOP.jpg" },
+            { rank: "25", title: "The Piano Teacher", director: "Michael Haneke", year: "2001", country: "Austria", poster: "https://image.tmdb.org/t/p/w500/gNHKYQnP1RnqEhkivHJzBPb4MOPED.jpg" },
             { rank: "26", title: "The Man Without a Past", director: "Aki Kaurismäki", year: "2002", country: "Finland", poster: "https://image.tmdb.org/t/p/w500/suyitjirIQRQNEqZWUbj5B6GWRk.jpg" },
             { rank: "27", title: "La La Land", director: "Damien Chazelle", year: "2016", country: "USA", poster: "https://image.tmdb.org/t/p/w500/uDO8zWDhfWwoFdKS4fzkUJt0Rf0.jpg" },
             { rank: "28", title: "12 Angry Men", director: "Sidney Lumet", year: "1957", country: "USA", poster: "https://image.tmdb.org/t/p/w500/ppd84D2i9W8jXmsyInGyihiSyqz.jpg" },
@@ -474,33 +431,6 @@
             { rank: "101", title: "The Cook, the Thief, His Wife & Her Lover", director: "Peter Greenaway", year: "1989", country: "UK", poster: "https://image.tmdb.org/t/p/w500/32iU6yyYzlHRgeOqL4RPVxotwU4.jpg" }
         ];
 
-        const spotlightPool = [
-            {
-                type: "Director Spotlight",
-                title: "The Coen Brothers",
-                desc: "An obsession with structural ironies, deadpan fatalism, and regular folks stumbling into beautifully complex moral quicksands.",
-                tags: ["Fargo (#09)", "The Big Lebowski (#49)", "Inside Llewyn Davis (#79)"]
-            },
-            {
-                type: "Director Spotlight",
-                title: "Mike Leigh",
-                desc: "Unvarnished, improvisational slices of human friction. Masterful observation of quiet desperation and profound tenderness in British landscapes.",
-                tags: ["Naked", "Secrets & Lies"]
-            },
-            {
-                type: "Aesthetic Constants",
-                title: "The Tilda Swinton Presence",
-                desc: "Chameleonic, architectural, and thoroughly alien. Tracking a fascination with performances that transcend traditional character work into pure presence.",
-                tags: ["The Zone of Interest (#67)"]
-            },
-            {
-                type: "Director Spotlight",
-                title: "Asghar Farhadi",
-                desc: "Intense, localized micro-dramas where simple misunderstandings escalate into profound systemic and moral breakdowns.",
-                tags: ["A Separation (#11)", "About Elly (#36)"]
-            }
-        ];
-
         function renderFilms(films) {
             const grid = document.getElementById('filmGrid');
             grid.innerHTML = '';
@@ -530,6 +460,72 @@
             });
         }
 
+        // Letterboxd RSS Parser
+        async function fetchRecentLetterboxdLogs() {
+            const grid = document.getElementById('letterboxdGrid');
+            
+            if (LETTERBOXD_USERNAME === "ankitx") {
+                grid.innerHTML = `<div class="loading-text">Configuration required: Please edit the script source and replace "ankitx" with your real Letterboxd user handle.</div>`;
+                return;
+            }
+
+            const rssUrl = `https://letterboxd.com/${ankitx}/rss/`;
+            const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                if (!data.items || data.items.length === 0) {
+                    grid.innerHTML = `<div class="loading-text">No diary entries found for user "${ankitx}".</div>`;
+                    return;
+                }
+
+                grid.innerHTML = ''; 
+                const elementsToRender = data.items.slice(0, 4);
+
+                elementsToRender.forEach(item => {
+                    const titleMatch = item.title.match(/(.*?),\s*(\d{4})/);
+                    const movieTitle = titleMatch ? titleMatch[1] : item.title;
+                    const movieYear = titleMatch ? titleMatch[2] : "";
+
+                    const htmlContent = item.description;
+                    const srcMatch = htmlContent.match(/src="([^"]+)"/);
+                    let posterUrl = srcMatch ? srcMatch[1] : "";
+
+                    if (posterUrl.includes('-0-150-0-225-crop.jpg')) {
+                        posterUrl = posterUrl.replace('-0-150-0-225-crop.jpg', '-0-500-0-750-crop.jpg');
+                    }
+
+                    const card = document.createElement('div');
+                    card.className = 'film-card';
+                    
+                    card.innerHTML = `
+                        <div class="film-poster-holder" style="background-image: url('${posterUrl}')"></div>
+                        <div class="film-info">
+                            <div class="film-title-row">
+                                <h4>${movieTitle}</h4>
+                                <span class="film-year-badge">${movieYear}</span>
+                            </div>
+                            <div class="film-subtext-row">
+                                <span class="film-rank" style="font-size: 0.65rem; color: var(--text-secondary);">DIARY LOG</span>
+                                <span class="film-meta" style="text-transform: uppercase; font-size: 0.65rem;">★ View Entry</span>
+                            </div>
+                        </div>
+                    `;
+                    
+                    card.style.cursor = "pointer";
+                    card.addEventListener('click', () => window.open(item.link, '_blank'));
+                    
+                    grid.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error("Letterboxd sync error:", error);
+                grid.innerHTML = `<div class="loading-text">Unable to reach the live feed at this time.</div>`;
+            }
+        }
+
         function filterFilms() {
             const query = document.getElementById('searchBar').value.toLowerCase();
             const filtered = filmDatabase.filter(film => {
@@ -540,55 +536,9 @@
             renderFilms(filtered);
         }
 
-        function generateDailySpotlights() {
-            const container = document.getElementById('dailySpotlightSection');
-            const today = new Date();
-            const dateSeed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
-            
-            const index1 = dateSeed % spotlightPool.length;
-            const index2 = (dateSeed + 2) % spotlightPool.length; 
-            
-            const card1 = spotlightPool[index1];
-            const card2 = (index1 === index2) ? spotlightPool[(index1 + 1) % spotlightPool.length] : spotlightPool[index2];
-
-            container.innerHTML = `
-                <h3>Featured Today</h3>
-                <div class="spotlight-grid">
-                    <div class="spotlight-card">
-                        <div class="spotlight-header-holder">
-                            <div>
-                                <span class="subtitle" style="font-size:0.65rem; color:var(--accent);">${card1.type}</span>
-                                <h4 style="margin-top:0.2rem;">${card1.title}</h4>
-                            </div>
-                        </div>
-                        <div class="spotlight-content">
-                            <p>${card1.desc}</p>
-                            <div class="tag-list">
-                                ${card1.tags.map(t => `<span class="tag">${t}</span>`).join('')}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="spotlight-card">
-                        <div class="spotlight-header-holder">
-                            <div>
-                                <span class="subtitle" style="font-size:0.65rem; color:var(--accent);">${card2.type}</span>
-                                <h4 style="margin-top:0.2rem;">${card2.title}</h4>
-                            </div>
-                        </div>
-                        <div class="spotlight-content">
-                            <p>${card2.desc}</p>
-                            <div class="tag-list">
-                                ${card2.tags.map(t => `<span class="tag">${t}</span>`).join('')}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
         window.addEventListener('DOMContentLoaded', () => {
-            generateDailySpotlights();
             renderFilms(filmDatabase);
+            fetchRecentLetterboxdLogs();
         });
     </script>
 </body>
