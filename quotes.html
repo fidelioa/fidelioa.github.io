@@ -9,8 +9,8 @@
             --bg-color: #08080b;
             --text-primary: #e4e4ed;
             --text-secondary: #5a5a6e;
-            --accent: #a385b9; /* Soft artsy violet */
-            --accent-dim: rgba(163, 133, 185, 0.15);
+            --accent-book: #a385b9; /* Soft artsy violet */
+            --accent-movie: #dfa857; /* Cinematic gold */
             --nav-bg: rgba(8, 8, 11, 0.9);
             --border: #161622;
             --card-bg: #0f0f14;
@@ -27,7 +27,7 @@
             color: var(--text-primary);
             font-family: 'Georgia', serif;
             line-height: 1.6;
-            padding: 140px 2rem 5rem 2rem; /* Adjusted gracefully in media queries */
+            padding: 140px 2rem 5rem 2rem;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -35,7 +35,6 @@
             overflow-x: hidden;
         }
 
-        /* Fixed Navigation Bar */
         nav {
             position: fixed;
             top: 0;
@@ -81,7 +80,7 @@
         }
 
         .nav-links a:hover, .nav-links .active {
-            color: var(--accent);
+            color: var(--accent-book);
         }
 
         main {
@@ -114,7 +113,6 @@
             letter-spacing: 2px;
         }
 
-        /* Live Filtering Search Bar */
         .search-container {
             margin-bottom: 3.5rem;
             width: 100%;
@@ -132,14 +130,13 @@
             border-radius: 4px;
             outline: none;
             transition: border-color 0.3s ease;
-            -webkit-appearance: none; /* Fixes iOS shadow styling bugs */
+            -webkit-appearance: none;
         }
 
         #searchBar:focus {
-            border-color: var(--accent);
+            border-color: var(--accent-book);
         }
 
-        /* Quotes Layout Stack */
         .quote-grid {
             display: flex;
             flex-direction: column;
@@ -154,8 +151,24 @@
             transition: border-color 0.3s ease;
         }
 
-        .quote-card:hover {
-            border-left-color: var(--accent);
+        .quote-card.book-type {
+            border-left-color: rgba(163, 133, 185, 0.2);
+        }
+        .quote-card.book-type:hover {
+            border-left-color: var(--accent-book);
+        }
+        .quote-card.book-type .quote-source {
+            color: var(--accent-book);
+        }
+
+        .quote-card.movie-type {
+            border-left-color: rgba(223, 168, 87, 0.2);
+        }
+        .quote-card.movie-type:hover {
+            border-left-color: var(--accent-movie);
+        }
+        .quote-card.movie-type .quote-source {
+            color: var(--accent-movie);
         }
 
         .quote-text {
@@ -163,7 +176,7 @@
             color: #c8c8d5;
             line-height: 1.7;
             margin-bottom: 1rem;
-            white-space: pre-wrap; /* Keeps breaks for the longer book fragments */
+            white-space: pre-wrap;
         }
 
         .quote-author {
@@ -174,12 +187,11 @@
             letter-spacing: 1.5px;
         }
 
-        .quote-book {
+        .quote-source {
             font-family: 'Georgia', serif;
             text-transform: none;
             font-style: italic;
             letter-spacing: 0;
-            color: var(--accent);
         }
 
         footer {
@@ -193,61 +205,22 @@
             padding-top: 2rem;
         }
 
-        /* Responsive collapse for tablets/phones */
         @media (max-width: 768px) {
-            body {
-                padding: 160px 1.25rem 4rem 1.25rem; /* More compact screen margins */
-            }
-
-            nav {
-                padding: 1.5rem 1.5rem;
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .nav-links {
-                gap: 1.2rem;
-            }
-
-            .nav-links a {
-                font-size: 0.75rem;
-                letter-spacing: 1px;
-            }
-
-            header {
-                margin-bottom: 2rem;
-            }
-
-            h2 {
-                font-size: 1.9rem; /* Prevent layout breaking on small headers */
-            }
-
-            .search-container {
-                margin-bottom: 2.5rem;
-            }
-
-            .quote-grid {
-                gap: 1.75rem;
-            }
-
-            .quote-card {
-                padding: 1.25rem 0 1.25rem 1.25rem; /* Reduced indent to give text more breathability */
-            }
-
-            .quote-text {
-                font-size: 1.05rem;
-                line-height: 1.6;
-            }
+            body { padding: 160px 1.25rem 4rem 1.25rem; }
+            nav { padding: 1.5rem 1.5rem; flex-direction: column; gap: 1rem; }
+            .nav-links { gap: 1.2rem; }
+            .nav-links a { font-size: 0.75rem; letter-spacing: 1px; }
+            header { margin-bottom: 2rem; }
+            h2 { font-size: 1.9rem; }
+            .search-container { margin-bottom: 2.5rem; }
+            .quote-grid { gap: 1.75rem; }
+            .quote-card { padding: 1.25rem 0 1.25rem 1.25rem; }
+            .quote-text { font-size: 1.05rem; line-height: 1.6; }
         }
 
-        /* Optimization for ultra-narrow phones */
         @media (max-width: 380px) {
-            .nav-links {
-                gap: 0.8rem;
-            }
-            .quote-card {
-                padding: 1rem 0 1rem 1rem;
-            }
+            .nav-links { gap: 0.8rem; }
+            .quote-card { padding: 1rem 0 1rem 1rem; }
         }
     </style>
 </head>
@@ -281,69 +254,421 @@
     </footer>
 
     <script>
-        // Central Repository of saved literary lines
         const quoteDatabase = [
-            { text: `“Taking a new step, uttering a new word, is what people fear most.”`, author: "Fyodor Dostoevsky", book: "Crime and Punishment" },
-            { text: `“Pain and suffering are always inevitable for a large intelligence and a deep heart. The really great men must, I think, have great sadness on earth.”`, author: "Fyodor Dostoevsky", book: "Crime and Punishment" },
-            { text: `“To go wrong in one's own way is better than to go right in someone else's.”`, author: "Fyodor Dostoevsky", book: "Crime and Punishment" },
-            { text: `“Perhaps one did not want to be loved so much as to be understood.”`, author: "George Orwell", book: "1984" },
-            { text: `“The best books... are those that tell you what you know already.”`, author: "George Orwell", book: "1984" },
-            { text: `“Who controls the past controls the future. Who controls the present controls the past.”`, author: "George Orwell", book: "1984" },
-            { text: `“But if thought corrupts language, language can also corrupt thought.”`, author: "George Orwell", book: "Politics and the English Language" },
-            { text: `“If you want a picture of the future, imagine a boot stamping on a human face—for ever.”`, author: "George Orwell", book: "1984" },
-            { text: `“We shall meet in the place where there is no darkness.”`, author: "George Orwell", book: "1984" },
-            { text: `“What really knocks me out is a book that, when you're all done reading it, you wish the author that wrote it was a terrific friend of yours and you could call him up on the phone whenever you felt like it. That doesn't happen much, though.”`, author: "J.D. Salinger", book: "The Catcher in the Rye" },
-            { text: `“I'm quite illiterate, but I read a lot.”`, author: "J.D. Salinger", book: "The Catcher in the Rye" },
-            { text: `“I am always saying \"Glad to've met you\" to somebody I'm not at all glad I met. If you want to stay alive, you have to say that stuff, though.”`, author: "J.D. Salinger", book: "The Catcher in the Rye" },
-            { text: `“The village of Holcomb stands on the high wheat plains of western Kansas, a lonesome area that other Kansans call “out there.”`, author: "Truman Capote", book: "In Cold Blood" },
-            { text: `“It is no shame to have a dirty face- the shame comes when you keep it dirty.”`, author: "Truman Capote", book: "In Cold Blood" },
-            { text: `“Imagination, of course, can open any door - turn the key and let terror walk right in.”`, author: "Truman Capote", book: "In Cold Blood" },
-            { text: `“As long as you live, there's always something waiting; and even if it's bad, and you know it's bad, what can you do? You can't stop living.”`, author: "Truman Capote", book: "In Cold Blood" },
-            { text: `“I hope she'll be a fool -- that's the best thing a girl can be in this world, a beautiful little fool.”`, author: "F. Scott Fitzgerald", book: "The Great Gatsby" },
-            { text: `“Angry, and half in love with her, and tremendously sorry, I turned away.”`, author: "F. Scott Fitzgerald", book: "The Great Gatsby" },
-            { text: `“So we beat on, boats against the current, borne back ceaselessly into the past.”`, author: "F. Scott Fitzgerald", book: "The Great Gatsby" },
-            { text: `“I was within and without, simultaneously enchanted and repelled by the inexhaustible variety of life.”`, author: "F. Scott Fitzgerald", book: "The Great Gatsby" },
-            { text: `“There ain't no sin and there ain't no virtue. There's just stuff people do.”`, author: "John Steinbeck", book: "The Grapes of Wrath" },
-            { text: `“And the little screaming fact that sounds through all history: repression works only to strengthen and knit the repressed.”`, author: "John Steinbeck", book: "The Grapes of Wrath" },
-            { text: `“It was her habit to build up laughter out of inadequate materials.”`, author: "John Steinbeck", book: "The Grapes of Wrath" },
-            { text: `“...and in the eyes of the people there is the failure; and in the eyes of the hungry there is a growing wrath. In the souls of the people the grapes of wrath are filling and growing heavy, growing heavy for the vintage.”`, author: "John Steinbeck", book: "The Grapes of Wrath" },
-            { text: `“How can we live without our lives? How will we know it's us without our past?”`, author: "John Steinbeck", book: "The Grapes of Wrath" },
-            { text: `“The quality of owning freezes you forever in \"I,\" and cuts you off forever from the \"we.”`, author: "John Steinbeck", book: "The Grapes of Wrath" },
-            { text: `“Before I knowed it, I was sayin' out loud, 'The hell with it! There ain't no sin and there ain't no virtue. There's just stuff people do. It's all part of the same thing.' . . . . I says, 'What's this call, this sperit?' An' I says, 'It's love. I love people so much I'm fit to bust, sometimes.' . . . . I figgered, 'Why do we got to hang it on God or Jesus? Maybe,' I figgered, 'maybe it's all men an' all women we love; maybe that's the Holy Sperit-the human sperit-the whole shebang. Maybe all men got one big soul ever'body's a part of.' Now I sat there thinkin' it, an' all of a suddent-I knew it. I knew it so deep down that it was true, and I still know it.”`, author: "John Steinbeck", book: "The Grapes of Wrath" },
-            { text: `“The works of the roots of the vines, of the trees, must be destroyed to keep up the price, and this is the saddest, bitterest thing of all. Carloads of oranges dumped on the ground. The people came for miles to take the fruit, but this could not be. How would they buy oranges at twenty cents a dozen if they could drive out and pick them up? And men with hoses squirt kerosene on the oranges, and they are angry at the crime, angry at the people who have come to take the fruit. A million people hungry, needing the fruit- and kerosene sprayed over the golden mountains. And the smell of rot fills the country. Burn coffee for fuel in the ships. Burn corn to keep warm, it makes a hot fire. Dump potatoes in the rivers and place guards along the banks to keep the hungry people from fishing them out. Slaughter the pigs and bury them, and let the putrescence drip down into the earth. There is a crime here that goes beyond denunciation. There is a sorrow here that weeping cannot symbolize. There is a failure here that topples all our success. The fertile earth, the straight tree rows, the sturdy trunks, and the ripe fruit. And children dying of pellagra must die because a profit cannot be taken from an orange. And coroners must fill in the certificate- died of malnutrition- because the food must rot, must be forced to rot. The people come with nets to fish for potatoes in the river, and the guards hold them back; they come in rattling cars to get the dumped oranges, but the kerosene is sprayed. And they stand still and watch the potatoes float by, listen to the screaming pigs being killed in a ditch and covered with quick-lime, watch the mountains of oranges slop down to a putrefying ooze; and in the eyes of the people there is the failure; and in the eyes of the hungry there is a growing wrath. In the souls of the people the grapes of wrath are filling and growing heavy, growing heavy for the vintage.”`, author: "John Steinbeck", book: "The Grapes of Wrath" },
-            { text: `“All animals are equal, but some animals are more equal than others.”`, author: "George Orwell", book: "Animal Farm" },
-            { text: `“It's easy to believe in something when you win all the time...The losses are what define a man's faith.”`, author: "Brandon Sanderson", book: "The Well of Ascension (Mistborn, #2)" },
-            { text: `“I write these words in steel, for anything not set in metal cannot be trusted.”`, author: "Brandon Sanderson", book: "The Well of Ascension (Mistborn, #2)" },
-            { text: `“If you want to know what a man's like, take a good look at how he treats his inferiors, not his equals.”`, author: "J.K. Rowling", book: "Harry Potter and the Goblet of Fire (Harry Potter, #4)" },
-            { text: `“I was forced to acknowledge too late, much too late, that I too had loved, that I was capable of suffering, and that I was human after all.”`, author: "Jacqueline Harpman", book: "I Who Have Never Known Men" },
-            { text: `“Perhaps home is not a place but simply an irrevocable condition.”`, author: "James Baldwin", book: "Giovanni’s Room" },
-            { text: `“You don’t have a home until you leave it and then, when you have left it, you never can go back.”`, author: "James Baldwin", book: "Giovanni’s Room" },
-            { text: `“People can't, unhappily, invent their mooring posts, their lovers and their friends, anymore than they can invent their parents.  Life gives these and also takes them away and the great difficulty is to say Yes to life.”`, author: "James Baldwin", book: "Giovanni’s Room" },
-            { text: `“Confusion is a luxury which only the very, very young can possibly afford and you are not that young anymore”`, author: "James Baldwin", book: "Giovanni’s Room" },
-            { text: `“For I am—or I was—one of those people who pride themselves in on their willpower, on their ability to make a decision and carry it through. This virtue, like most virtues, is ambiguity itself. People who believe that they are strong-willed and the masters of their destiny can only continue to believe this by becoming specialists in self-deception. Their decisions are not really decisions at all—a real decision makes one humble, one knows that it is at the mercy of more things than can be named—but elaborate systems of evasion, of illusion, designed to make themselves and the world appear to be what they and the world are not. This is certainly what my decision, made so long ago in Joey’s bed, came to. I had decided to allow no room in the universe for something which shamed and frightened me. I succeeded very well—by not looking at the universe, by not looking at myself, by remaining, in effect, in constant motion.”`, author: "James Baldwin", book: "Giovanni’s Room" },
-            { text: `“Perhaps, as we say in America, I wanted to find myself. This is an interesting phrase, not current as far as I know in the language of any other people, which certainly does not mean what it says but betrays a nagging suspicion that something has been misplaced. I think now that if I had any intimation that the self I was going to find would turn out to be only the same self from which I had spent so much time in flight, I would have stayed at home.”`, author: "James Baldwin", book: "Giovanni’s Room" },
-            { text: `“You do not,’ cried Giovanni, sitting up, ‘love anyone! You never have loved anyone, I am sure you never will! You love your purity, you love your mirror—you are just like a little virgin, you walk around with your hands in front of you as though you had some precious metal, gold, silver, rubies, maybe diamonds down there between your legs! You will never give it to anybody, you will never let anybody touch it—man or woman. You want to be clean. You think you came here covered with soap and you think you will go out covered with soap—and you do not want to stink, not even for five minutes, in the meantime.’ He grasped me by the collar, wrestling and caressing at once, fluid and iron at once: saliva spraying from his lips and his eyes full of tears, but with the bones of his face showing and the muscles leaping in his arms and neck. ‘You want to leave Giovanni because he makes you stink. You want to despise Giovanni because he is not afraid of the stink of love. You want to kill him in the name of all your lying little moralities. And you—you are immoral. You are, by far, the most immoral man I have met in all my life. Look, look what you have done to me. Do you think you could have done this if I did not love you? Is this what you should do to love?”`, author: "James Baldwin", book: "Giovanni’s Room" },
-            { text: `“Learn this now and learn it well. Like a compass facing north, a man’s accusing finger always finds a woman. Always. You remember that, Mariam.”`, author: "Khaled Hosseini", book: "A Thousand Splendid Suns" },
-            { text: `“Miriam wished for so much in those final moments. Yet as she closed her eyes, it was not regret any longer but a sensation of abundant peace that washed over her. She thought of her entry into this world, the harami child of a lowly villager, an unintended thing, a pitiable, regrettable accident. A weed. And yet she was leaving the world as a woman who had loved and been loved back. She was leaving it as a friend, a companion, a guardian. A mother. A person of consequence at last. No. It was not so bad, Miriam thought, that she should die this way. Not so bad. This was a legitimate end to a life of illegitimate belongings.”`, author: "Khaled Hosseini", book: "A Thousand Splendid Suns" },
-            { text: `“she is the noor of my eyes and the sultan of my heart.”`, author: "Khaled Hosseini", book: "A Thousand Splendid Suns" },
-            { text: `“And the past held only this wisdom: that love was a damaging mistake, and its accomplice, hope, a treacherous illusion. And whenever those twin poisonous flowers began to sprout in the parched land of that field, Mariam uprooted them. She uprooted them and ditched them before they took hold.”`, author: "Khaled Hosseini", book: "A Thousand Splendid Suns" },
-            { text: `“But the game involves only male names. Because, if it's a girl, Laila has already named her”`, author: "Khaled Hosseini", book: "A Thousand Splendid Suns" },
-            { text: `“Mariam lay on the couch, hands tucked between her knees, watched the whirlpool of snow twisting and spinning outside the window.  She remembered Nana saying once that each snowflake was a sigh heaved by an aggrieved woman somewhere in the world.  That all the sighs drifted up the sky, gathered into clouds, then broke into tiny pieces that fell silently on the people below.  As a reminder of how people like us suffer, she'd said.  How quietly we endure all that falls upon us.”`, author: "Khaled Hosseini", book: "A Thousand Splendid Suns" },
-            { text: `“I keep thinking about this river somewhere, with the water moving really fast.  And these two people in the water, trying to hold onto each other, holding on as hard as they can, but in the end it's just too much.  The current's too strong.  They've got to let go, drift apart.  That's how it is with us.  It's a shame, Kath, because we've loved each other all our lives.  But in the end, we can't stay together forever.”`, author: "Kazuo Ishiguro", book: "Never Let Me Go" },
-            { text: `“Sometimes I get so immersed in my own company, if I unexpectedly run into someone I know, it's a bit of a shock and takes me a while to adjust.”`, author: "Kazuo Ishiguro", book: "Never Let Me Go" },
-            { text: `“I do what I do without hope of reward or fear of punishment. I do not require Heaven or Hell to bribe or scare me into acting decently.”`, author: "Mary Doria Russell", book: "The Sparrow (The Sparrow, #1)" },
-            { text: `“The Jewish sages also tell us that God dances when His children defeat Him in argument, when they stand on their feet and use their minds.  So questions like Anne's are worth asking.  To ask them is a very fine kind of human behavior.  If we keep demanding that God yield up His answers, perhaps some day we will understand them.  And then we will be something more than clever apes, and we shall dance with God.”`, author: "Mary Doria Russell", book: "The Sparrow (The Sparrow, #1)" },
-            { text: `“we all make vows, Jimmy.  And there is something very beautiful and touching and noble about wanting good impulses to be permanent and true forever,\" she said.  \"Most of us stand up and vow to love, honor and cherish someone.  And we truly mean it, at the time.  But two or twelve or twenty years down the road, the lawyers are negotiating the property settlement.\"    \"You and George didn't go back on your promises.\"    She laughed.  \"Lemme tell ya something, sweetface.  I have been married at least four times, to four different men.\"  She watched him chew that over for a moment before continuing, \"They've all been named George Edwards but, believe me, the man who is waiting for me down the hall is a whole lot different animal from the boy I married, back before there was dirt.  Oh, there are continuities.  He has always been fun and he has never been able to budget his time properly and - well, the rest is none of your business.\"    \"But people change,\" he said quietly.    \"Precisely.  People change.  Cultures change.  Empires rise and fall.  Shit.  Geology changes!  Every ten years or so, George and I have faced the fact that we have changed and we've had to decide if it makes sense to create a new marriage between these two new people.\"  She flopped back against her chair.  \"Which is why vows are such a tricky business.  Because nothing stays the same forever.  Okay.  Okay!  I'm figuring something out now.\"  She sat up straight, eyes focused somewhere outside the room, and Jimmy realized that even Anne didn't have all the answers and that was either the most comforting thing he'd learned in a long time or the most discouraging.  \"Maybe because so few of us would be able to give up something so fundamental for something so abstract, we protect ourselves from the nobility of a priest's vows by jeering at him when he can't live up to them, always and forever.\"  She shivered and slumped suddenly, \"But, Jimmy!  What unnatural words.  Always and forever!  Those aren't human words, Jim.  Not even stones are always and forever.”`, author: "Mary Doria Russell", book: "The Sparrow (The Sparrow, #1)" },
-            { text: `“Watching him with one eye, she wondered if men ever figured out that they were more appealing when they were pursuing their own work than when they were pursuing a woman.”`, author: "Mary Doria Russell", book: "The Sparrow (The Sparrow, #1)" },
-            { text: `“You see, that is my dilemma. Because if I was led by God to love God, step by step, as it seemed, if I accept that the beauty and the rapture were real and true, then the rest of it was God's will too, and that, gentlemen, is cause for bitterness. But if I am simply a deluded ape who took a lot of old folktales far too seriously, then I brought all this on myself and my companions and the whole business becomes farcical, doesn't it. The problem with atheism, I find, under these circumstances,\" he continued with academic exactitude, each word etched on the air with acid, \"is that I have no one to despise but myself. If, however, I choose to believe that God is vicious, then at least I have the solace of hating God.”`, author: "Mary Doria Russell", book: "The Sparrow (The Sparrow, #1)" },
-            { text: `“See that's where it falls apart for me!\" Anne cried.  \"What sticks in my throat is that God gets the credit but never the blame.  I just can't swallow that kind of theological candy.  Either God's in charge or he's not...”`, author: "Mary Doria Russell", book: "The Sparrow (The Sparrow, #1)" },
-            { text: `“Nothing, nothing mattered, and I knew why. So did he. Throughout the whole absurd life I'd lived, a dark wind had been rising toward me from somewhere deep in my future, across years that were still to come, and as it passed, this wind leveled whatever was offered to me at the time, in years no more real than the ones I was living. What did other people's deaths or a mother's love matter to me; what did his God or the lives people choose or the fate they think they elect matter to me when we're all elected by the same fate, me and billions of privileged people like him who also called themselves my brothers? Couldn't he see, couldn't he see that? Everybody was privileged. There were only privileged people. The others would all be condemned one day. And he would be condemned, too.”`, author: "Albert Camus", book: "The Stranger" },
-            { text: `“I can't stand it to think my life is going so fast and I'm not really living it.”`, author: "Ernest Hemingway", book: "The Sun Also Rises" },
-            { text: `“Oh Jake,\" Brett said, \"We could have had such a damned good time together.\"Ahead was a mounted policeman in khaki directing traffic. He raised his baton. The car slowed suddenly, pressing Brett against me.Yes,\" I said. \"Isn't it pretty to think so?”`, author: "Ernest Hemingway", book: "The Sun Also Rises" },
-            { text: `“Going to another country doesn’t make any difference. I’ve tried all that. You can’t get away from yourself by moving from one place to another. There’s nothing to that.”`, author: "Ernest Hemingway", book: "The Sun Also Rises" },
-            { text: `“Have you no hope at all? And do you really live with the thought that when you die, you die, and nothing remains?\" \"Yes,\" I said.”`, author: "Albert Camus", book: "The Stranger" },
-            { text: `“I had only a little time left and I didn't want to waste it on God.”`, author: "Albert Camus", book: "L'Étranger" },
-            { text: `“I looked up at the mass of signs and stars in the night sky and laid myself open for the first time to the benign indifference of the world.”`, author: "Albert Camus", book: "The Stranger" }
+            // --- BOOKS ---
+            { type: "book", text: `“Taking a new step, uttering a new word, is what people fear most.”`, author: "Fyodor Dostoevsky", source: "Crime and Punishment" },
+            { type: "book", text: `“Pain and suffering are always inevitable for a large intelligence and a deep heart. The really great men must, I think, have great sadness on earth.”`, author: "Fyodor Dostoevsky", source: "Crime and Punishment" },
+            { type: "book", text: `“To go wrong in one's own way is better than to go right in someone else's.”`, author: "Fyodor Dostoevsky", source: "Crime and Punishment" },
+            { type: "book", text: `“Perhaps one did not want to be loved so much as to be understood.”`, author: "George Orwell", source: "1984" },
+            { type: "book", text: `“The best books... are those that tell you what you know already.”`, author: "George Orwell", source: "1984" },
+            { type: "book", text: `“Who controls the past controls the future. Who controls the present controls the past.”`, author: "George Orwell", source: "1984" },
+            { type: "book", text: `“But if thought corrupts language, language can also corrupt thought.”`, author: "George Orwell", source: "Politics and the English Language" },
+            { type: "book", text: `“If you want a picture of the future, imagine a boot stamping on a human face—for ever.”`, author: "George Orwell", source: "1984" },
+            { type: "book", text: `“We shall meet in the place where there is no darkness.”`, author: "George Orwell", source: "1984" },
+            { type: "book", text: `“What really knocks me out is a book that, when you're all done reading it, you wish the author that wrote it was a terrific friend of yours and you could call him up on the phone whenever you felt like it. That doesn't happen much, though.”`, author: "J.D. Salinger", source: "The Catcher in the Rye" },
+            { type: "book", text: `“I'm quite illiterate, but I read a lot.”`, author: "J.D. Salinger", source: "The Catcher in the Rye" },
+            { type: "book", text: `“I am always saying \"Glad to've met you\" to somebody I'm not at all glad I met. If you want to stay alive, you have to say that stuff, though.”`, author: "J.D. Salinger", source: "The Catcher in the Rye" },
+            { type: "book", text: `“The village of Holcomb stands on the high wheat plains of western Kansas, a lonesome area that other Kansans call “out there.”`, author: "Truman Capote", source: "In Cold Blood" },
+            { type: "book", text: `“It is no shame to have a dirty face- the shame comes when you keep it dirty.”`, author: "Truman Capote", source: "In Cold Blood" },
+            { type: "book", text: `“Imagination, of course, can open any door - turn the key and let terror walk right in.”`, author: "Truman Capote", source: "In Cold Blood" },
+            { type: "book", text: `“As long as you live, there's always something waiting; and even if it's bad, and you know it's bad, what can you do? You can't stop living.”`, author: "Truman Capote", source: "In Cold Blood" },
+            { type: "book", text: `“I hope she'll be a fool -- that's the best thing a girl can be in this world, a beautiful little fool.”`, author: "F. Scott Fitzgerald", source: "The Great Gatsby" },
+            { type: "book", text: `“Angry, and half in love with her, and tremendously sorry, I turned away.”`, author: "F. Scott Fitzgerald", source: "The Great Gatsby" },
+            { type: "book", text: `“So we beat on, boats against the current, borne back ceaselessly into the past.”`, author: "F. Scott Fitzgerald", source: "The Great Gatsby" },
+            { type: "book", text: `“I was within and without, simultaneously enchanted and repelled by the inexhaustible variety of life.”`, author: "F. Scott Fitzgerald", source: "The Great Gatsby" },
+            { type: "book", text: `“There ain't no sin and there ain't no virtue. There's just stuff people do.”`, author: "John Steinbeck", source: "The Grapes of Wrath" },
+            { type: "book", text: `“And the little screaming fact that sounds through all history: repression works only to strengthen and knit the repressed.”`, author: "John Steinbeck", source: "The Grapes of Wrath" },
+            { type: "book", text: `“It was her habit to build up laughter out of inadequate materials.”`, author: "John Steinbeck", source: "The Grapes of Wrath" },
+            { type: "book", text: `“...and in the eyes of the people there is the failure; and in the eyes of the hungry there is a growing wrath. In the souls of the people the grapes of wrath are filling and growing heavy, growing heavy for the vintage.”`, author: "John Steinbeck", source: "The Grapes of Wrath" },
+            { type: "book", text: `“How can we live without our lives? How will we know it's us without our past?”`, author: "John Steinbeck", source: "The Grapes of Wrath" },
+            { type: "book", text: `“The quality of owning freezes you forever in \"I,\" and cuts you off forever from the \"we.”`, author: "John Steinbeck", source: "The Grapes of Wrath" },
+            { type: "book", text: `“Before I knowed it, I was sayin' out loud, 'The hell with it! There ain't no sin and there ain't no virtue. There's just stuff people do. It's all part of the same thing.' . . . . I says, 'What's this call, this sperit?' An' I says, 'It's love. I love people so much I'm fit to bust, sometimes.' . . . . I figgered, 'Why do we got to hang it on God or Jesus? Maybe,' I figgered, 'maybe it's all men an' all women we love; maybe that's the Holy Sperit-the human sperit-the whole shebang. Maybe all men got one big soul ever'body's a part of.' Now I sat there thinkin' it, an' all of a suddent-I knew it. I knew it so deep down that it was true, and I still know it.”`, author: "John Steinbeck", source: "The Grapes of Wrath" },
+            { type: "book", text: `“The works of the roots of the vines, of the trees, must be destroyed to keep up the price, and this is the saddest, bitterest thing of all. Carloads of oranges dumped on the ground. The people came for miles to take the fruit, but this could not be. How would they buy oranges at twenty cents a dozen if they could drive out and pick them up? And men with hoses squirt kerosene on the oranges, and they are angry at the crime, angry at the people who have come to take the fruit. A million people hungry, needing the fruit- and kerosene sprayed over the golden mountains. And the smell of rot fills the country. Burn coffee for fuel in the ships. Burn corn to keep warm, it makes a hot fire. Dump potatoes in the rivers and place guards along the banks to keep the hungry people from fishing them out. Slaughter the pigs and bury them, and let the putrescence drip down into the earth. There is a crime here that goes beyond denunciation. There is a sorrow here that weeping cannot symbolize. There is a failure here that topples all our success. The fertile earth, the straight tree rows, the sturdy trunks, and the ripe fruit. And children dying of pellagra must die because a profit cannot be taken from an orange. And coroners must fill in the certificate- died of malnutrition- because the food must rot, must be forced to rot. The people come with nets to fish for potatoes in the river, and the guards hold them back; they come in rattling cars to get the dumped oranges, but the kerosene is sprayed. And they stand still and watch the potatoes float by, listen to the screaming pigs being killed in a ditch and covered with quick-lime, watch the mountains of oranges slop down to a putrefying ooze; and in the eyes of the people there is the failure; and in the eyes of the hungry there is a growing wrath. In the souls of the people the grapes of wrath are filling and growing heavy, growing heavy for the vintage.”`, author: "John Steinbeck", source: "The Grapes of Wrath" },
+            { type: "book", text: `“All animals are equal, but some animals are more equal than others.”`, author: "George Orwell", source: "Animal Farm" },
+            { type: "book", text: `“It's easy to believe in something when you win all the time...The losses are what define a man's faith.”`, author: "Brandon Sanderson", source: "The Well of Ascension (Mistborn, #2)" },
+            { type: "book", text: `“I write these words in steel, for anything not set in metal cannot be trusted.”`, author: "Brandon Sanderson", source: "The Well of Ascension (Mistborn, #2)" },
+            { type: "book", text: `“If you want to know what a man's like, take a good look at how he treats his inferiors, not his equals.”`, author: "J.K. Rowling", source: "Harry Potter and the Goblet of Fire (Harry Potter, #4)" },
+            { type: "book", text: `“I was forced to acknowledge too late, much too late, that I too had loved, that I was capable of suffering, and that I was human after all.”`, author: "Jacqueline Harpman", source: "I Who Have Never Known Men" },
+            { type: "book", text: `“Perhaps home is not a place but simply an irrevocable condition.”`, author: "James Baldwin", source: "Giovanni’s Room" },
+            { type: "book", text: `“You don’t have a home until you leave it and then, when you have left it, you never can go back.”`, author: "James Baldwin", source: "Giovanni’s Room" },
+            { type: "book", text: `“People can't, unhappily, invent their mooring posts, their lovers and their friends, anymore than they can invent their parents.  Life gives these and also takes them away and the great difficulty is to say Yes to life.”`, author: "James Baldwin", source: "Giovanni’s Room" },
+            { type: "book", text: `“Confusion is a luxury which only the very, very young can possibly afford and you are not that young anymore”`, author: "James Baldwin", source: "Giovanni’s Room" },
+            { type: "book", text: `“For I am—or I was—one of those people who pride themselves in on their willpower, on their ability to make a decision and carry it through. This virtue, like most virtues, is ambiguity itself. People who believe that they are strong-willed and the masters of their destiny can only continue to believe this by becoming specialists in self-deception. Their decisions are not really decisions at all—a real decision makes one humble, one knows that it is at the mercy of more things than can be named—but elaborate systems of evasion, of illusion, designed to make themselves and the world appear to be what they and the world are not. This is certainly what my decision, made so long ago in Joey’s bed, came to. I had decided to allow no room in the universe for something which shamed and frightened me. I succeeded very well—by not looking at the universe, by not looking at myself, by remaining, in effect, in constant motion.”`, author: "James Baldwin", source: "Giovanni’s Room" },
+            { type: "book", text: `“Perhaps, as we say in America, I wanted to find myself. This is an interesting phrase, not current as far as I know in the language of any other people, which certainly does not mean what it says but betrays a nagging suspicion that something has been misplaced. I think now that if I had any intimation that the self I was going to find would turn out to be only the same self from which I had spent so much time in flight, I would have stayed at home.”`, author: "James Baldwin", source: "Giovanni’s Room" },
+            { type: "book", text: `“You do not,’ cried Giovanni, sitting up, ‘love anyone! You never have loved anyone, I am sure you never will! You love your purity, you love your mirror—you are just like a little virgin, you walk around with your hands in front of you as though you had some precious metal, gold, silver, rubies, maybe diamonds down there between your legs! You will never give it to anybody, you will never let anybody touch it—man or woman. You want to be clean. You think you came here covered with soap and you think you will go out covered with soap—and you do not want to stink, not even for five minutes, in the meantime.’ He grasped me by the collar, wrestling and caressing at once, fluid and iron at once: saliva spraying from his lips and his eyes full of tears, but with the bones of his face showing and the muscles leaping in his arms and neck. ‘You want to leave Giovanni because he makes you stink. You want to despise Giovanni because he is not afraid of the stink of love. You want to kill him in the name of all your lying little moralities. And you—you are immoral. You are, by far, the most immoral man I have met in all my life. Look, look what you have done to me. Do you think you could have done this if I did not love you? Is this what you should do to love?”`, author: "James Baldwin", source: "Giovanni’s Room" },
+            { type: "book", text: `“Learn this now and learn it well. Like a compass facing north, a man’s accusing finger always finds a woman. Always. You remember that, Mariam.”`, author: "Khaled Hosseini", source: "A Thousand Splendid Suns" },
+            { type: "book", text: `“Miriam wished for so much in those final moments. Yet as she closed her eyes, it was not regret any longer but a sensation of abundant peace that washed over her. She thought of her entry into this world, the harami child of a lowly villager, an unintended thing, a pitiable, regrettable accident. A weed. And yet she was leaving the world as a woman who had loved and been loved back. She was leaving it as a friend, a companion, a guardian. A mother. A person of consequence at last. No. It was not so bad, Miriam thought, that she should die this way. Not so bad. This was a legitimate end to a life of illegitimate belongings.”`, author: "Khaled Hosseini", source: "A Thousand Splendid Suns" },
+            { type: "book", text: `“she is the noor of my eyes and the sultan of my heart.”`, author: "Khaled Hosseini", source: "A Thousand Splendid Suns" },
+            { type: "book", text: `“And the past held only this wisdom: that love was a damaging mistake, and its accomplice, hope, a treacherous illusion. And whenever those twin poisonous flowers began to sprout in the parched land of that field, Mariam uprooted them. She uprooted them and ditched them before they took hold.”`, author: "Khaled Hosseini", source: "A Thousand Splendid Suns" },
+            { type: "book", text: `“But the game involves only male names. Because, if it's a girl, Laila has already named her”`, author: "Khaled Hosseini", source: "A Thousand Splendid Suns" },
+            { type: "book", text: `“Mariam lay on the couch, hands tucked between her knees, watched the whirlpool of snow twisting and spinning outside the window.  She remembered Nana saying once that each snowflake was a sigh heaved by an aggrieved woman somewhere in the world.  That all the sighs drifted up the sky, gathered into clouds, then broke into tiny pieces that fell silently on the people below.  As a reminder of how people like us suffer, she'd said.  How quietly we endure all that falls upon us.”`, author: "Khaled Hosseini", source: "A Thousand Splendid Suns" },
+            { type: "book", text: `“I keep thinking about this river somewhere, with the water moving really fast.  And these two people in the water, trying to hold onto each other, holding on as hard as they can, but in the end it's just too much.  The current's too strong.  They've got to let go, drift apart.  That's how it is with us.  It's a shame, Kath, because we've loved each other all our lives.  But in the end, we can't stay together forever.”`, author: "Kazuo Ishiguro", source: "Never Let Me Go" },
+            { type: "book", text: `“Sometimes I get so immersed in my own company, if I unexpectedly run into someone I know, it's a bit of a shock and takes me a while to adjust.”`, author: "Kazuo Ishiguro", source: "Never Let Me Go" },
+            { type: "book", text: `“I do what I do without hope of reward or fear of punishment. I do not require Heaven or Hell to bribe or scare me into acting decently.”`, author: "Mary Doria Russell", source: "The Sparrow (The Sparrow, #1)" },
+            { type: "book", text: `“The Jewish sages also tell us that God dances when His children defeat Him in argument, when they stand on their feet and use their minds.  So questions like Anne's are worth asking.  To ask them is a very fine kind of human behavior.  If we keep demanding that God yield up His answers, perhaps some day we will understand them.  And then we will be something more than clever apes, and we shall dance with God.”`, author: "Mary Doria Russell", source: "The Sparrow (The Sparrow, #1)" },
+            { type: "book", text: `“we all make vows, Jimmy.  And there is something very beautiful and touching and noble about wanting good impulses to be permanent and true forever,\" she said.  \"Most of us stand up and vow to love, honor and cherish someone.  And we truly mean it, at the time.  But two or twelve or twenty years down the road, the lawyers are negotiating the property settlement.\"    \"You and George didn't go back on your promises.\"    She laughed.  \"Lemme tell ya something, sweetface.  I have been married at least four times, to four different men.\"  She watched him chew that over for a moment before continuing, \"They've all been named George Edwards but, believe me, the man who is waiting for me down the hall is a whole lot different animal from the boy I married, back before there was dirt.  Oh, there are continuities.  He has always been fun and he has never been able to budget his time properly and - well, the rest is none of your business.\"    \"But people change,\" he said quietly.    \"Precisely.  People change.  Cultures change.  Empires rise and fall.  Shit.  Geology changes!  Every ten years or so, George and I have faced the fact that we have changed and we've had to decide if it makes sense to create a new marriage between these two new people.\"  She flopped back against her chair.  \"Which is why vows are such a tricky business.  Because nothing stays the same forever.  Okay.  Okay!  I'm figuring something out now.\"  She sat up straight, eyes focused somewhere outside the room, and Jimmy realized that even Anne didn't have all the answers and that was either the most comforting thing he'd learned in a long time or the most discouraging.  \"Maybe because so few of us would be able to give up something so fundamental for something so abstract, we protect ourselves from the nobility of a priest's vows by jeering at him when he can't live up to them, always and forever.\"  She shivered and slumped suddenly, \"But, Jimmy!  What unnatural words.  Always and forever!  Those aren't human words, Jim.  Not even stones are always and forever.”`, author: "Mary Doria Russell", source: "The Sparrow (The Sparrow, #1)" },
+            { type: "book", text: `“Watching him with one eye, she wondered if men ever figured out that they were more appealing when they were pursuing their own work than when they were pursuing a woman.”`, author: "Mary Doria Russell", source: "The Sparrow (The Sparrow, #1)" },
+            { type: "book", text: `“You see, that is my dilemma. Because if I was led by God to love God, step by step, as it seemed, if I accept that the beauty and the rapture were real and true, then the rest of it was God's will too, and that, gentlemen, is cause for bitterness. But if I am simply a deluded ape who took a lot of old folktales far too seriously, then I brought all this on myself and my companions and the whole business becomes farcical, doesn't it. The problem with atheism, I find, under these circumstances,\" he continued with academic exactitude, each word etched on the air with acid, \"is that I have no one to despise but myself. If, however, I choose to believe that God is vicious, then at least I have the solace of hating God.”`, author: "Mary Doria Russell", source: "The Sparrow (The Sparrow, #1)" },
+            { type: "book", text: `“See that's where it falls apart for me!\" Anne cried.  \"What sticks in my throat is that God gets the credit but never the blame.  I just can't swallow that kind of theological candy.  Either God's in charge or he's not...”`, author: "Mary Doria Russell", source: "The Sparrow (The Sparrow, #1)" },
+            { type: "book", text: `“Nothing, nothing mattered, and I knew why. So did he. Throughout the whole absurd life I'd lived, a dark wind had been rising toward me from somewhere deep in my future, across years that were still to come, and as it passed, this wind leveled whatever was offered to me at the time, in years no more real than the ones I was living. What did other people's deaths or a mother's love matter to me; what did his God or the lives people choose or the fate they think they elect matter to me when we're all elected by the same fate, me and billions of privileged people like him who also called themselves my brothers? Couldn't he see, couldn't he see that? Everybody was privileged. There were only privileged people. The others would all be condemned one day. And he would be condemned, too.”`, author: "Albert Camus", source: "The Stranger" },
+            { type: "book", text: `“I can't stand it to think my life is going so fast and I'm not really living it.”`, author: "Ernest Hemingway", source: "The Sun Also Rises" },
+            { type: "book", text: `“Oh Jake,\" Brett said, \"We could have had such a damned good time together.\"Ahead was a mounted policeman in khaki directing traffic. He raised his baton. The car slowed suddenly, pressing Brett against me.Yes,\" I said. \"Isn't it pretty to think so?”`, author: "Ernest Hemingway", source: "The Sun Also Rises" },
+            { type: "book", text: `“Going to another country doesn’t make any difference. I’ve tried all that. You can’t get away from yourself by moving from one place to another. There’s nothing to that.”`, author: "Ernest Hemingway", source: "The Sun Also Rises" },
+            { type: "book", text: `“Have you no hope at all? And do you really live with the thought that when you die, you die, and nothing remains?\" \"Yes,\" I said.”`, author: "Albert Camus", source: "The Stranger" },
+            { type: "book", text: `“I had only a little time left and I didn't want to waste it on God.”`, author: "Albert Camus", source: "L'Étranger" },
+            { type: "book", text: `“I looked up at the mass of signs and stars in the night sky and laid myself open for the first time to the benign indifference of the world.”`, author: "Albert Camus", source: "The Stranger" },
+
+            // --- MOVIES FROM UNTITLED DOCUMENT.PDF ---
+            { type: "movie", text: `"Frankly, my dear, I don't give a damn."`, author: "Clark Gable", source: "Gone with the Wind" },
+            { type: "movie", text: `"You don't understand! I coulda had class. I coulda been a contender. I could've been somebody, instead of a bum, which is what I am; let's face it."`, author: "Marlon Brando", source: "On the Waterfront" },
+            { type: "movie", text: `"May the Force be with you."`, author: "Harrison Ford", source: "Star Wars" },
+            { type: "movie", text: `"I'm going to make him an offer he can't refuse."`, author: "Marlon Brando", source: "The Godfather" },
+            { type: "movie", text: `"I love the smell of napalm in the morning."`, author: "Robert Duvall", source: "Apocalypse Now" },
+            { type: "movie", text: `"Toto, I've got a feeling we're not in Kansas anymore."`, author: "Judy Garland", source: "The Wizard of Oz" },
+            { type: "movie", text: `"I am your father."`, author: "James Earl Jones", source: "Star Wars V: The Empire Strikes Back" },
+            { type: "movie", text: `"There's no place like home."`, author: "Judy Garland", source: "The Wizard of Oz" },
+            { type: "movie", text: `"Here's lookin' at you, kid."`, author: "Humphrey Bogart", source: "Casablanca" },
+            { type: "movie", text: `"Go ahead, make my day."`, author: "Clint Eastwood", source: "Sudden Impact" },
+            { type: "movie", text: `"Fasten your seatbelts. It's going to be a bumpy night."`, author: "Bette Davis", source: "All about Eve" },
+            { type: "movie", text: `"You can't handle the truth!"`, author: "Jack Nicholson", source: "A Few Good Men" },
+            { type: "movie", text: `"Alright, Mr. DeMille, I'm ready for my close-up."`, author: "Gloria Swanson", source: "Sunset Boulevard" },
+            { type: "movie", text: `"We'll always have Paris."`, author: "Humphrey Bogart", source: "Casablanca" },
+            { type: "movie", text: `"You talkin' to me?"`, author: "Robert DeNiro", source: "Taxi Driver" },
+            { type: "movie", text: `"You've gotta ask yourself one question: 'Do I feel lucky?' Well, do ya' punk?"`, author: "Clint Eastwood", source: "Dirty Harry" },
+            { type: "movie", text: `"Bond. James Bond."`, author: "Sean Connery", source: "Dr. No" },
+            { type: "movie", text: `"Houston, we have a problem."`, author: "Tom Hanks", source: "Apollo 13" },
+            { type: "movie", text: `"The stuff that dreams are made of."`, author: "Humphrey Bogart", source: "The Maltese Falcon" },
+            { type: "movie", text: `"I am serious. And don't call me Shirley."`, author: "Leslie Nielson", source: "Airplane!" },
+            { type: "movie", text: `"I'll be back."`, author: "Arnold Schwarzenegger", source: "The Terminator" },
+            { type: "movie", text: `"Louis, I think this is the beginning of a beautiful friendship."`, author: "Humphrey Bogart", source: "Casablanca" },
+            { type: "movie", text: `"E.T. phone home."`, author: "Joe Welsh", source: "E.T.: the Extra-Terrestrial" },
+            { type: "movie", text: `"If you build it, he will come."`, author: "Ray Liotta", source: "Field of Dreams" },
+            { type: "movie", text: `"I'm mad as hell, and I'm not going to take this anymore!"`, author: "Peter Finch", source: "Network" },
+            { type: "movie", text: `"My father taught me many lessons from this chair. He taught me, 'Keep your friends close, but your enemies closer."`, author: "Al Pacino", source: "The Godfather Part II" },
+            { type: "movie", text: `"Mama always said 'life is like a bunch of chocolates, you never know what you're gonna get."`, author: "Tom Hanks", source: "Forrest Gump" },
+            { type: "movie", text: `"Martini. Shaken, not stirred."`, author: "Sean Connery", source: "Goldfinger" },
+            { type: "movie", text: `"What is it you want, Mary? What do you want? You want the moon? Just say the word, and I'll throw a lasso around it and pull it down."`, author: "James Stewart", source: "It's a Wonderful Life" },
+            { type: "movie", text: `"Mirror, mirror on the wall, who's the fairest of them all?"`, author: "Lucille la Verne", source: "Snow White and the Seven Dwarves" },
+            { type: "movie", text: `"I see dead people."`, author: "Haley Joel Osment", source: "The Sixth Sense" },
+            { type: "movie", text: `"Of all the gin joints in all the towns in all the world, she walks into mine."`, author: "Humphrey Bogart", source: "Casablanca" },
+            { type: "movie", text: `"Run, Forrest! Run!"`, author: "Hanna Hall", source: "Forrest Gump" },
+            { type: "movie", text: `"Rosebud."`, author: "Orson Welles", source: "Citizen Kane" },
+            { type: "movie", text: `"Love means never having to say you're sorry."`, author: "Ali MacGraw", source: "Love Story" },
+            { type: "movie", text: `"I'm walkin' here! I'm walkin' here!"`, author: "Dustin Hoffman", source: "Midnight Cowboy" },
+            { type: "movie", text: `"Today, I consider myself the luckiest man on the face of the earth."`, author: "Gary Cooper", source: "The Pride of the Yankees" },
+            { type: "movie", text: `"Hello. My name is Inigo Montoya. You killed my father. Prepare to die."`, author: "Mandy Patinkin", source: "The Princess Bride" },
+            { type: "movie", text: `"To infinity and beyond!"`, author: "Tim Allen", source: "Toy Story" },
+            { type: "movie", text: `"I'get you my pretty, and your little dog, too!"`, author: "Margaret Hamilton", source: "The Wizard of Oz" },
+            { type: "movie", text: `"Elementary, my dear Watson."`, author: "Basil Rathbone", source: "The Adventures of Sherlock Holmes" },
+            { type: "movie", text: `"What we've got here is...failure to communicate."`, author: "Strother Martin", source: "Cool Hand Luke" },
+            { type: "movie", text: `"There's no crying in baseball!"`, author: "Tom Hanks", source: "A League of their Own" },
+            { type: "movie", text: `"You wanna play games, let's play games...Say 'hello' to my little friend!"`, author: "Al Pacino", source: "Scarface" },
+            { type: "movie", text: `"Made it, Ma! Top of the world!"`, author: "James Cagney", source: "White Heat" },
+            { type: "movie", text: `"Play it Sam, play 'As Time Goes By."`, author: "Ingrid Bergman", source: "Casablanca" },
+            { type: "movie", text: `"Nobody puts baby in a corner."`, author: "Patrick Swayze", source: "Dirty Dancing" },
+            { type: "movie", text: `"Space... the Final Frontier. These are the continuing voyages of the starship Enterprise. Her ongoing mission: to explore strange new worlds, to seek out new life forms and new civilizations, to boldly go where no man has gone before."`, author: "Leonard Nimoy", source: "Star Trek: the Wrath of Khan" },
+            { type: "movie", text: `"Gentlemen, there's no fighting in here! This is the war room!"`, author: "Peter Sellers", source: "Dr. Strangelove: or How I Learned to Stop Worrying and Love the Bomb" },
+            { type: "movie", text: `"Now, I want you to remember that no bastard ever won a war by dying for his country. He won it by making the other poor dumb bastard die for his country."`, author: "George C. Scott", source: "Patton" },
+            { type: "movie", text: `"Father to a murdered son. Husband to a murdered wife. And I will have my vengeance, in this life or the next."`, author: "Russell Crowe", source: "Gladiator" },
+            { type: "movie", text: `"I'm King of the world!"`, author: "Leonardo DiCaprio", source: "Titanic" },
+            { type: "movie", text: `"Show me the money!"`, author: "Cuba Gooding, Jr.", source: "Jerry Maguire" },
+            { type: "movie", text: `"My precious."`, author: "Andy Serkis", source: "The Lord of the Rings: The Fellowship of the Ring" },
+            { type: "movie", text: `"Help me, Obi-Wan Kenobi, you're my only hope."`, author: "Carrie Fisher", source: "Star Wars" },
+            { type: "movie", text: `"You know how to whistle, don't you, Steve? You just put your lips together and blow."`, author: "Lauren Bacall", source: "To Have and Have Not" },
+            { type: "movie", text: `"The point is, ladies and gentleman, is that greed - for lack of a better word - is good. Greed is right. Greed works. Greed clarifies, cuts through and captures the essence of the evolutionary spirit. Greed, in all of its forms - greed for life, for money, for love, knowledge - has marked the upward surge of mankind."`, author: "Michael Douglas", source: "Wall Street" },
+            { type: "movie", text: `"It's alive. It's alive!"`, author: "Colin Clive", source: "Frankenstein" },
+            { type: "movie", text: `"You'll shoot your eye out!"`, author: "Melinda Dillon", source: "A Christmas Story" },
+            { type: "movie", text: `"One morning I shot an elephant in my pajamas. How he got in my pajamas, I don't know."`, author: "Groucho Marx", source: "Animal Crackers" },
+            { type: "movie", text: `"Aye, fight and you may die, run and you'll live. At least a while. And dying in your beds many years from now, would you be willing to trade all the days from this day to that for one chance, just one chance to come back here and tell our enemies that they may take our lives, but they'll never take our freedom!"`, author: "Mel Gibson", source: "Braveheart" },
+            { type: "movie", text: `"Badges? We ain't got no badges! We don't need no badges! I don't have to show you any stinking badges!"`, author: "Alfonso Bedoya", source: "The Treasure of the Sierra Madre" },
+            { type: "movie", text: `"They call me Mr. Tibbs!"`, author: "Sidney Poitier", source: "In the Heat of the Night" },
+            { type: "movie", text: `"Be afraid. Be very afraid."`, author: "Geena Davis", source: "The Fly" },
+            { type: "movie", text: `"Every time a bell rings, an angel gets his wings."`, author: "Henry Travers", source: "It's a Wonderful Life" },
+            { type: "movie", text: `"You're gonna need a bigger boat."`, author: "Roy Scheider", source: "Jaws" },
+            { type: "movie", text: `"Life moves pretty fast. If you don't stop and look around once in a while, you could miss it."`, author: "Matthew Broderick", source: "Ferris Bueller's Day Off" },
+            { type: "movie", text: `"Lions and tigers and bears, oh my!"`, author: "Judy Garland, Ray Bolger and Jack Haley", source: "The Wizard of Oz" },
+            { type: "movie", text: `"Life is a banquet, and most poor suckers are starving to death!"`, author: "Rosalind Russell", source: "Auntie Mame" },
+            { type: "movie", text: `"A census taker once tried to test me. I ate his liver with some fava beans and a nice chianti."`, author: "Anthony Hopkins", source: "The Silence of the Lambs" },
+            { type: "movie", text: `"Who's on first?"`, author: "Bud Abbott", source: "The Naughty Nineties" },
+            { type: "movie", text: `"Open the pod bay doors, HAL."`, author: "Keir Dullea", source: "2001: A Space Odyssey" },
+            { type: "movie", text: `"Here's Johnny!"`, author: "Jack Nicholson", source: "The Shining" },
+            { type: "movie", text: `"I am Groot."`, author: "Vin Diesel", source: "Guardians of the Galaxy" },
+            { type: "movie", text: `"Follow the money."`, author: "Hal Holbrook", source: "All the President's Men" },
+            { type: "movie", text: `"I'll have what she's having."`, author: "Estelle Reiner", source: "When Harry Met Sally" },
+            { type: "movie", text: `"Be the ball."`, author: "Chevy Chase", source: "Caddyshack" },
+            { type: "movie", text: `"Why don't you come up sometime and see me?"`, author: "Mae West", source: "She Done Him Wrong" },
+            { type: "movie", text: `"Soylent Green is people!"`, author: "Charlton Heston", source: "Soylent Green" },
+            { type: "movie", text: `"You never really understand a person until you consider things from his point of view, until you climb inside of his skin and walk around in it."`, author: "Gregory Peck", source: "To Kill a Mockingbird" },
+            { type: "movie", text: `"Why so serious? Let's put a smile on that face."`, author: "Heath Ledger", source: "The Dark Knight" },
+            { type: "movie", text: `"You're a wizard, Harry."`, author: "Robbie Coltrane", source: "Harry Potter and the Sorcerer's Stone" },
+            { type: "movie", text: `"Roads? Where we going, we don't need roads."`, author: "Christopher Lloyd", source: "Back to the Future" },
+            { type: "movie", text: `"Pay no attention to the man behind the curtain!"`, author: "Frank Morgan", source: "The Wizard of Oz" },
+            { type: "movie", text: `"Forget it, Jake. It's Chinatown."`, author: "Bruce Glover", source: "Chinatown" },
+            { type: "movie", text: `"Somebody stop me!"`, author: "Jim Carrey", source: "The Mask" },
+            { type: "movie", text: `"You make me want to be a better man."`, author: "Jack Nicholson", source: "As Good as it Gets" },
+            { type: "movie", text: `"Good morning, Vietnam!"`, author: "Robin Williams", source: "Good Morning, Vietnam!" },
+            { type: "movie", text: `"I'm melting! Melting!"`, author: "Margaret Hamilton", source: "The Wizard of Oz" },
+            { type: "movie", text: `"Hasta la vista, baby."`, author: "Arnold Schwarzenegger", source: "Terminator II: Judgment Day" },
+            { type: "movie", text: `"You shall not pass!"`, author: "Ian McKellen", source: "The Lord of the Rings: The Fellowship of the Ring" },
+            { type: "movie", text: `"There are simply too many notes."`, author: "Jeffrey Jones", source: "Amadeus" },
+            { type: "movie", text: `"Excuse me while I whip this out."`, author: "Cleavon Little", source: "Blazing Saddles" },
+            { type: "movie", text: `"After all, tomorrow is another day!"`, author: "Vivien Leigh", source: "Gone with the Wind" },
+            { type: "movie", text: `"We rob banks."`, author: "Warren Beatty", source: "Bonnie and Clyde" },
+            { type: "movie", text: `"That's my secret, Captain. I'm always angry."`, author: "Mark Ruffalo", source: "The Avengers" },
+            { type: "movie", text: `"A boy's best friend is his mother."`, author: "Anthony Perkins", source: "Psycho" },
+            { type: "movie", text: `"Shut up and deal."`, author: "Shirley MacLaine", source: "The Apartment" },
+            { type: "movie", text: `"What a dump!"`, author: "Bette Davis", source: "Beyond the Forest" },
+            { type: "movie", text: `"It's showtime!"`, author: "Roy Scheider", source: "All That Jazz" },
+            { type: "movie", text: `"Yeah, baby!"`, author: "Mike Myers", source: "Austin Powers: International Man of Mystery" },
+            { type: "movie", text: `"We're on a mission from God."`, author: "Dan Aykroyd", source: "Blues Brothers" },
+            { type: "movie", text: `"Round up the usual suspects."`, author: "Claude Rains", source: "Casablanca" },
+            { type: "movie", text: `"Carpe diem. Seize the day, boys. Make your lives extraordinary."`, author: "Robin Williams", source: "Dead Poets' Society" },
+            { type: "movie", text: `"That'll do, pig. That'll do."`, author: "James Cromwell", source: "Babe" },
+            { type: "movie", text: `"Yo, Adrian."`, author: "Sylvester Stallone", source: "Rocky" },
+            { type: "movie", text: `"Get busy livin' or get busy dyin'."`, author: "Tim Robbins", source: "The Shawshank Redemption" },
+            { type: "movie", text: `"I'll meet you at the place near the thing where we met that time."`, author: "Albert Brooks", source: "Broadcast News" },
+            { type: "movie", text: `"I am not an animal!"`, author: "John Hurt", source: "The Elephant Man" },
+            { type: "movie", text: `"Listen to them, children of the night...what music they make."`, author: "Bela Lugosi", source: "Dracula" },
+            { type: "movie", text: `"Oh, Jerry, don't let's ask for the moon. We have the stars."`, author: "Bette Davis", source: "Now, Voyager" },
+            { type: "movie", text: `"Stella! Hey, Stella!"`, author: "Marlon Brando", source: "A Streetcar Named Desire" },
+            { type: "movie", text: `"As you wish."`, author: "Cary Elwes", source: "The Princess Bride" },
+            { type: "movie", text: `"You ever seen a grown man naked?"`, author: "Peter Graves", source: "Airplane!" },
+            { type: "movie", text: `"I am Iron Man."`, author: "Robert Downey, Jr.", source: "Iron Man" },
+            { type: "movie", text: `"I've abandoned my child! I've abandoned my boy!"`, author: "Daniel Day Lewis", source: "There Will Be Blood" },
+            { type: "movie", text: `"Georgia, love is for the very young."`, author: "Kirk Douglas", source: "The Bold and the Beautiful" },
+            { type: "movie", text: `"That was the most fun I've ever had without laughing."`, author: "Woody Allen", source: "Annie Hall" },
+            { type: "movie", text: `"You had me at 'hello."`, author: "Renée Zellwegger", source: "Jerry Maguire" },
+            { type: "movie", text: `"May you all remember this as the day you almost caught Captain Jack Sparrow!"`, author: "Johnny Depp", source: "Pirates of the Caribbean: The Curse of the Black Pearl" },
+            { type: "movie", text: `"Hulk...Smash!"`, author: "Edward Norton", source: "The Incredible Hulk" },
+            { type: "movie", text: `"Goodnight, you princes of Maine, you kings of New England."`, author: "Michael Caine", source: "The Cider House Rules" },
+            { type: "movie", text: `"I think it pisses God off when you walk by the color purple in a field and don't notice it."`, author: "Margaret Avery", source: "The Color Purple" },
+            { type: "movie", text: `"I'm no good at being noble, but it doesn't take much to see that the problems of three little people don't amount to a hill of beans in this crazy world."`, author: "Humphrey Bogart", source: "Casablanca" },
+            { type: "movie", text: `"And our bodies are earth. And our thoughts are clay. And we sleep and eat with death."`, author: "Lew Ayres", source: "All Quiet on the Western Front" },
+            { type: "movie", text: `"The list is an absolute good. The list is life."`, author: "Ben Kingsley", source: "Schindler's List" },
+            { type: "movie", text: `"Wouldja do me a favor, Harry? Drop dead."`, author: "Judy Holliday", source: "Born Yesterday" },
+            { type: "movie", text: `"Tell 'em to go out there with all they got and win just one for the Gipper."`, author: "Pat O'Brien", source: "Knute Rockne: All-American" },
+            { type: "movie", text: `"Yippie-kay-yay, motherfucker!"`, author: "Bruce Willis", source: "Die Hard" },
+            { type: "movie", text: `"La-dee-da, la-dee-da."`, author: "Diane Keaton", source: "Annie Hall" },
+            { type: "movie", text: `"Mama, face it, I was the slut of all time."`, author: "Elizabeth Taylor", source: "Butterfield 8" },
+            { type: "movie", text: `"A lie keeps growing and growing until it's as clear as the nose on your face."`, author: "Evelyn Venable", source: "Pinocchio" },
+            { type: "movie", text: `"I am big! It's the pictures that got small."`, author: "Gloria Swanson", source: "Sunset Boulevard" },
+            { type: "movie", text: `"These go to eleven."`, author: "Christopher Guest", source: "This is Spinal Tap" },
+            { type: "movie", text: `"Mein Führer! I can walk!"`, author: "Peter Sellers", source: "Dr. Strangelove: or How I Learned to Stop Worrying and Love the Bomb" },
+            { type: "movie", text: `"As God as my witness, I'll never go hungry again!"`, author: "Vivien Leigh", source: "Gone with the Wind" },
+            { type: "movie", text: `"I believe in long, slow, deep, soft, wet kisses that last three days."`, author: "Kevin Costner", source: "Bull Durham" },
+            { type: "movie", text: `"In spite of everything, I still believe that people are really good at heart."`, author: "Millie Perkins", source: "The Diary of Anne Frank" },
+            { type: "movie", text: `"I'm here to fight for truth, justice and the American way."`, author: "Christopher Reeve", source: "Superman: the Movie" },
+            { type: "movie", text: `"Are you not entertained?"`, author: "Russell Crowe", source: "Gladiator" },
+            { type: "movie", text: `"I don't know nothing about birthin' babies!"`, author: "Butterfly McQueen", source: "Gone with the Wind" },
+            { type: "movie", text: `"I feel the need... The need for speed!"`, author: "Tom Cruise and Anthony Edwards", source: "Top Gun" },
+            { type: "movie", text: `"Well, nobody's perfect."`, author: "Joe E. Brown", source: "Some Like it Hot" },
+            { type: "movie", text: `"I'm the ghost with the most, babe."`, author: "Michael Keaton", source: "Beetlejuice" },
+            { type: "movie", text: `"It was beauty killed the beast."`, author: "Robert Armstrong", source: "King Kong" },
+            { type: "movie", text: `"Have you ever danced with the devil in the pale moonlight?"`, author: "Jack Nicholson", source: "Batman" },
+            { type: "movie", text: `"I'm Spartacus!"`, author: "Tony Curtis", source: "Spartacus" },
+            { type: "movie", text: `"Alright, alright, alright!"`, author: "Matthew McConaughey", source: "Dazed and Confused" },
+            { type: "movie", text: `"Give me a whiskey, ginger ale on the side. And don't be stingy, baby."`, author: "Greta Garbo", source: "Anna Christie" },
+            { type: "movie", text: `"Get off of my plane."`, author: "Harrison Ford", source: "Air Force One" },
+            { type: "movie", text: `"Sometimes there's so much beauty in the world I feel like I can't take it, like my heart's going to cave in."`, author: "Wes Bentley", source: "American Beauty" },
+            { type: "movie", text: `"Wait a minute, wait a minute. You ain't heard nothin' yet!"`, author: "Al Jolson", source: "The Jazz Singer" },
+            { type: "movie", text: `"You complete me."`, author: "Tom Cruise", source: "Jerry Maguire" },
+            { type: "movie", text: `"Get your stinkin' paws off me, you damned dirty ape!"`, author: "Charlton Heston", source: "Planet of the Apes" },
+            { type: "movie", text: `"I never wanted this for you."`, author: "Marlon Brando", source: "The Godfather" },
+            { type: "movie", text: `"You're a better man than I am, Gunga Din."`, author: "Cary Grant", source: "Gunga Din" },
+            { type: "movie", text: `"Don't mess with the bull, young man. You'll get the horns!"`, author: "Paul Gleason", source: "The Breakfast Club" },
+            { type: "movie", text: `"Shane! Shane! Come back, Shane!"`, author: "Brandon de Wilde", source: "Shane" },
+            { type: "movie", text: `"I was looking up. It was the nearest thing to heaven. You were there."`, author: "Deborah Kerr", source: "An Affair to Remember" },
+            { type: "movie", text: `"Plastics."`, author: "Walter Brooke", source: "The Graduate" },
+            { type: "movie", text: `"The dingo took my baby!"`, author: "Meryl Streep", source: "A Cry in the Dark" },
+            { type: "movie", text: `"I love him because he's the kind of guy who gets drunk on a glass of buttermilk, and I love the way he blushes right up over his ears. I love him because he doesn't know how to kiss, the jerk!"`, author: "Barbara Stanwyck", source: "Ball of Fire" },
+            { type: "movie", text: `"I know it was you, Fredo. You broke my heart."`, author: "Al Pacino", source: "The Godfather Part II" },
+            { type: "movie", text: `"Mama says, 'stupid is and stupid does."`, author: "Tom Hanks", source: "Forrest Gump" },
+            { type: "movie", text: `"These aren't the droids you're looking for."`, author: "Alec Guinness", source: "Star Wars" },
+            { type: "movie", text: `"The path of the righteous man is beset on all sides by the inequities of the selfish and the tyranny of evil men. Blessed is he who, in the name of charity and good will, shepherds the weak through the valley of darkness., for he is truly his brother's keeper and the finder of lost children. And I will strike down upon thee with great vengeance and furious anger those who would attempt to poison and destroy My brothers. And you will know My name is the Lord when I lay My vengeance upon thee!"`, author: "Samuel L. Jackson", source: "Pulp Fiction" },
+            { type: "movie", text: `"Wakanda Forever!"`, author: "Danai Gurira", source: "Black Panther" },
+            { type: "movie", text: `"The love inside...you take it with you."`, author: "Patrick Swayze", source: "Ghost" },
+            { type: "movie", text: `"Nothing is over until we decide it is! Was it over when the Germans bombed Pearl Harbor? Hell no!"`, author: "John Belushi", source: "National Lampoon's Animal House" },
+            { type: "movie", text: `"I always say a kiss on the hand might feel very good, but a diamond tiara lasts forever."`, author: "Marilyn Monroe", source: "Gentlemen Prefer Blondes" },
+            { type: "movie", text: `"We came. We saw. We kicked its ass."`, author: "Bill Murray", source: "Ghostbusters" },
+            { type: "movie", text: `"Wherever there's a fight so hungry people can eat, I'll be there."`, author: "Henry Fonda", source: "The Grapes of Wrath" },
+            { type: "movie", text: `"Hi-yo silver!"`, author: "Clayton Moore", source: "The Lone Ranger" },
+            { type: "movie", text: `"My mother thanks you. My father thanks you. My sister thanks you. And I thank you."`, author: "James Cagney", source: "Yankee-Doodle Dandy" },
+            { type: "movie", text: `"Have you ever seen an elephant fly?"`, author: "Cliff Edwards", source: "Dumbo" },
+            { type: "movie", text: `"All-righty then!"`, author: "Jim Carrey", source: "Ace Ventura: Pet Detective" },
+            { type: "movie", text: `"Well, I've wrestled with reality for thirty-five years, Doctor, and I'm happy to state that I finally won out over it."`, author: "James Stewart", source: "Harvey" },
+            { type: "movie", text: `"The greatest trick the devil ever pulled was convincing the world he didn't exist."`, author: "Kevin Spacey", source: "The Usual Suspects" },
+            { type: "movie", text: `"One million dollars."`, author: "Mike Myers", source: "Austin Powers: International Man of Mystery" },
+            { type: "movie", text: `"That dirty, double-crossing rat!"`, author: "James Cagney", source: "Blonde Crazy" },
+            { type: "movie", text: `"There are only two things more beautiful than a good gun: a Swiss watch or a woman from anywhere. Ever had a good Swiss watch?"`, author: "John Ireland", source: "Red River" },
+            { type: "movie", text: `"I've seen things you people wouldn't believe. Attack ships on fire off the shoulder of Orion. I watched C-beams glitter in the dark near the Tannhauser gate. All those moments will be lost in time, like tears in the rain. Time to die."`, author: "Rutger Hauer", source: "Blade Runner" },
+            { type: "movie", text: `"Cinderella story. Outta nowhere. A former greens-keeper, now, about to become the Masters champion. It looks like a mirac... It's in the hole! It's in the hole! It's in the hole!"`, author: "Bill Murray", source: "Caddyshack" },
+            { type: "movie", text: `"I have always depended on the kindness of strangers."`, author: "Vivien Leigh", source: "A Streetcar Named Desire" },
+            { type: "movie", text: `"First rule of fight club is: you do not talk about fight club."`, author: "Brad Pitt", source: "Fight Club" },
+            { type: "movie", text: `"I was born a poor black child."`, author: "Steve Martin", source: "The Jerk" },
+            { type: "movie", text: `"Wax on, wax off."`, author: "Pat Morita", source: "The Karate Kid" },
+            { type: "movie", text: `"Et cetera, et cetera, et cetera!"`, author: "Yul Brynner", source: "The King and I" },
+            { type: "movie", text: `"My brothers! I see in your eyes the same fear that would take the heart of me! A day may come when the courage of men fails, when we forsake our friends and break all bonds of fellowship. But it is not this day. An hour of wolves and shattered shields when the age of Men comes crashing down! But it is not this day! This day we fight!"`, author: "Viggo Mortenson", source: "The Lord of the Rings: The Return of the King" },
+            { type: "movie", text: `"Sanctuary!"`, author: "Charles Laughton", source: "The Hunchback of Notre Dame" },
+            { type: "movie", text: `"I don't mind if you don't like my manners. I don't like them myself. They're pretty bad. I grieve over them long winter evenings."`, author: "Humphrey Bogart", source: "The Big Sleep" },
+            { type: "movie", text: `"You're my Lassie come home."`, author: "Roddie McDowell", source: "Lassie, Come Home" },
+            { type: "movie", text: `"Inconceivable!"`, author: "Wallace Shawn", source: "The Princess Bride" },
+            { type: "movie", text: `"Good evening, Clarice."`, author: "Anthony Hopkins", source: "The Silence of the Lambs" },
+            { type: "movie", text: `"You is kind. You is smart. You is important."`, author: "Viola Davis", source: "The Help" },
+            { type: "movie", text: `"Drainage! Drainage, Eli, you boy. Drained dry. I'm so sorry. Here, if you have a milkshake, and I have a milkshake, and I have a straw. There it is, that's a straw, you see? You watching?. And my straw reaches across the room, and starts to drink your milkshake... I... drink... your... milkshake!"`, author: "Daniel Day-Lewis", source: "There Will Be Blood" },
+            { type: "movie", text: `"Baby, I don't care."`, author: "Robert Mitchum", source: "Out of the Past" },
+            { type: "movie", text: `"Nature,' Mr. Allnut, is what we are put in this world to rise above."`, author: "Katharine Hepburn", source: "The African Queen" },
+            { type: "movie", text: `"I could dance with you 'til the cows come home. On second thought, I'd rather dance with the cows 'til you came home."`, author: "Groucho Marx", source: "Duck Soup" },
+            { type: "movie", text: `"You aren't too bright. I like that in a man."`, author: "Kathleen Turner", source: "Body Heat" },
+            { type: "movie", text: `"Toga! Toga!"`, author: "John Belushi", source: "National Lampoon's Animal House" },
+            { type: "movie", text: `"You best start believin' in ghost stories, Miss Turner. You're in one!"`, author: "Geoffrey Rush", source: "Pirates of the Caribbean: The Curse of the Black Pearl" },
+            { type: "movie", text: `"I'm getting too old for this shit."`, author: "Danny Glover", source: "Lethal Weapon" },
+            { type: "movie", text: `"I can do this all day."`, author: "Chris Evans", source: "Captain America: The First Avenger" },
+            { type: "movie", text: `"Get away from her, you bitch!"`, author: "Sigourney Weaver", source: "Aliens" },
+            { type: "movie", text: `"I need him like the axe needs the turkey."`, author: "Barbara Stanwyck", source: "The Lady Eve" },
+            { type: "movie", text: `"Goodness had nothing to do with it, dearie."`, author: "Mae West", source: "Night after Night" },
+            { type: "movie", text: `"Out here, due process is a bullet."`, author: "John Wayne", source: "The Green Berets" },
+            { type: "movie", text: `"I was born when she kissed me. I died when she left me. I lived a few weeks while she loved me."`, author: "Humphrey Bogart", source: "In a Lonely Place" },
+            { type: "movie", text: `"I wouldn't give you two cents for all your fancy rules if, behind them, they didn't have a little bit of plain, ordinary, everyday kindness and a little looking out for the other fella, too."`, author: "James Stewart", source: "Mr. Smith Goes to Washington" },
+            { type: "movie", text: `"Oh, you should never, never doubt what nobody is sure about."`, author: "Gene Wilder", source: "Willy Wonka and the Chocolate Factory" },
+            { type: "movie", text: `"I picked the wrong week to stop sniffing glue."`, author: "Lloyd Bridges", source: "Airplane!" },
+            { type: "movie", text: `"Does your dog bite?"`, author: "Peter Sellers", source: "The Pink Panther Strikes Again" },
+            { type: "movie", text: `"It is not our abilities that show us what we truly are. It is our choices."`, author: "Richard Harris", source: "Harry Potter and the Chamber of Secrets" },
+            { type: "movie", text: `"I forgot my mantra."`, author: "Jeff Goldblum", source: "Annie Hall" },
+            { type: "movie", text: `"Just when I thought I was out, they pull me back in."`, author: "Al Pacino", source: "The Godfather Part II" },
+            { type: "movie", text: `"It depends on who's in the saddle."`, author: "Lauren Bacall", source: "The Big Sleep" },
+            { type: "movie", text: `"We belong dead."`, author: "Boris Karloff", source: "The Bride of Frankenstein" },
+            { type: "movie", text: `"Why don't you go outside and jerk yourself a soda?"`, author: "Annette Benning", source: "Bugsy" },
+            { type: "movie", text: `"Is that my daughter in there!?"`, author: "Sean Penn", source: "Mystic River" },
+            { type: "movie", text: `"There are eight million stories in the naked city. This has been one of them."`, author: "Mark Hellinger", source: "The Naked City" },
+            { type: "movie", text: `"Chill-dren..."`, author: "Robert Mitchum", source: "The Night of the Hunter" },
+            { type: "movie", text: `"Listen to me, mister. You're my knight in shining armor. Don't you forget it! You're going to get back on that horse, and I'm going to be right behind you, holding on tight, and away we're gonna go, go, go!"`, author: "Katharine Hepburn", source: "On Golden Pond" },
+            { type: "movie", text: `"I'd love to kiss you, but I just washed my hair."`, author: "Bette Davis", source: "Gain in the Cotton" },
+            { type: "movie", text: `"Always do the right thing."`, author: "Ossie Davis", source: "Do the Right Thing" },
+            { type: "movie", text: `"Yes, it used to be beautiful-what with the rackets, whoring, guns."`, author: "Burt Lancaster", source: "Atlantic City" },
+            { type: "movie", text: `"How do I look?"`, author: "Audrey Hepburn", source: "Breakfast at Tiffany's" },
+            { type: "movie", text: `"Hello, gorgeous."`, author: "Barbara Streisand", source: "Funny Girl" },
+            { type: "movie", text: `"Would you be shocked if I put on something more comfortable?"`, author: "Jean Harlow", source: "Hell's Angels" },
+            { type: "movie", text: `"On this team, we fight for that inch! On this team, we tear ourselves, and everyone around us to pieces for that inch. We claw with our finger nails for that inch. Cause we know when we add up all those inches that's going to make the fucking difference between winning and losing...between living and dying."`, author: "Al Pacino", source: "Any Given Sunday" },
+            { type: "movie", text: `"Better to be king for a night than schmuck for a lifetime."`, author: "Robert De Niro", source: "The King of Comedy" },
+            { type: "movie", text: `"You can't fool me, there ain't no Sanity Clause."`, author: "Chico Marx", source: "A Night at the Opera" },
+            { type: "movie", text: `"They are with me still real in memory as they were in flesh, loving and beloved forever. How green was my valley then."`, author: "Roddy McDowell", source: "How Green was My Valley" },
+            { type: "movie", text: `"If I'd been a ranch, they would've named me the Bar Nothing."`, author: "Rita Hayworth", source: "Gilda" },
+            { type: "movie", text: `"This is this."`, author: "Robert DeNiro", source: "The Deer Hunter" },
+            { type: "movie", text: `"It's a Sicilian message. It means Luca Brasi sleeps with the fishes."`, author: "Richard S. Castellano", source: "The Godfather" },
+            { type: "movie", text: `"Mrs. Robinson, you're trying to seduce me, aren't you?"`, author: "Dustin Hoffman", source: "The Graduate" },
+            { type: "movie", text: `"Earn this."`, author: "Tom Hanks", source: "Saving Private Ryan" },
+            { type: "movie", text: `"I suggest that we give him ten years in Leavenworth, or eleven years in Twelveworth."`, author: "Groucho Marx", source: "Duck Soup" },
+            { type: "movie", text: `"Life will find a way."`, author: "Jeff Goldblum", source: "Jurassic Park" },
+            { type: "movie", text: `"You're tearing me apart!"`, author: "James Dean", source: "Rebel without a Cause" },
+            { type: "movie", text: `"Life is pain, Highness! Anyone who says differently is selling something."`, author: "Cary Elwes", source: "The Princess Bride" },
+            { type: "movie", text: `"In my case, self-absorption is completely justified. I have never discovered any other subject so worthy of my attention."`, author: "Clifton Webb", source: "Laura" },
+            { type: "movie", text: `"There's a speed limit in this state, Mr. Neff. 45 miles an hour."`, author: "Barbara Stanwyck", source: "Double Idemnity" },
+            { type: "movie", text: `"I have nipples, Greg. Could you milk me?"`, author: "Robert DeNiro", source: "Meet the Parents" },
+            { type: "movie", text: `"Jane. Tarzan. Jane. Tarzan."`, author: "Johnny Weissmuller", source: "Tarzan the Ape Man" },
+            { type: "movie", text: `"Well, it's not the men in your life that counts, it's the life in your men."`, author: "Mae West", source: "I'm No Angel" },
+            { type: "movie", text: `"Ninotchka, it's midnight. One half of Paris is making love to the other half."`, author: "Melvyn Douglas", source: "Ninotchka" },
+            { type: "movie", text: `"The very things that hold you down are going to lift you up."`, author: "Edward Brophy", source: "Dumbo" },
+            { type: "movie", text: `"I'm Batman."`, author: "Michael Keaton", source: "Batman" },
+            { type: "movie", text: `"I'm your number one fan."`, author: "Kathy Bates", source: "Misery" },
+            { type: "movie", text: `"Okay, but I get to be on top."`, author: "Tom Hanks", source: "Big" },
+            { type: "movie", text: `"Stop making noises like a husband."`, author: "Ann Savage", source: "Detour" },
+            { type: "movie", text: `"I know you are, but what am I?"`, author: "Paul Reubens", source: "Pee Wee's Big Adventure" },
+            { type: "movie", text: `"Welcome to Jurassic Park."`, author: "Richard Attenborough", source: "Jurassic Park" },
+            { type: "movie", text: `"Do, or do not. There is no try."`, author: "Frank Oz", source: "Star Wars V: The Empire Strikes Back" },
+            { type: "movie", text: `"Smile!"`, author: "Charlie Chaplin", source: "Modern Times" },
+            { type: "movie", text: `"Well, Tillie, when the hell are we going to get some dinner?"`, author: "Spencer Tracy", source: "Guess Who's Coming to Dinner?" },
+            { type: "movie", text: `"Fill your hands, you son-of-a-bitch!"`, author: "John Wayne", source: "True Grit" },
+            { type: "movie", text: `"Funny like I'm a clown; do I amuse you?"`, author: "Joe Pesci", source: "Goodfellas" },
+            { type: "movie", text: `"Hey, Bud, let's party!"`, author: "Sean Penn", source: "Fast Times at Ridgemont High" },
+            { type: "movie", text: `"Excellent!"`, author: "Keanu Reeves and Alex Winter", source: "Bill and Ted's Excellent Adventure" },
+            { type: "movie", text: `"I think people should mate for life, like pigeons or Catholics."`, author: "Woody Allen", source: "Manhattan" },
+            { type: "movie", text: `"Have you checked the children lately?"`, author: "Tony Beckley", source: "When a Stranger Calls" },
+            { type: "movie", text: `"Are you gonna bark all day, little doggie, or are you gonna bite?"`, author: "Michael Madsen", source: "Reservoir Dogs" },
+            { type: "movie", text: `"Dyin' ain't much of a livin', boy."`, author: "Clint Eastwood", source: "The Outlaw Josey Wales" },
+            { type: "movie", text: `"Fat, drunk and stupid is no way to go through life, son."`, author: "John Vernon", source: "National Lampoon's Animal House" },
+            { type: "movie", text: `"I could've saved more."`, author: "Liam Neeson", source: "Schindler's List" },
+            { type: "movie", text: `"Leave the gun. Take the cannolis."`, author: "Richard S. Castellano", source: "The Godfather" },
+            { type: "movie", text: `"You think I'm licked. You all think I'm licked. Well, I'm not licked! And I'm going to stay right here and fight for this lost cause!"`, author: "James Stewart", source: "Mr. Smith Goes to Washington" },
+            { type: "movie", text: `"I love you. I've loved you since the first moment I saw you. I guess maybe I've even loved you before I saw you."`, author: "Montgomery Clift", source: "A Place in the Sun" },
+            { type: "movie", text: `"You know, Billy, we blew it."`, author: "Peter Fonda", source: "Easy Rider" },
+            { type: "movie", text: `"I do wish we could chat longer, but I'm having an old friend for dinner."`, author: "Anthony Hopkins", source: "The Silence of the Lambs" },
+            { type: "movie", text: `"If I hold you any closer, I'll be in back of you."`, author: "Groucho Marx", source: "A Day at the Races" },
+            { type: "movie", text: `"Insanity runs in my family. It practically gallops."`, author: "Cary Grant", source: "Arsenic and Old Lace" },
+            { type: "movie", text: `"Why don't you get out of that wet coat and into a dry martini?"`, author: "Robert Benchley", source: "The Major and the Minor" },
+            { type: "movie", text: `"For what we are about to see next, we must enter quietly into the realm of genius!"`, author: "Gene Wilder", source: "Young Frankenstein" },
+            { type: "movie", text: `"With my brains and your looks, we could go places."`, author: "John Garfield", source: "The Postman Always Rings Twice" },
+            { type: "movie", text: `"Parfait's gotta be the most delicious thing on the whole damn planet!"`, author: "Eddie Murphy", source: "Shrek" },
+            { type: "movie", text: `"So let it be written, so let it be done."`, author: "Yul Brynner", source: "The Ten Commandments" },
+            { type: "movie", text: `"In Switzerland, they had brotherly love, they had 500 years of democracy and peace. And what did that produce? The cuckoo clock."`, author: "Orson Welles", source: "The Third Man" },
+            { type: "movie", text: `"Do you want a leg or a breast?"`, author: "Grace Kelly", source: "To Catch a Thief" },
+            { type: "movie", text: `"I bet you can squeal like a pig."`, author: "Bill McKinney", source: "Deliverance" },
+            { type: "movie", text: `"I like to watch."`, author: "Peter Sellers", source: "Being There" },
+            { type: "movie", text: `"To my big brother George, the richest man in town!"`, author: "Todd Karns", source: "It's a Wonderful Life" },
+            { type: "movie", text: `"Oh, Frank, my lips are hot. Kiss my hot lips."`, author: "Sally Kellerman", source: "M*A*S*H" },
+            { type: "movie", text: `"We didn't land on Plymouth Rock-Plymouth Rock landed on us!"`, author: "Denzel Washington", source: "Malcolm X" },
+            { type: "movie", text: `"Would you like me to tell you the little story of right hand, left hand? The story of good and evil? H-A-T-E. It was with this left hand that old brother Cain struck the blow that laid his brother low. L-O-V-E. You see these fingers, dear hearts? These fingers has veins that run straight to the soul of man-the right hand, friends, the hand of love."`, author: "Robert Mitchum", source: "The Night of the Hunter" },
+            { type: "movie", text: `"You know the difference between you and me? I make this look good."`, author: "Will Smith", source: "Men in Black" },
+            { type: "movie", text: `"I don't care if you like each other, but you will respect each other."`, author: "Denzel Washington", source: "Remember the Titans" },
+            { type: "movie", text: `"Mother of mercy, is this the end of Rico?"`, author: "Edward G. Robinson", source: "Little Caesar" },
+            { type: "movie", text: `"I do not know how to kiss, or I would kiss you. Where do the noses go?"`, author: "Ingrid Bergman", source: "For Whom the Bell Tolls" },
+            { type: "movie", text: `"Warriors, come out to play!"`, author: "David Patrick Kelly", source: "Warriors" },
+            { type: "movie", text: `"Remember, you're fighting for this woman's honor, which is probably more than she ever did."`, author: "Groucho Marx", source: "Duck Soup" },
+            { type: "movie", text: `"Not many people know it, but the Führer was a terrific dancer"`, author: "Kenneth Mars", source: "The Producers" },
+            { type: "movie", text: `"Never give up! Never surrender!"`, author: "Tim Allen", source: "Galaxy Quest" },
+            { type: "movie", text: `"It's a hell of a thing killin' a man. You take away all he's got and all he's ever gonna have."`, author: "Clint Eastwood", source: "Unforgiven" },
+            { type: "movie", text: `"Madness. Madness."`, author: "James Donald", source: "The Bridge on the River Kwai" },
+            { type: "movie", text: `"One drink's too many, and a hundred's not enough."`, author: "Howard da Silva", source: "The Lost Weekend" },
+            { type: "movie", text: `"Snakes. Why did it have to be snakes?"`, author: "Harrison Ford", source: "Raiders of the Lost Ark" },
+            { type: "movie", text: `"You're lit from within, Tracy. You've got fires banked down in you, hearth-fires and holocausts."`, author: "James Stewart", source: "The Philadelphia Story" },
+            { type: "movie", text: `"I had a farm in Africa."`, author: "Meryl Streep", source: "Out of Africa" },
+            { type: "movie", text: `"We all go a little mad sometimes."`, author: "Anthony Perkins", source: "Psycho" },
+            { type: "movie", text: `"Fear is the path to the dark side. Fear leads to anger; anger leads to hate; hate leads to suffering."`, author: "Frank Oz", source: "Star Wars I: The Phantom Menace" },
+            { type: "movie", text: `"I'm hysterical! I'm having hysterics. I'm hysterical. I can't stop when I get like this. I can't stop. I'm hysterical!"`, author: "Gene Wilder", source: "The Producers" },
+            { type: "movie", text: `"All my life, I wanted to be a gangster."`, author: "Ray Liotta", source: "Goodfellas" },
+            { type: "movie", text: `"I'm disinclined to acquiesce to your request...It means 'no."`, author: "Geoffrey Rush", source: "Pirates of the Caribbean: The Curse of the Black Pearl" },
+            { type: "movie", text: `"Just a bit outside!"`, author: "Bob Uecker", source: "Major League" },
+            { type: "movie", text: `"Sonny, true love is the greatest thing in the world-except for a nice MLT: mutton, lettuce, and tomato salad, where the mutton is nice and lean and the tomato is ripe-they're so perky, I love that."`, author: "Billy Crystal", source: "The Princess Bride" },
+            { type: "movie", text: `"I'm an excellent driver."`, author: "Dustin Hoffman", source: "Rain Man" },
+            { type: "movie", text: `"Women should be kept illiterate and clean-like canaries."`, author: "Roscoe Karns", source: "Woman of the Year" },
+            { type: "movie", text: `"Oh, you betcha."`, author: "Frances McDormand", source: "Fargo" },
+            { type: "movie", text: `"Fiddle-dee-dee."`, author: "Vivien Leigh", source: "Gone with the Wind" },
+            { type: "movie", text: `"They call it a 'Royale with cheese."`, author: "John Travolta", source: "Pulp Fiction" },
+            { type: "movie", text: `"You need kissing, badly. That's what's wrong with you. You should be kissed and often, and by someone who knows how."`, author: "Clark Gable", source: "Gone With the Wind" },
+            { type: "movie", text: `"You never got me down, Ray!"`, author: "Robert DeNiro", source: "Raging Bull" },
+            { type: "movie", text: `"They say that the best weapon is the one you never have to fire. I respectfully disagree. I prefer the weapon you only have to fire once. That's how Dad did it, that's how America does it, and it's worked out pretty well so far."`, author: "Robert Downey, Jr.", source: "Iron Man" },
+            { type: "movie", text: `"I'm not bad, I'm just drawn that way."`, author: "Kathleen Turner", source: "Who Framed Roger Rabbit?" },
+            { type: "movie", text: `"What an excellent day for an exorcism."`, author: "Linda Blair and Mercedes McCambridge", source: "The Exorcist" },
+            { type: "movie", text: `"Mary Poppins: practically perfect in every way."`, author: "Julie Andrews", source: "Mary Poppins" },
+            { type: "movie", text: `"We're not worthy!"`, author: "Dana Carvey and Mike Myers", source: "Wayne's World" },
+            { type: "movie", text: `"I'll remember you, honey. You're the one that got away."`, author: "Paul Newman", source: "Hud" },
+            { type: "movie", text: `"Chance is the fool's name for fate."`, author: "Fred Astaire", source: "The Gay Divorcee" },
+            { type: "movie", text: `"Day ain't over yet."`, author: "Jack Palance", source: "City Slickers" },
+            { type: "movie", text: `"I ain't so tough."`, author: "James Cagney", source: "The Public Enemy" },
+            { type: "movie", text: `"What is your major malfunction!?"`, author: "R. Lee Emery", source: "Full Metal Jacket" },
+            { type: "movie", text: `"Not much meat on her, but what is there is choice."`, author: "Spencer Tracy", source: "Pat and Mike" },
+            { type: "movie", text: `"Maybe I was wrong and luck is like love. You have to go all the way to find it."`, author: "Robert Mitchum", source: "Out of the Past" },
+            { type: "movie", text: `"There's more to life than being ridiculously good-looking."`, author: "Ben Stiller", source: "Zoolander" },
+            { type: "movie", text: `"One, two Freddie's coming for you..."`, author: "Ensemble of Children", source: "Nightman on Elm's Street" },
+            { type: "movie", text: `"You're next! You're next!"`, author: "Kevin McCarthy", source: "Invasion of the Body Snatchers" },
+            { type: "movie", text: `"As if!"`, author: "Alicia Silverstone", source: "Clueless" },
+            { type: "movie", text: `"Never give a sucker an even break."`, author: "W.C. Fields", source: "Poppy" },
+            { type: "movie", text: `"Argo, fuck yourself!"`, author: "Alan Arkin", source: "Argo" },
+            { type: "movie", text: `"Is it safe?"`, author: "Laurence Olivier", source: "Marathon Man" },
+            { type: "movie", text: `"I'll see you at the opera tonight. I'll hold your seat till you get there. After you get there you're on your own."`, author: "Groucho Marx", source: "Duck Soup" },
+            { type: "movie", text: `"But with a little sex in it."`, author: "Robert Warwick", source: "Sullivan's Travels" },
+            { type: "movie", text: `"It took more than one man to change my name to Shanghai Lily."`, author: "Marlene Dietrich", source: "Shanghai Express" },
+            { type: "movie", text: `"I'll alert the media."`, author: "John Gielgud", source: "Arthur" },
+            { type: "movie", text: `"I don't know how to put this, but I'm kind of a big deal...people know me...I'm very important. I have many leather-bound books and my apartment smells of rich mahogany."`, author: "Will Ferrell", source: "Anchorman: The Legend of Ron Burgundy" },
+            { type: "movie", text: `"You're so money, you don't even know it."`, author: "Vince Vaughn", source: "Swingers" },
+            { type: "movie", text: `"Goodbye, Mr. Anderson."`, author: "Hugo Weaving", source: "The Matrix" },
+            { type: "movie", text: `"Never apologize and never explain-it's a sign of weakness."`, author: "John Wayne", source: "She Wore a Yellow Ribbon" },
+            { type: "movie", text: `"Dignity. Always dignity."`, author: "Gene Kelly", source: "Singin' in the Rain" },
+            { type: "movie", text: `"Would you like to play a game?"`, author: "James Ackerman", source: "War Games" },
+            { type: "movie", text: `"I have a head for business and a bod for sin."`, author: "Melanie Griffith", source: "Working Girl" },
+            { type: "movie", text: `"If they move, kill 'em."`, author: "William Holden", source: "The Wild Bunch" },
+            { type: "movie", text: `"Face it girls, I'm older and I have more insurance."`, author: "Kathy Bates", source: "Fried Green Tomatoes" },
+            { type: "movie", text: `"The pellet with the poison's in the vessel with the pestle. The chalice from the palace has the brew that is true."`, author: "Danny Kaye", source: "The Court Jester" },
+            { type: "movie", text: `"There's an old joke. Um... two elderly women are at a Catskill mountain resort, and one of 'em says, 'Boy, the food at this place is really terrible.' The other one says, 'Yeah, I know; and such small portions.' Well, that's essentially how I feel about life - full of loneliness, and misery, and suffering, and unhappiness, and it's all over much too quickly."`, author: "Woody Allen", source: "Annie Hall" }
         ];
 
         let shuffledQuotes = [];
@@ -364,11 +689,11 @@
 
             quotesToRender.forEach(item => {
                 const card = document.createElement('div');
-                card.className = 'quote-card';
+                card.className = `quote-card ${item.type}-type`;
 
                 card.innerHTML = `
                     <p class="quote-text">${item.text}</p>
-                    <p class="quote-author">— ${item.author}, <span class="quote-book">${item.book}</span></p>
+                    <p class="quote-author">— ${item.author}, <span class="quote-source">${item.source}</span></p>
                 `;
                 grid.appendChild(card);
             });
@@ -380,7 +705,7 @@
             const filtered = shuffledQuotes.filter(item => {
                 return item.text.toLowerCase().includes(query) || 
                        item.author.toLowerCase().includes(query) || 
-                       item.book.toLowerCase().includes(query);
+                       item.source.toLowerCase().includes(query);
             });
 
             renderQuotes(filtered);
