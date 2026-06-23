@@ -129,10 +129,32 @@
         .quote-source {
             font-family: monospace;
             font-size: 0.75rem;
-            color: var(--accent);
+            color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 2px;
             display: block;
+            margin-bottom: 2.5rem;
+        }
+
+        /* Monolith Action Link */
+        .monolith-btn {
+            display: inline-block;
+            font-family: monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--accent);
+            text-decoration: none;
+            border: 1px solid rgba(163, 133, 185, 0.3);
+            padding: 0.75rem 1.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .monolith-btn:hover {
+            background: var(--accent-dim);
+            border-color: var(--accent);
+            text-shadow: 0 0 8px var(--accent-dim);
+            box-shadow: 0 0 15px rgba(163, 133, 185, 0.05);
         }
 
         /* Footer */
@@ -189,6 +211,10 @@
             .home-quote {
                 font-size: 1.1rem;
             }
+
+            .quote-source {
+                margin-bottom: 2rem;
+            }
         }
 
         /* Target extra small screens (iPhone SE, etc.) */
@@ -225,6 +251,11 @@
                 "We used to look up at the sky and wonder at our place in the stars."
             </p>
             <span class="quote-source">— Interstellar</span>
+
+            <!-- Into the Monolith -->
+            <a href="/monolith" class="monolith-btn" title="This is not my beautiful house, this is not my beautiful site">
+                → Enter Monolith
+            </a>
         </div>
     </main>
 
