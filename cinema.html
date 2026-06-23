@@ -136,11 +136,13 @@
         .quote-display {
             background: var(--card-bg);
             border: 1px solid var(--border);
-            padding: 2rem;
+            padding: 2.5rem;
             border-radius: 4px;
             font-style: italic;
-            line-height: 1.6;
-            color: #f0f0f5;
+            line-height: 1.7;
+            font-size: 1.15rem;
+            color: #e4e4ed;
+            position: relative;
         }
 
         .search-container {
@@ -253,15 +255,6 @@
             max-width: 140px;
         }
 
-        .loading-text {
-            font-family: monospace;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            font-style: italic;
-            grid-column: 1 / -1;
-            padding: 2rem 0;
-        }
-
         footer {
             margin-top: auto;
             padding-top: 4rem;
@@ -297,10 +290,10 @@
     <nav>
         <a href="index.html" class="nav-logo">// f&e</a>
         <ul class="nav-links">
-            <li><a href="quotes">Quotes</a></li>
-            <li><a href="poems">Poems</a></li>
-            <li><a href="cinema" class="active">Cinema</a></li>
-            <li><a href="about">About</a></li>
+            <li><a href="quotes.html">Quotes</a></li>
+            <li><a href="poems.html">Poems</a></li>
+            <li><a href="cinema.html" class="active">Cinema</a></li>
+            <li><a href="about.html">About</a></li>
         </ul>
     </nav>
 
@@ -310,15 +303,13 @@
             <span class="subtitle">101 movies I keep returning to</span>
         </header>
 
-        <!-- Random Movie Quote Section -->
         <section id="quoteSection">
             <h3>Echoes</h3>
             <div class="quote-display" id="quoteDisplay">
-                <span style="color: var(--text-secondary); font-family: monospace; font-size: 0.85rem;">Listening for echoes...</span>
+                <span style="color: var(--text-secondary); font-family: monospace; font-size: 0.85rem;">Retrieving a voice...</span>
             </div>
         </section>
 
-        <!-- Main Curated Archive -->
         <section>
             <h3>The 101 Favorites</h3>
             <div class="search-container">
@@ -467,35 +458,43 @@
             });
         }
 
-        // Fetch quotes.html, find all elements containing quotes, and pick a random one
+        // Live-fetching real quotes directly from quotes.html 
         async function fetchRandomQuote() {
             const display = document.getElementById('quoteDisplay');
             try {
+                // 1. Fetch the raw content of your local quotes file
                 const response = await fetch('quotes.html');
-                if (!response.ok) throw new Error('Could not fetch quotes');
+                if (!response.ok) throw new Error('File not found');
                 
                 const text = await response.text();
+                
+                // 2. Turn the plain text response into a navigable DOM structure
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(text, 'text/html');
                 
-                // Assumes quotes are inside blockquotes, items, paragraphs, or target elements.
-                // You can tune the querySelectorAll below depending on quotes.html structure (e.g., '.quote', 'blockquote')
-                let quotes = doc.querySelectorAll('blockquote, p, .quote, li');
+                // 3. Find structural components containing your quotes inside quotes.html
+                // This targets blockquotes, list items, paragraphs, or divs with a class of "quote"
+                let quotes = Array.from(doc.querySelectorAll('blockquote, li, p, .quote, .item'));
+                
+                // Filter out elements that are completely empty or have just navigational white spaces
+                quotes = quotes.filter(el => el.textContent.trim().length > 10);
                 
                 if (quotes.length === 0) {
-                     display.innerHTML = `<span style="color: var(--text-secondary);">"Silence is a source of great strength."</span>`;
+                     display.innerHTML = `<span>"Frankly, my dear, I don't give a damn."</span>`;
                      return;
                 }
                 
+                // 4. Extract a completely random element index on every load/refresh
                 const randomIndex = Math.floor(Math.random() * quotes.length);
                 const chosenQuote = quotes[randomIndex];
                 
-                // Render the random quote HTML directly into the placeholder wrapper safely
-                display.innerHTML = chosenQuote.outerHTML;
+                // 5. Safely clean and push the text content directly inside our container
+                display.innerHTML = chosenQuote.innerHTML;
 
             } catch (error) {
-                console.error("Quote load error:", error);
-                display.innerHTML = `<span style="color: var(--text-secondary);">"Every man must die, Jon Snow. But first he must live."</span>`;
+                console.error("Quote fetching failed:", error);
+                // Fallback elegant quote if file path/CORS has issues locally
+                display.innerHTML = `<span>"I'm going to make him an offer he can't refuse."</span>`;
             }
         }
 
@@ -511,7 +510,7 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             renderFilms(filmDatabase);
-            fetchRandomQuote();
+            fetchRandomQuote(); // Trigger random selector on load
         });
     </script>
 </body>
