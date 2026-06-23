@@ -133,28 +133,43 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             display: block;
-            margin-bottom: 2.5rem;
+            margin-bottom: 3rem;
         }
 
-        /* Monolith Action Link */
+        /* Striking Monolith Action Link */
         .monolith-btn {
             display: inline-block;
             font-family: monospace;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--accent);
+            letter-spacing: 2px;
+            font-weight: bold;
+            color: #ffffff;
+            background: rgba(163, 133, 185, 0.08);
             text-decoration: none;
-            border: 1px solid rgba(163, 133, 185, 0.3);
-            padding: 0.75rem 1.25rem;
-            transition: all 0.3s ease;
+            border: 1px solid var(--accent);
+            padding: 0.9rem 1.75rem;
+            box-shadow: 0 0 15px var(--accent-dim);
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         .monolith-btn:hover {
-            background: var(--accent-dim);
-            border-color: var(--accent);
-            text-shadow: 0 0 8px var(--accent-dim);
-            box-shadow: 0 0 15px rgba(163, 133, 185, 0.05);
+            background: var(--accent);
+            color: var(--bg-color);
+            box-shadow: 0 0 25px rgba(163, 133, 185, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Repository Text Context Tag */
+        .repo-notice {
+            display: block;
+            margin-top: 1rem;
+            font-family: monospace;
+            font-size: 0.7rem;
+            line-height: 1.5;
+            color: var(--text-secondary);
+            letter-spacing: 0.5px;
+            max-width: 280px;
         }
 
         /* Footer */
@@ -206,6 +221,9 @@
                 border-left: none;
                 border-top: 1px solid var(--border);
                 padding: 2rem 1rem 0 1rem;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
             }
 
             .home-quote {
@@ -214,6 +232,11 @@
 
             .quote-source {
                 margin-bottom: 2rem;
+            }
+
+            .repo-notice {
+                text-align: center;
+                max-width: 100%;
             }
         }
 
@@ -252,10 +275,15 @@
             </p>
             <span class="quote-source">— Interstellar</span>
 
-            <!-- Into the Monolith -->
-            <a href="/monolith" class="monolith-btn" title="This is not my beautiful house, this is not my beautiful site">
+            <!-- Striking Monolith Action Link -->
+            <a href="/monolith" class="monolith-btn">
                 → Enter Monolith
             </a>
+
+            <!-- Explicit Study Repository Metadata Context -->
+            <span class="repo-notice">
+                (this is not my beautiful house, this is not my beautiful site)
+            </span>
         </div>
     </main>
 
