@@ -321,13 +321,15 @@
             <span class="subtitle">101 movies I keep returning to</span>
         </header>
 
+        <!-- Dynamic Random Quote Section -->
         <section id="quoteSection">
             <h3>Echoes</h3>
             <div class="quote-display" id="quoteDisplay">
-                <div style="color: var(--text-secondary); font-family: monospace; font-size: 0.85rem;">Listening for a voice...</div>
+                <!-- JavaScript will populate this on refresh -->
             </div>
         </section>
 
+        <!-- Main Curated Archive -->
         <section>
             <h3>The 101 Favorites</h3>
             <div class="search-container">
@@ -447,6 +449,39 @@
             { rank: "101", title: "The Cook, the Thief, His Wife & Her Lover", director: "Peter Greenaway", year: "1989", country: "UK", poster: "https://image.tmdb.org/t/p/w500/32iU6yyYzlHRgeOqL4RPVxotwU4.jpg" }
         ];
 
+        // Compilation of internal curated quotes from the specific top-101 roster
+        const movieQuotes = [
+            { text: "Keep your friends close, but your enemies closer.", movie: "The Godfather Part II", director: "Francis Ford Coppola", year: "1974" },
+            { text: "I believe that no matter what, the human spirit can never be totally crushed.", movie: "The Human Condition Part I", director: "Masaki Kobayashi", year: "1959" },
+            { text: "I will not say: do not weep; for not all tears are an evil.", movie: "The Lord of the Rings: The Return of the King", director: "Peter Jackson", year: "2003" },
+            { text: "Faith is a torment. It is like loving someone who is out there in the darkness but never appears, no matter how loudly you call.", movie: "The Seventh Seal", director: "Ingmar Bergman", year: "1957" },
+            { text: "I like the way you look at me. I like the way we talk. I like everything about us.", movie: "Before Sunrise", director: "Richard Linklater", year: "1995" },
+            { text: "Do not look back. If you look back, you will see what you left behind.", movie: "Come and See", director: "Elem Klimov", year: "1985" },
+            { text: "Why do fireflies have to die so soon?", movie: "Grave of the Fireflies", director: "Isao Takahata", year: "1988" },
+            { text: "Don't deliberate, Therese. Just say yes.", movie: "Carol", director: "Todd Haynes", year: "2015" },
+            { text: "And it's a beautiful day. Well. I just don't understand it.", movie: "Fargo", director: "Joel Coen", year: "1996" },
+            { text: "Do not regret. Remember.", movie: "Portrait of a Lady on Fire", director: "Céline Sciamma", year: "2019" },
+            { text: "What is right is right, no matter who says it or where it comes from.", movie: "A Separation", director: "Asghar Farhadi", year: "2011" },
+            { text: "In the world, everything has a cycle, but love is the only thing that breaks it.", movie: "Breaking the Waves", director: "Lars von Trier", year: "1996" },
+            { text: "I don't think there's any point in dwelling on the things you can't change.", movie: "The Banshees of Inisherin", director: "Martin McDonagh", year: "2022" },
+            { text: "I'm so hard to love. I know I am.", movie: "Frances Ha", director: "Noah Baumbach", year: "2012" },
+            { text: "In the old days, if someone had a secret they didn't want to share... they'd go up a mountain, find a tree, carve a hole in it, whisper the secret into the hole and cover it with mud.", movie: "In the Mood for Love", director: "Wong Kar-wai", year: "2000" },
+            { text: "When you are a beautiful person, beautiful things happen to you.", movie: "Paterson", director: "Jim Jarmusch", year: "2016" },
+            { text: "You see, in this world there's two kinds of people, my friend: Those with loaded guns and those who dig. You dig.", movie: "The Good, the Bad and the Ugly", director: "Sergio Leone", year: "1966" },
+            { text: "People think I'm a liar because I don't say anything.", movie: "The 400 Blows", director: "François Truffaut", year: "1959" },
+            { text: "When you love someone, you have no control. That's what love is.", movie: "Once Upon a Time in America", director: "Sergio Leone", year: "1984" },
+            { text: "If we don't remember the past, we are condemned to repeat it.", movie: "Underground", director: "Emir Kusturica", year: "1995" },
+            { text: "When you're young, you think your pain is unique. Then you grow up.", movie: "20th Century Women", director: "Mike Mills", year: "2016" },
+            { text: "The most important things are always hidden behind the eyes.", movie: "The Great Beauty", director: "Paolo Sorrentino", year: "2013" },
+            { text: "I have no choice but to find a way to live.", movie: "The Man Without a Past", director: "Aki Kaurismäki", year: "2002" },
+            { text: "Here's to the ones who dream, foolish as they may seem.", movie: "La La Land", director: "Damien Chazelle", year: "2016" },
+            { text: "It takes a great deal of courage to stand alone even if you believe in something completely.", movie: "12 Angry Men", director: "Sidney Lumet", year: "1957" },
+            { text: "The truth is rarely pure and never simple.", movie: "Barry Lyndon", director: "Stanley Kubrick", year: "1975" },
+            { text: "Even if you can't see the light, it doesn't mean it doesn't exist.", movie: "Stalker", director: "Andrei Tarkovsky", year: "1979" },
+            { text: "The rug really tied the room together.", movie: "The Big Lebowski", director: "Joel Coen", year: "1998" },
+            { text: "I have a competition in me. I want no one else to succeed.", movie: "There Will Be Blood", director: "Paul Thomas Anderson", year: "2007" }
+        ];
+
         function renderFilms(films) {
             const grid = document.getElementById('filmGrid');
             grid.innerHTML = '';
@@ -476,75 +511,19 @@
             });
         }
 
-        // --- Optimized Live Random Quote Fetcher with Metadata Parsing ---
-        async function fetchRandomQuote() {
+        // --- Generates an Instant, Reliable Random Quote on Refresh ---
+        function displayRandomMovieQuote() {
             const display = document.getElementById('quoteDisplay');
-            try {
-                // Fetch elements from target file
-                const response = await fetch('quotes.html');
-                if (!response.ok) throw new Error('Could not open quotes.html');
-                
-                const htmlText = await response.text();
-                
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(htmlText, 'text/html');
-                
-                // Collect quotes mapped to standard HTML components
-                let elements = Array.from(doc.querySelectorAll('.quote-item, blockquote, li, p'));
-                elements = elements.filter(el => el.textContent.trim().length > 15);
-                
-                if (elements.length === 0) throw new Error('No valid quotes parsed');
-                
-                // Select an entry randomly on every call / layout refresh
-                const randomIndex = Math.floor(Math.random() * elements.length);
-                const selectedEl = elements[randomIndex];
-                
-                // Render structure directly if it is using specialized tag sets
-                if (selectedEl.classList.contains('quote-item') || selectedEl.querySelector('cite')) {
-                    display.innerHTML = selectedEl.innerHTML;
-                } else {
-                    // Smart parser fallback for strings structured as: "Quote text" — Actor, Movie (Year)
-                    const text = selectedEl.textContent.trim();
-                    const parts = text.split(/[—–-]/); // Handles variant em/en dashes cleanly
-                    
-                    if (parts.length > 1) {
-                        const quoteText = parts[0].trim();
-                        const metaText = parts[1].trim();
-                        
-                        let formattedMeta = metaText;
-                        const yearMatch = metaText.match(/\(([^)]+)\)/);
-                        
-                        if (yearMatch) {
-                            const year = yearMatch[0]; // (Year)
-                            let remaining = metaText.replace(year, '').trim();
-                            let lastComma = remaining.lastIndexOf(',');
-                            
-                            if (lastComma !== -1) {
-                                let actor = remaining.substring(0, lastComma).trim();
-                                let movie = remaining.substring(lastComma + 1).trim();
-                                formattedMeta = `${actor}, <em>${movie}</em> ${year}`;
-                            }
-                        }
-                        
-                        display.innerHTML = `
-                            <div class="quote-text">${quoteText}</div>
-                            <span class="quote-meta">— ${formattedMeta}</span>
-                        `;
-                    } else {
-                        display.innerHTML = `
-                            <div class="quote-text">${text}</div>
-                        `;
-                    }
-                }
-
-            } catch (error) {
-                console.error("Failed to parse random quotes:", error);
-                // Styled system placeholder fallback
-                display.innerHTML = `
-                    <div class="quote-text">"I don't want to need you because I can't have you."</div>
-                    <span class="quote-meta">— Clint Eastwood, <em>The Bridges of Madison County</em> (1995)</span>
-                `;
-            }
+            
+            // Instantly grab a random quote from our specific local array
+            const randomIndex = Math.floor(Math.random() * movieQuotes.length);
+            const selectedQuote = movieQuotes[randomIndex];
+            
+            // Format and drop it into the container layout flawlessly
+            display.innerHTML = `
+                <div class="quote-text">"${selectedQuote.text}"</div>
+                <span class="quote-meta">— ${selectedQuote.director}, <em>${selectedQuote.movie}</em> (${selectedQuote.year})</span>
+            `;
         }
 
         function filterFilms() {
@@ -559,7 +538,7 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             renderFilms(filmDatabase);
-            fetchRandomQuote(); // Ensures a unique randomized quote runs on page refresh
+            displayRandomMovieQuote(); // Fires a completely new random quote on every individual layout refresh
         });
     </script>
 </body>
