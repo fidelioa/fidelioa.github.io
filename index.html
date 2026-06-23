@@ -91,9 +91,8 @@
             grid-template-columns: 1.2fr 1fr;
             align-items: center;
             gap: 4rem;
-            margin: auto; /* Centers the block vertically on screen */
-            padding-top: 100px; /* Enhanced to clear fixed nav safely */
-            padding-bottom: 40px;
+            margin: auto auto 2rem auto; /* Adjusted margins to push content layout cleanly */
+            padding-top: 140px; /* Enhanced to clear fixed nav safely */
         }
 
         /* Left side: Big, structural typography */
@@ -133,27 +132,30 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             display: block;
-            margin-bottom: 3rem;
         }
 
-        /* Grouped Layout Container for Subtext Quote + Button */
+        /* Grouped Layout Container placed completely below the main grid */
         .cta-container {
-            display: inline-flex;
+            display: flex;
             flex-direction: column;
-            align-items: flex-start;
-            gap: 1.2rem; /* Clean gap between quote and button */
+            align-items: center;
+            text-align: center;
+            gap: 1.2rem; 
+            margin-bottom: auto; /* Balances vertically with main grid layout */
+            padding-bottom: 2rem;
+            width: 100%;
         }
 
-        /* Subtext quote placed directly above button */
+        /* New contextual subtext quote placed directly above button */
         .repo-notice {
             display: block;
             font-family: 'Georgia', serif;
-            font-size: 0.95rem; /* Made larger as requested */
+            font-size: 1rem; /* Slightly enhanced sizing */
             font-style: italic;
             line-height: 1.5;
             color: var(--text-secondary);
             letter-spacing: 0.5px;
-            max-width: 290px;
+            max-width: 400px;
         }
 
         /* Striking Monolith Action Link */
@@ -168,7 +170,7 @@
             background: rgba(163, 133, 185, 0.08);
             text-decoration: none;
             border: 1px solid var(--accent);
-            padding: 0.9rem 1.75rem;
+            padding: 0.9rem 2.25rem; /* Slightly padded for emphasis below layout */
             box-shadow: 0 0 15px var(--accent-dim);
             transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
@@ -212,7 +214,8 @@
                 grid-template-columns: 1fr;
                 gap: 2.5rem;
                 text-align: center;
-                padding-top: 140px; /* Leaves room for stacked nav */
+                padding-top: 140px; 
+                margin-bottom: 3rem;
             }
 
             .brand-axis { 
@@ -229,31 +232,18 @@
                 border-left: none;
                 border-top: 1px solid var(--border);
                 padding: 2rem 1rem 0 1rem;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
             }
 
             .home-quote {
                 font-size: 1.1rem;
             }
 
-            .quote-source {
-                margin-bottom: 2rem;
-            }
-
-            /* Center align entire CTA block on mobile layout */
             .cta-container {
-                align-items: center;
-                text-align: center;
-            }
-
-            .repo-notice {
-                max-width: 100%;
+                padding-bottom: 1rem;
             }
         }
 
-        /* Target extra small screens (iPhone SE, etc.) */
+        /* Target extra small screens */
         @media (max-width: 380px) {
             .nav-links {
                 gap: 0.8rem;
@@ -287,17 +277,17 @@
                 "We used to look up at the sky and wonder at our place in the stars."
             </p>
             <span class="quote-source">— Interstellar</span>
-
-            <div class="cta-container">
-                <span class="repo-notice">
-                    this is not my beautiful house, this is not my beautiful site
-                </span>
-                <a href="/monolith" class="monolith-btn">
-                    → Enter Monolith
-                </a>
-            </div>
         </div>
     </main>
+
+    <div class="cta-container">
+        <span class="repo-notice">
+            When you gotta go, you gotta go
+        </span>
+        <a href="/monolith" class="monolith-btn">
+            → Enter Monolith
+        </a>
+    </div>
 
     <footer>
         [ digital scrapbook // 2026 ]
