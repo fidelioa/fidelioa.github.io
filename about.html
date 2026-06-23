@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fragments & Echoes — About</title>
+    <title>Fragments & Echoes — Cinema</title>
     <style>
         :root {
             --bg-color: #08080b;
@@ -84,14 +84,14 @@
             text-shadow: 0 0 8px var(--accent-dim);
         }
 
-        /* Profile Layout Container */
+        /* Layout Container - Slightly widened to accommodate a gorgeous grid layout */
         main {
             width: 100%;
-            max-width: 550px;
+            max-width: 700px;
             display: flex;
             flex-direction: column;
             gap: 2rem;
-            padding-top: 120px; /* Matched to Cinema page layout safe clearance */
+            padding-top: 120px; 
             padding-bottom: 40px;
         }
 
@@ -111,8 +111,8 @@
             line-height: 1.6;
         }
 
-        /* Social Signal Links Area */
-        .coordinates-panel {
+        /* Cinema Poster Grid Configuration */
+        .cinema-panel {
             background: var(--panel-bg);
             border: 1px solid var(--border);
             padding: 2rem;
@@ -132,43 +132,69 @@
             padding-bottom: 0.5rem;
         }
 
-        .social-grid {
+        .poster-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .movie-card {
             display: flex;
             flex-direction: column;
-            gap: 1.2rem;
-        }
-
-        .social-link {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             text-decoration: none;
-            transition: all 0.2s ease;
+            group: hover;
         }
 
-        .network-name {
-            font-size: 1.1rem;
-            color: var(--text-primary);
+        .poster-wrapper {
+            width: 100%;
+            aspect-ratio: 2 / 3;
+            background-color: #050507;
+            border: 1px solid var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .movie-poster {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.75;
+            transition: opacity 0.3s ease;
+        }
+
+        .movie-meta {
+            margin-top: 0.6rem;
+            font-family: 'Georgia', serif;
+        }
+
+        .movie-title {
+            font-size: 0.9rem;
             font-style: italic;
-        }
-
-        .network-handle {
-            font-family: monospace;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            letter-spacing: 0.5px;
-            border-bottom: 1px solid transparent;
-            transition: color 0.2s ease, border-color 0.2s ease;
-        }
-
-        /* Hover Actions */
-        .social-link:hover .network-name {
-            color: var(--accent);
-        }
-
-        .social-link:hover .network-handle {
             color: var(--text-primary);
+            line-height: 1.3;
+        }
+
+        .movie-year {
+            font-family: monospace;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-top: 0.15rem;
+        }
+
+        /* Interactive Hover Actions */
+        .movie-card:hover .poster-wrapper {
+            transform: translateY(-4px);
             border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(163, 133, 185, 0.1);
+        }
+
+        .movie-card:hover .movie-poster {
+            opacity: 1;
+        }
+
+        .movie-card:hover .movie-title {
+            color: var(--accent);
         }
 
         /* Footer */
@@ -201,7 +227,12 @@
             }
 
             main {
-                padding-top: 160px; /* Safe shift to prevent text hidden behind vertical mobile menu stack */
+                padding-top: 160px; /* Prevent text hidden behind vertical mobile menu stack */
+            }
+
+            .poster-grid {
+                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+                gap: 1rem;
             }
         }
 
@@ -214,63 +245,71 @@
 </head>
 <body>
 
-    <!-- Top Navigation Bar -->
     <nav>
         <a href="index.html" class="nav-logo">// f&e</a>
         <ul class="nav-links">
             <li><a href="quotes">Quotes</a></li>
             <li><a href="poems">Poems</a></li>
-            <li><a href="cinema">Cinema</a></li>
-            <li><a href="about" class="active">About</a></li>
+            <li><a href="cinema" class="active">Cinema</a></li>
+            <li><a href="about">About</a></li>
         </ul>
     </nav>
 
-    <!-- Main Content Frame -->
     <main>
         
         <section class="intro-section">
-            <h2>ankit.</h2>
+            <h2>cinematic echoes.</h2>
             <p>
-                This is a quiet, digital scrap space for things that linger long after the pages are closed or the screens go black. Just a collection of fragments, verses, and cinematic echoes that hit the right note.
-            </p>
-            <p>
-                Nothing structured, nothing complex. Just text in the dark.
+                A visual running sequence of frames that stay pinned to the mind long after the room goes quiet.
             </p>
         </section>
 
-        <!-- Dynamic Social Grid Alignment -->
-        <section class="coordinates-panel">
-            <span class="panel-label">Digital Coordinates</span>
+        <section class="cinema-panel">
+            <span class="panel-label">Projector Log</span>
             
-            <div class="social-grid">
-                
-                <!-- Letterboxd -->
-                <a href="https://letterboxd.com/ankitx" class="social-link" target="_blank" rel="noopener noreferrer">
-                    <span class="network-name">Letterboxd</span>
-                    <span class="network-handle">/ankitx</span>
-                </a>
-
-                <!-- Goodreads -->
-                <a href="https://www.goodreads.com/user/show/151452764-ankit" class="social-link" target="_blank" rel="noopener noreferrer">
-                    <span class="network-name">Goodreads</span>
-                    <span class="network-handle">/ankit</span>
-                </a>
-
-                <!-- Instagram -->
-                <a href="https://www.instagram.com/i_is_ankit/" class="social-link" target="_blank" rel="noopener noreferrer">
-                    <span class="network-name">Instagram</span>
-                    <span class="network-handle">@i_is_ankit</span>
-                </a>
-
-            </div>
+            <div class="poster-grid" id="cinema-grid">
+                </div>
         </section>
 
     </main>
 
-    <!-- Footer -->
     <footer>
         [ fragments & echoes // transmission terminal ]
     </footer>
+
+    <script>
+        /**
+         * Dynamic Film Library configuration
+         * Find movie paths easily by looking up your title on themoviedb.org
+         * Simply copy the image filename from their official poster image.
+         */
+        const watchList = [
+            { title: "In the Mood for Love", year: "2000", tmdbPoster: "/itA6SBA88vS0v87n76n1m9b0ypY.jpg" },
+            { title: "Fallen Angels", year: "1995", tmdbPoster: "/uv6966Q6O8B3m69vAThZ83957hA.jpg" },
+            { title: "Blade Runner 2049", year: "2017", tmdbPoster: "/g63b36nWhG6766RgghU8660gq7E.jpg" },
+            { title: "Chungking Express", year: "1994", tmdbPoster: "/gYpWw07X7g3D698Ksh6Yv790VvY.jpg" }
+        ];
+
+        const gridContainer = document.getElementById('cinema-grid');
+        const tmdbBaseUrl = "https://image.tmdb.org/t/p/w500"; // TMDb CDN asset layer
+
+        watchList.forEach(movie => {
+            const card = document.createElement('div');
+            card.className = 'movie-card';
+            
+            card.innerHTML = `
+                <div class="poster-wrapper">
+                    <img class="movie-poster" src="${tmdbBaseUrl}${movie.tmdbPoster}" alt="${movie.title} poster" loading="lazy">
+                </div>
+                <div class="movie-meta">
+                    <div class="movie-title">${movie.title}</div>
+                    <div class="movie-year">${movie.year}</div>
+                </div>
+            `;
+            
+            gridContainer.appendChild(card);
+        });
+    </script>
 
 </body>
 </html>
