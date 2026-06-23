@@ -31,7 +31,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 2rem;
-            overflow-x: hidden; /* Prevent horizontal scrolling safely */
+            overflow-x: hidden;
         }
 
         /* Fixed Navigation Bar */
@@ -83,39 +83,22 @@
             text-shadow: 0 0 8px var(--accent-dim);
         }
 
-        /* Artsy Split Layout Frame */
+        /* Clean Vertical Layout Frame */
         main {
             width: 100%;
-            max-width: 900px;
-            display: grid;
-            grid-template-columns: 1.2fr 1fr;
+            max-width: 700px; /* narrowed slightly for an editorial look */
+            display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 4rem;
-            margin: auto; /* Centers the block vertically on screen */
-            padding-top: 100px; /* Enhanced to clear fixed nav safely */
-            padding-bottom: 40px;
+            text-align: center;
+            margin: auto; 
+            padding-top: 140px; 
+            padding-bottom: 60px;
         }
 
-        /* Left side: Big, structural typography */
-        .brand-axis {
-            text-align: right;
-        }
-
-        h1 {
-            font-size: 4rem;
-            font-weight: 400;
-            font-style: italic;
-            letter-spacing: -2px;
-            line-height: 0.95;
-            background: linear-gradient(to bottom, #e4e4ed 30%, #4a4a5a);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* Right side: The Statement Content */
+        /* Top Layer: The Quote Context */
         .statement-axis {
-            border-left: 1px solid var(--border);
-            padding: 1.5rem 0 1.5rem 3rem;
+            margin-bottom: 3.5rem;
         }
 
         .home-quote {
@@ -133,15 +116,34 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             display: block;
-            margin-bottom: 3rem;
         }
 
-        /* New Grouped Layout Container for Button + Notice */
+        /* Middle Layer: Strong Brand Focus */
+        .brand-axis {
+            margin-bottom: 4rem;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            padding: 2.5rem 0;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 4.5rem;
+            font-weight: 400;
+            font-style: italic;
+            letter-spacing: -2px;
+            line-height: 0.95;
+            background: linear-gradient(to bottom, #e4e4ed 40%, #4a4a5a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Bottom Layer: Action Group */
         .cta-container {
             display: inline-flex;
             flex-direction: column;
-            align-items: flex-start;
-            gap: 0.85rem;
+            align-items: center;
+            gap: 1rem;
         }
 
         /* Striking Monolith Action Link */
@@ -156,7 +158,7 @@
             background: rgba(163, 133, 185, 0.08);
             text-decoration: none;
             border: 1px solid var(--accent);
-            padding: 0.9rem 1.75rem;
+            padding: 0.9rem 2.25rem;
             box-shadow: 0 0 15px var(--accent-dim);
             transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
@@ -177,7 +179,7 @@
             line-height: 1.5;
             color: var(--text-secondary);
             letter-spacing: 0.5px;
-            max-width: 250px;
+            max-width: 320px;
         }
 
         /* Footer */
@@ -203,63 +205,35 @@
                 gap: 1.2rem;
             }
 
-            .nav-links a {
-                font-size: 0.75rem;
-                letter-spacing: 1px;
-            }
-
             main {
-                grid-template-columns: 1fr;
-                gap: 2.5rem;
-                text-align: center;
-                padding-top: 140px; /* Leaves room for stacked nav */
-            }
-
-            .brand-axis { 
-                text-align: center; 
+                padding-top: 160px;
             }
 
             h1 { 
-                font-size: 2.8rem; /* Scaled down slightly to prevent awkward wrap */
+                font-size: 3.2rem;
                 letter-spacing: -1px;
-                margin-bottom: 0.5rem; 
             }
 
             .statement-axis {
-                border-left: none;
-                border-top: 1px solid var(--border);
-                padding: 2rem 1rem 0 1rem;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
+                margin-bottom: 2.5rem;
+            }
+
+            .brand-axis {
+                margin-bottom: 3rem;
+                padding: 2rem 0;
             }
 
             .home-quote {
                 font-size: 1.1rem;
             }
-
-            .quote-source {
-                margin-bottom: 2rem;
-            }
-
-            /* Center align entire CTA block on mobile layout */
-            .cta-container {
-                align-items: center;
-                text-align: center;
-            }
-
-            .repo-notice {
-                max-width: 100%;
-            }
         }
 
-        /* Target extra small screens (iPhone SE, etc.) */
         @media (max-width: 380px) {
             .nav-links {
                 gap: 0.8rem;
             }
             h1 {
-                font-size: 2.4rem;
+                font-size: 2.6rem;
             }
         }
     </style>
@@ -278,24 +252,27 @@
     </nav>
 
     <main>
-        <div class="brand-axis">
-            <h1>fragments<br>& echoes</h1>
-        </div>
-        
+        <!-- Layer 1: The Quote Intro -->
         <div class="statement-axis">
             <p class="home-quote">
                 "We used to look up at the sky and wonder at our place in the stars."
             </p>
             <span class="quote-source">— Interstellar</span>
+        </div>
 
-            <div class="cta-container">
-                <a href="/monolith" class="monolith-btn">
-                    → Enter Monolith
-                </a>
-                <span class="repo-notice">
-                    It's a dirty job, but somebody's gotta do it
-                </span>
-            </div>
+        <!-- Layer 2: Main Identity Anchor -->
+        <div class="brand-axis">
+            <h1>fragments<br>& echoes</h1>
+        </div>
+        
+        <!-- Layer 3: Lower Interaction Terminal -->
+        <div class="cta-container">
+            <a href="/monolith" class="monolith-btn">
+                → Enter Monolith
+            </a>
+            <span class="repo-notice">
+                this is not my beautiful house, this is not my beautiful site
+            </span>
         </div>
     </main>
 
