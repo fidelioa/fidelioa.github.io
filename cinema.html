@@ -84,7 +84,7 @@
             text-shadow: 0 0 8px var(--accent-dim);
         }
 
-        /* Structured Main Layout Container */
+        /* Main Layout Container */
         main {
             width: 100%;
             max-width: 900px; 
@@ -132,17 +132,35 @@
             padding-bottom: 0.5rem;
         }
 
-        /* Movie Quote Display Container styling */
+        /* Quote Display Box Styling */
         .quote-display {
             background: var(--card-bg);
             border: 1px solid var(--border);
             padding: 2.5rem;
             border-radius: 4px;
-            font-style: italic;
             line-height: 1.7;
+        }
+
+        .quote-text {
+            font-style: italic;
             font-size: 1.15rem;
             color: #e4e4ed;
-            position: relative;
+            margin-bottom: 0.8rem;
+        }
+
+        .quote-meta {
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            display: block;
+            font-style: normal;
+            letter-spacing: 1px;
+        }
+
+        .quote-meta em {
+            font-family: 'Georgia', serif;
+            font-style: italic;
+            color: var(--accent);
         }
 
         .search-container {
@@ -255,6 +273,15 @@
             max-width: 140px;
         }
 
+        .loading-text {
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-style: italic;
+            grid-column: 1 / -1;
+            padding: 2rem 0;
+        }
+
         footer {
             margin-top: auto;
             padding-top: 4rem;
@@ -290,10 +317,10 @@
     <nav>
         <a href="index.html" class="nav-logo">// f&e</a>
         <ul class="nav-links">
-            <li><a href="quotes.html">Quotes</a></li>
-            <li><a href="poems.html">Poems</a></li>
-            <li><a href="cinema.html" class="active">Cinema</a></li>
-            <li><a href="about.html">About</a></li>
+            <li><a href="quotes">Quotes</a></li>
+            <li><a href="poems">Poems</a></li>
+            <li><a href="cinema" class="active">Cinema</a></li>
+            <li><a href="about">About</a></li>
         </ul>
     </nav>
 
@@ -303,13 +330,23 @@
             <span class="subtitle">101 movies I keep returning to</span>
         </header>
 
+        <!-- Dynamic Random Quote Section -->
         <section id="quoteSection">
             <h3>Echoes</h3>
             <div class="quote-display" id="quoteDisplay">
-                <span style="color: var(--text-secondary); font-family: monospace; font-size: 0.85rem;">Retrieving a voice...</span>
+                <div style="color: var(--text-secondary); font-family: monospace; font-size: 0.85rem;">Listening for a voice...</div>
             </div>
         </section>
 
+        <!-- Live Letterboxd Feed Section -->
+        <section id="letterboxdSection">
+            <h3>Recent Logs</h3>
+            <div class="film-grid" id="letterboxdGrid">
+                <div class="loading-text">Fetching data from Letterboxd diary...</div>
+            </div>
+        </section>
+
+        <!-- Main Curated Archive -->
         <section>
             <h3>The 101 Favorites</h3>
             <div class="search-container">
@@ -324,6 +361,9 @@
     </footer>
 
     <script>
+        // CONFIGURATION: Injected user handle
+        const LETTERBOXD_USERNAME = "ankitx";
+
         // Film archive database
         const filmDatabase = [
             { rank: "01", title: "The Godfather Part II", director: "Francis Ford Coppola", year: "1974", country: "USA", poster: "https://image.tmdb.org/t/p/w500/hek3koDUyRQk7FIhPXsa6mT2Zc3.jpg" },
@@ -458,43 +498,137 @@
             });
         }
 
-        // Live-fetching real quotes directly from quotes.html 
+        // --- Random Quote Fetcher with Metadata ---
         async function fetchRandomQuote() {
             const display = document.getElementById('quoteDisplay');
             try {
-                // 1. Fetch the raw content of your local quotes file
                 const response = await fetch('quotes.html');
-                if (!response.ok) throw new Error('File not found');
+                if (!response.ok) throw new Error('Could not open quotes.html');
                 
-                const text = await response.text();
+                const htmlText = await response.text();
                 
-                // 2. Turn the plain text response into a navigable DOM structure
                 const parser = new DOMParser();
-                const doc = parser.parseFromString(text, 'text/html');
+                const doc = parser.parseFromString(htmlText, 'text/html');
                 
-                // 3. Find structural components containing your quotes inside quotes.html
-                // This targets blockquotes, list items, paragraphs, or divs with a class of "quote"
-                let quotes = Array.from(doc.querySelectorAll('blockquote, li, p, .quote, .item'));
+                // Targets containers. Designed to read modern styled structures or raw list entries.
+                let elements = Array.from(doc.querySelectorAll('.quote-item, blockquote, li, p'));
+                elements = elements.filter(el => el.textContent.trim().length > 15);
                 
-                // Filter out elements that are completely empty or have just navigational white spaces
-                quotes = quotes.filter(el => el.textContent.trim().length > 10);
+                if (elements.length === 0) throw new Error('No valid quotes parsed');
                 
-                if (quotes.length === 0) {
-                     display.innerHTML = `<span>"Frankly, my dear, I don't give a damn."</span>`;
-                     return;
+                const randomIndex = Math.floor(Math.random() * elements.length);
+                const selectedEl = elements[randomIndex];
+                
+                // If the element already contains custom internal class metadata tags, display directly
+                if (selectedEl.classList.contains('quote-item') || selectedEl.querySelector('cite')) {
+                    display.innerHTML = selectedEl.innerHTML;
+                } else {
+                    // Smart parser fallback for strings structured as: "Quote" — Actor, Movie (Year)
+                    const text = selectedEl.textContent.trim();
+                    const parts = text.split(/[—–-]/); // Split by various dash lengths
+                    
+                    if (parts.length > 1) {
+                        const quoteText = parts[0].trim();
+                        const metaText = parts[1].trim();
+                        
+                        // Parse movie titles hidden in parenthesis or commas if possible
+                        let formattedMeta = metaText;
+                        const yearMatch = metaText.match(/\(([^)]+)\)/);
+                        
+                        if (yearMatch) {
+                            const year = yearMatch[0];
+                            let remaining = metaText.replace(year, '').trim();
+                            let lastComma = remaining.lastIndexOf(',');
+                            
+                            if (lastComma !== -1) {
+                                let actor = remaining.substring(0, lastComma).trim();
+                                let movie = remaining.substring(lastComma + 1).trim();
+                                formattedMeta = `${actor}, <em>${movie}</em> ${year}`;
+                            }
+                        }
+                        
+                        display.innerHTML = `
+                            <div class="quote-text">${quoteText}</div>
+                            <span class="quote-meta">— ${formattedMeta}</span>
+                        `;
+                    } else {
+                        display.innerHTML = `<div class="quote-text">${text}</div>`;
+                    }
                 }
-                
-                // 4. Extract a completely random element index on every load/refresh
-                const randomIndex = Math.floor(Math.random() * quotes.length);
-                const chosenQuote = quotes[randomIndex];
-                
-                // 5. Safely clean and push the text content directly inside our container
-                display.innerHTML = chosenQuote.innerHTML;
 
             } catch (error) {
-                console.error("Quote fetching failed:", error);
-                // Fallback elegant quote if file path/CORS has issues locally
-                display.innerHTML = `<span>"I'm going to make him an offer he can't refuse."</span>`;
+                console.error("Failed to parse live quotes:", error);
+                // Hardcoded beautiful fallback
+                display.innerHTML = `
+                    <div class="quote-text">"I don't want to need you because I can't have you."</div>
+                    <span class="quote-meta">— Clint Eastwood, <em>The Bridges of Madison County</em> (1995)</span>
+                `;
+            }
+        }
+
+        // Letterboxd RSS Parser via open CORS Proxy
+        async function fetchRecentLetterboxdLogs() {
+            const grid = document.getElementById('letterboxdGrid');
+            const rssUrl = `https://letterboxd.com/${LETTERBOXD_USERNAME}/rss/`;
+            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
+
+            try {
+                const proxyResponse = await fetch(proxyUrl);
+                const proxyData = await proxyResponse.json();
+                
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(proxyData.contents, "text/xml");
+                const items = xmlDoc.getElementsByTagName("item");
+
+                if (!items || items.length === 0) {
+                    grid.innerHTML = `<div class="loading-text">No recent diary entries found for "${LETTERBOXD_USERNAME}".</div>`;
+                    return;
+                }
+
+                grid.innerHTML = ''; 
+                const limit = Math.min(items.length, 4);
+
+                for(let i = 0; i < limit; i++) {
+                    const item = items[i];
+                    const rawTitle = item.getElementsByTagName("title")[0]?.textContent || "";
+                    const link = item.getElementsByTagName("link")[0]?.textContent || "#";
+                    const description = item.getElementsByTagName("description")[0]?.textContent || "";
+
+                    const titleMatch = rawTitle.match(/(.*?),\s*(\d{4})/);
+                    const movieTitle = titleMatch ? titleMatch[1] : rawTitle;
+                    const movieYear = titleMatch ? titleMatch[2] : "";
+
+                    const srcMatch = description.match(/src="([^"]+)"/);
+                    let posterUrl = srcMatch ? srcMatch[1] : "";
+                    if (posterUrl.includes('-0-150-0-225-crop.jpg')) {
+                        posterUrl = posterUrl.replace('-0-150-0-225-crop.jpg', '-0-500-0-750-crop.jpg');
+                    }
+
+                    const card = document.createElement('div');
+                    card.className = 'film-card';
+                    card.style.cursor = "pointer";
+                    
+                    card.innerHTML = `
+                        <div class="film-poster-holder" style="background-image: url('${posterUrl}')"></div>
+                        <div class="film-info">
+                            <div class="film-title-row">
+                                <h4>${movieTitle}</h4>
+                                <span class="film-year-badge">${movieYear}</span>
+                            </div>
+                            <div class="film-subtext-row">
+                                <span class="film-rank" style="font-size: 0.65rem; color: var(--text-secondary);">DIARY LOG</span>
+                                <span class="film-meta" style="text-transform: uppercase; font-size: 0.65rem;">★ View Entry</span>
+                            </div>
+                        </div>
+                    `;
+                    
+                    card.addEventListener('click', () => window.open(link, '_blank'));
+                    grid.appendChild(card);
+                }
+
+            } catch (error) {
+                console.error("Letterboxd sync error:", error);
+                grid.innerHTML = `<div class="loading-text">Unable to reach the live feed at this time.</div>`;
             }
         }
 
@@ -510,7 +644,8 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             renderFilms(filmDatabase);
-            fetchRandomQuote(); // Trigger random selector on load
+            fetchRandomQuote();
+            fetchRecentLetterboxdLogs();
         });
     </script>
 </body>
