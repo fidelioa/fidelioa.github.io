@@ -176,7 +176,6 @@
             border-color: var(--accent);
         }
 
-        /* Pure artwork layer completely free of obstructing text */
         .film-poster-holder {
             width: 100%;
             height: 290px;
@@ -323,7 +322,7 @@
     </footer>
 
     <script>
-        // CONFIGURATION: Replace with your exact Letterboxd username string
+        // CONFIGURATION: Real user handle injected
         const LETTERBOXD_USERNAME = "ankitx";
 
         // Film archive database
@@ -460,45 +459,53 @@
             });
         }
 
-        // Letterboxd RSS Parser
+        // Updated Letterboxd RSS Parser using an open CORS Proxy wrapper
         async function fetchRecentLetterboxdLogs() {
             const grid = document.getElementById('letterboxdGrid');
+            const rssUrl = `https://letterboxd.com/${LETTERBOXD_USERNAME}/rss/`;
             
-            if (LETTERBOXD_USERNAME === "ankitx") {
-                grid.innerHTML = `<div class="loading-text">Configuration required: Please edit the script source and replace "ankitx" with your real Letterboxd user handle.</div>`;
-                return;
-            }
-
-            const rssUrl = `https://letterboxd.com/${ankitx}/rss/`;
-            const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+            // Using api.allorigins.win as an updated wrapper to bypass CORS issues on local files/git pages safely
+            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
 
             try {
-                const response = await fetch(apiUrl);
-                const data = await response.json();
+                const proxyResponse = await fetch(proxyUrl);
+                const proxyData = await proxyResponse.json();
+                
+                // Parse raw XML string returned by the proxy
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(proxyData.contents, "text/xml");
+                const items = xmlDoc.getElementsByTagName("item");
 
-                if (!data.items || data.items.length === 0) {
-                    grid.innerHTML = `<div class="loading-text">No diary entries found for user "${ankitx}".</div>`;
+                if (!items || items.length === 0) {
+                    grid.innerHTML = `<div class="loading-text">No recent diary entries found for "${LETTERBOXD_USERNAME}".</div>`;
                     return;
                 }
 
                 grid.innerHTML = ''; 
-                const elementsToRender = data.items.slice(0, 4);
+                // Render up to 4 recent items
+                const limit = Math.min(items.length, 4);
 
-                elementsToRender.forEach(item => {
-                    const titleMatch = item.title.match(/(.*?),\s*(\d{4})/);
-                    const movieTitle = titleMatch ? titleMatch[1] : item.title;
+                for(let i = 0; i < limit; i++) {
+                    const item = items[i];
+                    const rawTitle = item.getElementsByTagName("title")[0]?.textContent || "";
+                    const link = item.getElementsByTagName("link")[0]?.textContent || "#";
+                    const description = item.getElementsByTagName("description")[0]?.textContent || "";
+
+                    // Parse out cleanly structured layout text
+                    const titleMatch = rawTitle.match(/(.*?),\s*(\d{4})/);
+                    const movieTitle = titleMatch ? titleMatch[1] : rawTitle;
                     const movieYear = titleMatch ? titleMatch[2] : "";
 
-                    const htmlContent = item.description;
-                    const srcMatch = htmlContent.match(/src="([^"]+)"/);
+                    // Find high-res image source
+                    const srcMatch = description.match(/src="([^"]+)"/);
                     let posterUrl = srcMatch ? srcMatch[1] : "";
-
                     if (posterUrl.includes('-0-150-0-225-crop.jpg')) {
                         posterUrl = posterUrl.replace('-0-150-0-225-crop.jpg', '-0-500-0-750-crop.jpg');
                     }
 
                     const card = document.createElement('div');
                     card.className = 'film-card';
+                    card.style.cursor = "pointer";
                     
                     card.innerHTML = `
                         <div class="film-poster-holder" style="background-image: url('${posterUrl}')"></div>
@@ -514,11 +521,9 @@
                         </div>
                     `;
                     
-                    card.style.cursor = "pointer";
-                    card.addEventListener('click', () => window.open(item.link, '_blank'));
-                    
+                    card.addEventListener('click', () => window.open(link, '_blank'));
                     grid.appendChild(card);
-                });
+                }
 
             } catch (error) {
                 console.error("Letterboxd sync error:", error);
