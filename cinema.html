@@ -84,7 +84,7 @@
             text-shadow: 0 0 8px var(--accent-dim);
         }
 
-        /* Main Layout Container */
+        /* Structured Main Layout Container */
         main {
             width: 100%;
             max-width: 900px; 
@@ -132,7 +132,7 @@
             padding-bottom: 0.5rem;
         }
 
-        /* Quote Display Box Styling */
+        /* Quote Box Aesthetics */
         .quote-display {
             background: var(--card-bg);
             border: 1px solid var(--border);
@@ -273,15 +273,6 @@
             max-width: 140px;
         }
 
-        .loading-text {
-            font-family: monospace;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            font-style: italic;
-            grid-column: 1 / -1;
-            padding: 2rem 0;
-        }
-
         footer {
             margin-top: auto;
             padding-top: 4rem;
@@ -330,7 +321,6 @@
             <span class="subtitle">101 movies I keep returning to</span>
         </header>
 
-        <!-- Dynamic Random Quote Section -->
         <section id="quoteSection">
             <h3>Echoes</h3>
             <div class="quote-display" id="quoteDisplay">
@@ -338,15 +328,6 @@
             </div>
         </section>
 
-        <!-- Live Letterboxd Feed Section -->
-        <section id="letterboxdSection">
-            <h3>Recent Logs</h3>
-            <div class="film-grid" id="letterboxdGrid">
-                <div class="loading-text">Fetching data from Letterboxd diary...</div>
-            </div>
-        </section>
-
-        <!-- Main Curated Archive -->
         <section>
             <h3>The 101 Favorites</h3>
             <div class="search-container">
@@ -361,9 +342,6 @@
     </footer>
 
     <script>
-        // CONFIGURATION: Injected user handle
-        const LETTERBOXD_USERNAME = "ankitx";
-
         // Film archive database
         const filmDatabase = [
             { rank: "01", title: "The Godfather Part II", director: "Francis Ford Coppola", year: "1974", country: "USA", poster: "https://image.tmdb.org/t/p/w500/hek3koDUyRQk7FIhPXsa6mT2Zc3.jpg" },
@@ -498,10 +476,11 @@
             });
         }
 
-        // --- Random Quote Fetcher with Metadata ---
+        // --- Optimized Live Random Quote Fetcher with Metadata Parsing ---
         async function fetchRandomQuote() {
             const display = document.getElementById('quoteDisplay');
             try {
+                // Fetch elements from target file
                 const response = await fetch('quotes.html');
                 if (!response.ok) throw new Error('Could not open quotes.html');
                 
@@ -510,33 +489,33 @@
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(htmlText, 'text/html');
                 
-                // Targets containers. Designed to read modern styled structures or raw list entries.
+                // Collect quotes mapped to standard HTML components
                 let elements = Array.from(doc.querySelectorAll('.quote-item, blockquote, li, p'));
                 elements = elements.filter(el => el.textContent.trim().length > 15);
                 
                 if (elements.length === 0) throw new Error('No valid quotes parsed');
                 
+                // Select an entry randomly on every call / layout refresh
                 const randomIndex = Math.floor(Math.random() * elements.length);
                 const selectedEl = elements[randomIndex];
                 
-                // If the element already contains custom internal class metadata tags, display directly
+                // Render structure directly if it is using specialized tag sets
                 if (selectedEl.classList.contains('quote-item') || selectedEl.querySelector('cite')) {
                     display.innerHTML = selectedEl.innerHTML;
                 } else {
-                    // Smart parser fallback for strings structured as: "Quote" — Actor, Movie (Year)
+                    // Smart parser fallback for strings structured as: "Quote text" — Actor, Movie (Year)
                     const text = selectedEl.textContent.trim();
-                    const parts = text.split(/[—–-]/); // Split by various dash lengths
+                    const parts = text.split(/[—–-]/); // Handles variant em/en dashes cleanly
                     
                     if (parts.length > 1) {
                         const quoteText = parts[0].trim();
                         const metaText = parts[1].trim();
                         
-                        // Parse movie titles hidden in parenthesis or commas if possible
                         let formattedMeta = metaText;
                         const yearMatch = metaText.match(/\(([^)]+)\)/);
                         
                         if (yearMatch) {
-                            const year = yearMatch[0];
+                            const year = yearMatch[0]; // (Year)
                             let remaining = metaText.replace(year, '').trim();
                             let lastComma = remaining.lastIndexOf(',');
                             
@@ -552,83 +531,19 @@
                             <span class="quote-meta">— ${formattedMeta}</span>
                         `;
                     } else {
-                        display.innerHTML = `<div class="quote-text">${text}</div>`;
+                        display.innerHTML = `
+                            <div class="quote-text">${text}</div>
+                        `;
                     }
                 }
 
             } catch (error) {
-                console.error("Failed to parse live quotes:", error);
-                // Hardcoded beautiful fallback
+                console.error("Failed to parse random quotes:", error);
+                // Styled system placeholder fallback
                 display.innerHTML = `
                     <div class="quote-text">"I don't want to need you because I can't have you."</div>
                     <span class="quote-meta">— Clint Eastwood, <em>The Bridges of Madison County</em> (1995)</span>
                 `;
-            }
-        }
-
-        // Letterboxd RSS Parser via open CORS Proxy
-        async function fetchRecentLetterboxdLogs() {
-            const grid = document.getElementById('letterboxdGrid');
-            const rssUrl = `https://letterboxd.com/${LETTERBOXD_USERNAME}/rss/`;
-            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
-
-            try {
-                const proxyResponse = await fetch(proxyUrl);
-                const proxyData = await proxyResponse.json();
-                
-                const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(proxyData.contents, "text/xml");
-                const items = xmlDoc.getElementsByTagName("item");
-
-                if (!items || items.length === 0) {
-                    grid.innerHTML = `<div class="loading-text">No recent diary entries found for "${LETTERBOXD_USERNAME}".</div>`;
-                    return;
-                }
-
-                grid.innerHTML = ''; 
-                const limit = Math.min(items.length, 4);
-
-                for(let i = 0; i < limit; i++) {
-                    const item = items[i];
-                    const rawTitle = item.getElementsByTagName("title")[0]?.textContent || "";
-                    const link = item.getElementsByTagName("link")[0]?.textContent || "#";
-                    const description = item.getElementsByTagName("description")[0]?.textContent || "";
-
-                    const titleMatch = rawTitle.match(/(.*?),\s*(\d{4})/);
-                    const movieTitle = titleMatch ? titleMatch[1] : rawTitle;
-                    const movieYear = titleMatch ? titleMatch[2] : "";
-
-                    const srcMatch = description.match(/src="([^"]+)"/);
-                    let posterUrl = srcMatch ? srcMatch[1] : "";
-                    if (posterUrl.includes('-0-150-0-225-crop.jpg')) {
-                        posterUrl = posterUrl.replace('-0-150-0-225-crop.jpg', '-0-500-0-750-crop.jpg');
-                    }
-
-                    const card = document.createElement('div');
-                    card.className = 'film-card';
-                    card.style.cursor = "pointer";
-                    
-                    card.innerHTML = `
-                        <div class="film-poster-holder" style="background-image: url('${posterUrl}')"></div>
-                        <div class="film-info">
-                            <div class="film-title-row">
-                                <h4>${movieTitle}</h4>
-                                <span class="film-year-badge">${movieYear}</span>
-                            </div>
-                            <div class="film-subtext-row">
-                                <span class="film-rank" style="font-size: 0.65rem; color: var(--text-secondary);">DIARY LOG</span>
-                                <span class="film-meta" style="text-transform: uppercase; font-size: 0.65rem;">★ View Entry</span>
-                            </div>
-                        </div>
-                    `;
-                    
-                    card.addEventListener('click', () => window.open(link, '_blank'));
-                    grid.appendChild(card);
-                }
-
-            } catch (error) {
-                console.error("Letterboxd sync error:", error);
-                grid.innerHTML = `<div class="loading-text">Unable to reach the live feed at this time.</div>`;
             }
         }
 
@@ -644,8 +559,7 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             renderFilms(filmDatabase);
-            fetchRandomQuote();
-            fetchRecentLetterboxdLogs();
+            fetchRandomQuote(); // Ensures a unique randomized quote runs on page refresh
         });
     </script>
 </body>
