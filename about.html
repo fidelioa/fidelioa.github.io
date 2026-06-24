@@ -14,7 +14,7 @@
             --text-secondary: #5a5a6e;
             --accent: #a385b9; /* Soft artsy violet */
             --accent-dim: rgba(163, 133, 185, 0.15);
-            --nav-bg: rgba(8, 8, 11, 0.9);
+            --nav-bg: rgba(8, 8, 11, 0.75);
             --border: #161622;
         }
 
@@ -31,10 +31,9 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
             align-items: center;
-            padding: 2rem;
             overflow-x: hidden;
+            position: relative;
         }
 
         /* Fixed Navigation Bar */
@@ -48,9 +47,10 @@
             align-items: center;
             padding: 2rem 2.5rem;
             background: var(--nav-bg);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             z-index: 100;
+            border-bottom: 1px solid rgba(22, 22, 34, 0.3);
         }
 
         .nav-logo {
@@ -86,43 +86,22 @@
             text-shadow: 0 0 8px var(--accent-dim);
         }
 
-        /* Profile Layout Container */
-        main {
+        /* WIDESCREEN LETTERBOXD BACKDROP */
+        .widescreen-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 580px;
-            display: flex;
-            flex-direction: column;
-            gap: 2.5rem;
-            padding-top: 120px; 
-            padding-bottom: 40px;
-        }
-
-        /* Letterboxd Patron-Style Backdrop Header Wrapper */
-        .profile-header-card {
-            position: relative;
-            width: 100%;
-            background: var(--panel-bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-bottom: 2rem;
-        }
-
-        .backdrop-container {
-            position: relative;
-            width: 100%;
-            height: 180px;
+            height: 48vh; /* Spans roughly half the view height like image_dd7b41.jpg */
             background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg');
             background-size: cover;
-            background-position: center 25%;
-            filter: grayscale(10%) brightness(55%) contrast(110%);
+            background-position: center 28%;
+            z-index: 1;
+            filter: brightness(50%) contrast(110%) saturate(90%);
         }
 
-        /* The signature non-straight Letterboxd dark vignette overlay mask */
-        .backdrop-container::after {
+        /* The signature horizontal and vertical atmospheric bleed masks */
+        .widescreen-backdrop::after {
             content: '';
             position: absolute;
             top: 0;
@@ -130,36 +109,44 @@
             width: 100%;
             height: 100%;
             background: 
-                linear-gradient(to bottom, transparent 30%, var(--panel-bg) 100%),
-                linear-gradient(to right, var(--panel-bg) 0%, transparent 15%, transparent 85%, var(--panel-bg) 100%),
-                radial-gradient(circle at center, transparent 20%, var(--panel-bg) 95%);
+                linear-gradient(to bottom, rgba(8, 8, 11, 0.4) 0%, transparent 30%, transparent 65%, var(--bg-color) 98%),
+                linear-gradient(to right, var(--bg-color) 0%, transparent 12%, transparent 88%, var(--bg-color) 100%);
         }
 
-        /* Foreground Stack */
-        .identity-stack {
+        /* Profile Layout Container */
+        main {
             position: relative;
+            width: 100%;
+            max-width: 580px;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            text-align: center;
-            margin-top: -65px; /* Pull up to overlay perfectly against the vignette gap */
+            gap: 2.5rem;
+            padding: 34vh 1.5rem 40px 1.5rem; /* Pushes content down so identity-stack lands perfectly over backdrop blend */
             z-index: 2;
-            gap: 1rem;
+        }
+
+        /* Identity Stack Floating Over Backdrop edge */
+        .identity-stack {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 0.5rem;
         }
 
         .avatar {
-            width: 130px;
-            height: 130px;
+            width: 110px;
+            height: 110px;
             border-radius: 50%;
-            border: 3px solid var(--panel-bg);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-            filter: grayscale(10%) contrast(105%);
+            border: 3px solid var(--bg-color);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.7);
             object-fit: cover;
-            transition: transform 0.4s ease;
+            flex-shrink: 0;
         }
 
-        .avatar:hover {
-            transform: scale(1.03);
+        .identity-text-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
         }
 
         .identity-stack h2 {
@@ -167,7 +154,7 @@
             font-weight: 400;
             letter-spacing: -0.5px;
             color: #f0f0f5;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
         }
 
         /* Typewriter Blinking Cursor Animation */
@@ -181,23 +168,24 @@
             50% { color: var(--accent); }
         }
 
-        /* Digital Coordinates Grid Layout Directly Inside Header */
-        .coordinates-subpanel {
-            width: 100%;
-            padding: 0 2rem;
-            margin-top: 1.5rem;
+        /* Digital Coordinates Layout */
+        .coordinates-panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--border);
+            padding: 1.8rem;
+            border-radius: 6px;
         }
 
         .panel-label {
             font-family: monospace;
-            font-size: 0.72rem;
+            font-size: 0.75rem;
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 2px;
-            margin-bottom: 1rem;
+            margin-bottom: 1.2rem;
             display: block;
             border-bottom: 1px dashed var(--border);
-            padding-bottom: 0.4rem;
+            padding-bottom: 0.5rem;
         }
 
         .social-grid {
@@ -227,7 +215,7 @@
         }
 
         .network-name {
-            font-size: 0.95rem;
+            font-size: 1rem;
             color: var(--text-primary);
             font-style: italic;
         }
@@ -298,16 +286,17 @@
         /* Footer */
         footer {
             margin-top: auto;
-            padding-top: 4rem;
+            padding: 4rem 0 2rem 0;
             font-family: monospace;
             font-size: 0.75rem;
             color: rgba(110, 110, 128, 0.3);
             letter-spacing: 1.5px;
             text-align: center;
             width: 100%;
+            z-index: 2;
         }
 
-        /* Responsive Formatting Layout Adjustments */
+        /* Responsive Layout Formatting Rules */
         @media (max-width: 768px) {
             nav {
                 padding: 1.5rem 1.5rem;
@@ -324,17 +313,23 @@
                 letter-spacing: 1px;
             }
 
+            .widescreen-backdrop {
+                height: 38vh;
+            }
+
             main {
-                padding-top: 160px; 
+                padding-top: 26vh; 
+            }
+
+            .identity-stack {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
             }
 
             .social-grid {
                 grid-template-columns: 1fr;
                 gap: 1rem;
-            }
-
-            .coordinates-subpanel {
-                padding: 0 1.2rem;
             }
         }
 
@@ -358,56 +353,59 @@
         </ul>
     </nav>
 
+    <!-- Full-Width Infinite Edge Letterboxd Patron Backdrop -->
+    <div class="widescreen-backdrop"></div>
+
     <main>
         
-        <!-- Unified Header Box: Backdrop, Profile, and Digital Coordinates -->
-        <div class="profile-header-card">
-            <div class="backdrop-container"></div>
-            
-            <div class="identity-stack">
-                <img src="https://a.ltrbxd.com/resized/avatar/upload/1/6/9/6/0/4/2/0/shard/avtr-0-1000-0-1000-crop.jpg" alt="ankit" class="avatar">
+        <!-- Horizon Profile Header Identity Stack -->
+        <div class="identity-stack">
+            <img src="https://a.ltrbxd.com/resized/avatar/upload/1/6/9/6/0/4/2/0/shard/avtr-0-1000-0-1000-crop.jpg" alt="ankit" class="avatar">
+            <div class="identity-text-wrapper">
                 <h2>ankit<span class="cursor">_</span></h2>
             </div>
-
-            <div class="coordinates-subpanel">
-                <span class="panel-label">Digital Coordinates</span>
-                <div class="social-grid">
-                    <a href="https://letterboxd.com/ankitx" class="social-link" target="_blank" rel="noopener noreferrer">
-                        <i class="si si-letterboxd"></i>
-                        <div class="network-details">
-                            <span class="network-name">Letterboxd</span>
-                            <span class="network-handle">/ankitx</span>
-                        </div>
-                    </a>
-
-                    <a href="https://www.goodreads.com/user/show/151452764-ankit" class="social-link" target="_blank" rel="noopener noreferrer">
-                        <i class="si si-goodreads"></i>
-                        <div class="network-details">
-                            <span class="network-name">Goodreads</span>
-                            <span class="network-handle">/ankit</span>
-                        </div>
-                    </a>
-
-                    <a href="https://www.instagram.com/i_is_ankit/" class="social-link" target="_blank" rel="noopener noreferrer">
-                        <i class="si si-instagram"></i>
-                        <div class="network-details">
-                            <span class="network-name">Instagram</span>
-                            <span class="network-handle">@i_is_ankit</span>
-                        </div>
-                    </a>
-
-                    <a href="https://github.com/fidelioa" class="social-link" target="_blank" rel="noopener noreferrer">
-                        <i class="si si-github"></i>
-                        <div class="network-details">
-                            <span class="network-name">GitHub</span>
-                            <span class="network-handle">/fidelioa</span>
-                        </div>
-                    </a>
-                </div>
-            </div>
         </div>
+
+        <!-- Coordinates Panel Below Name and Avatar -->
+        <section class="coordinates-panel">
+            <span class="panel-label">Digital Coordinates</span>
+            
+            <div class="social-grid">
+                <a href="https://letterboxd.com/ankitx" class="social-link" target="_blank" rel="noopener noreferrer">
+                    <i class="si si-letterboxd"></i>
+                    <div class="network-details">
+                        <span class="network-name">Letterboxd</span>
+                        <span class="network-handle">/ankitx</span>
+                    </div>
+                </a>
+
+                <a href="https://www.goodreads.com/user/show/151452764-ankit" class="social-link" target="_blank" rel="noopener noreferrer">
+                    <i class="si si-goodreads"></i>
+                    <div class="network-details">
+                        <span class="network-name">Goodreads</span>
+                        <span class="network-handle">/ankit</span>
+                    </div>
+                </a>
+
+                <a href="https://www.instagram.com/i_is_ankit/" class="social-link" target="_blank" rel="noopener noreferrer">
+                    <i class="si si-instagram"></i>
+                    <div class="network-details">
+                        <span class="network-name">Instagram</span>
+                        <span class="network-handle">@i_is_ankit</span>
+                    </div>
+                </a>
+
+                <a href="https://github.com/fidelioa" class="social-link" target="_blank" rel="noopener noreferrer">
+                    <i class="si si-github"></i>
+                    <div class="network-details">
+                        <span class="network-name">GitHub</span>
+                        <span class="network-handle">/fidelioa</span>
+                    </div>
+                </a>
+            </div>
+        </section>
         
-        <!-- Expanded Fleshed Out Narrative Paragraphs -->
+        <!-- Deepened Body Narrative -->
         <section class="intro-section">
             <p class="narrative">
                 Most of these fragments are things I found myself returning to years later. This space operates less like a traditional repository and more like an archive of echoes—lines, frames, and verses that refused to leave my mind after the pages were closed or the projection cut to black. In the digital rush, things are too easily lost. This serves as a quiet shelter for whatever lingers.
@@ -422,10 +420,10 @@
             </p>
         </section>
 
-        <!-- Final Signature Closing Elements -->
+        <!-- Signature Closing Elements -->
         <section class="closing-signature">
             <div class="signature-quote">"The rest is silence."</div>
-            <div class="timestamp">Established 2026 // Janakpur, Nepal</div>
+            <div class="timestamp">Established 2026 // Kathmandu, Nepal</div>
         </section>
 
     </main>
