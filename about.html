@@ -95,13 +95,39 @@
             padding-bottom: 40px;
         }
 
+        /* Visual Anchor System */
+        .profile-anchor {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            filter: grayscale(40%) contrast(110%);
+            object-fit: cover;
+        }
+
         .intro-section h2 {
             font-size: 2rem;
             font-weight: 400;
-            font-style: italic;
             letter-spacing: -0.5px;
-            margin-bottom: 1.5rem;
             color: #f0f0f5;
+        }
+
+        /* Typewriter Blinking Cursor Animation */
+        .cursor {
+            color: var(--accent);
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            from, to { color: transparent }
+            50% { color: var(--accent); }
         }
 
         .intro-section p {
@@ -109,6 +135,15 @@
             color: #b5b5c3;
             margin-bottom: 1.5rem;
             line-height: 1.6;
+        }
+
+        .intro-section p.interests {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            font-style: italic;
+            border-left: 2px solid var(--border);
+            padding-left: 1rem;
+            margin-top: 1.8rem;
         }
 
         /* Social Signal Links Area */
@@ -171,10 +206,32 @@
             border-color: var(--accent);
         }
 
+        /* Signature & Timestamp Elements */
+        .closing-signature {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .signature-quote {
+            font-size: 1.1rem;
+            font-style: italic;
+            color: #8a8a9e;
+            margin-bottom: 1rem;
+        }
+
+        .timestamp {
+            font-family: monospace;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            opacity: 0.7;
+        }
+
         /* Footer */
         footer {
             margin-top: auto;
-            padding-top: 5rem;
+            padding-top: 4rem;
             font-family: monospace;
             font-size: 0.75rem;
             color: rgba(110, 110, 128, 0.3);
@@ -228,12 +285,17 @@
     <main>
         
         <section class="intro-section">
-            <h2>ankit.</h2>
+            <div class="profile-anchor">
+                <img src="https://a.ltrbxd.com/resized/avatar/upload/1/6/9/6/0/4/2/0/shard/avtr-0-1000-0-1000-crop.jpg" alt="ankit" class="avatar">
+                <h2>ankit<span class="cursor">_</span></h2>
+            </div>
+            
             <p>
-                This is a quiet, digital scrap space for things that linger long after the pages are closed or the screens go black. Just a collection of fragments, verses, and cinematic echoes that hit the right note.
+                A personal archive of lines, scenes, and verses that refused to leave. Most of these fragments are things I found myself returning to years later.
             </p>
-            <p>
-                Nothing structured, nothing complex. Just text in the dark.
+            
+            <p class="interests">
+                Books, cinema, medicine, and whatever survives a second reading.
             </p>
         </section>
 
@@ -257,7 +319,17 @@
                     <span class="network-handle">@i_is_ankit</span>
                 </a>
 
+                <a href="https://github.com/fidelio" class="social-link" target="_blank" rel="noopener noreferrer">
+                    <span class="network-name">GitHub</span>
+                    <span class="network-handle">/fidelio</span>
+                </a>
+
             </div>
+        </section>
+
+        <section class="closing-signature">
+            <div class="signature-quote">"The rest is silence."</div>
+            <div class="timestamp">Established 2026 // Janakpur, Nepal</div>
         </section>
 
     </main>
